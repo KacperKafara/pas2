@@ -15,15 +15,14 @@ import java.util.stream.Collectors;
 public class ClientService {
 
 
-    @Autowired
-    private ClientRepository repository;
+    private final ClientRepository repository;
+
+    private final ClientDTOMapper mapper;
 
     @Autowired
-    private ClientDTOMapper mapper;
-
-
-    public ClientService() {
-        this.mapper = new ClientDTOMapper();
+    public ClientService(ClientRepository repository, ClientDTOMapper mapper) {
+        this.mapper = mapper;
+        this.repository = repository;
     }
 
     public List<ClientDTO> allClients(){
