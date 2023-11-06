@@ -13,5 +13,5 @@ public interface ClientRepository {
     Client saveClient(Client client);
     List<Client> findClients();
     Client setActive(UUID id, boolean active);
-    Client changeUsername(UUID id, String username);
+    Client updateClient(UUID id, Client client);
 }

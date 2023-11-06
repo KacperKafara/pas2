@@ -33,18 +33,17 @@ public class MovieController {
 
     @PostMapping
     public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
-        return new ResponseEntity<>(movieService.addMovie(movie), HttpStatus.CREATED);
+        Movie addedMovie = movieService.addMovie(movie);
+        if (addedMovie == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(addedMovie, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Movie> changeTitle(@PathVariable UUID id, @RequestBody String title) {
-        return new ResponseEntity<>(movieService.changeTitle(id, title), HttpStatus.OK);
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
+        Movie updatedMovie = movieService.updateMovie(id, movie);
+        if(updatedMovie == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(updatedMovie, HttpStatus.OK);
     }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Movie> changeCost(@PathVariable UUID id, @RequestBody double cost) {
-//        return new ResponseEntity<>(movieService.changeCost(id, cost), HttpStatus.OK);
-//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteMovie(@PathVariable UUID id) {

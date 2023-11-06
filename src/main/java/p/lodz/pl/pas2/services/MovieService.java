@@ -27,15 +27,14 @@ public class MovieService {
     }
 
     public Movie addMovie(Movie movie) {
+        if(movie.getCost() <= 0) return null;
+        if(movie.getTitle().isEmpty()) return null;
         return repository.saveMovie(movie);
     }
 
-    public Movie changeTitle(UUID id, String title) {
-        return repository.changeTitle(id, title);
-    }
-
-    public Movie changeCost(UUID id, double cost) {
-        return repository.changeCost(id, cost);
+    public Movie updateMovie(UUID id, Movie movie) {
+        if(movie.getTitle().isEmpty() || movie.getCost() <= 0) return null;
+        return repository.updateMovie(id, movie);
     }
 
     public boolean deleteMovie(UUID id) {

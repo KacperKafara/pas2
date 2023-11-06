@@ -10,7 +10,6 @@ public interface MovieRepository {
     Movie findMovie(UUID id);
     List<Movie> findMovies();
     Movie saveMovie(Movie movie);
-    Movie changeTitle(UUID id, String title);
-    Movie changeCost(UUID id, double cost);
+    Movie updateMovie(UUID id, Movie movie);
     boolean deleteMovie(UUID id);
 }

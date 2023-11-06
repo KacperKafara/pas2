@@ -29,6 +29,8 @@ public class ClientService {
     }
 
     public Client addClient(Client client) {
+        if(client.getUsername().isEmpty()) return null;
+        if(getClient(client.getUsername()) != null) return null;
         return repository.saveClient(client);
     }
 
@@ -36,7 +38,9 @@ public class ClientService {
         return repository.setActive(id, active);
     }
 
-    public Client changeUsername(UUID id, String username) {
-        return repository.changeUsername(id, username);
+    public Client updateClient(UUID id, Client client) {
+        if(client.getUsername().isEmpty()) return null;
+        if(getClient(client.getUsername()) != null) return null;
+        return repository.updateClient(id, client);
     }
 }

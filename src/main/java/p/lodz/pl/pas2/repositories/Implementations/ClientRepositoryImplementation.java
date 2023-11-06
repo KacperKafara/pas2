@@ -65,13 +65,11 @@ public class ClientRepositoryImplementation implements ClientRepository {
     }
 
     @Override
-    public Client changeUsername(UUID id, String username) {
-        for (Client client : clients) {
-            if (client.getId().equals(id)) {
-                client.setUsername(username);
-                return client;
-            }
-        }
-        return null;
+    public Client updateClient(UUID id, Client client) {
+        Client updatedClient = findClient(id);
+        updatedClient.setUsername(client.getUsername());
+        updatedClient.setClientType(client.getClientType());
+        updatedClient.setActive(client.isActive());
+        return updatedClient;
     }
 }

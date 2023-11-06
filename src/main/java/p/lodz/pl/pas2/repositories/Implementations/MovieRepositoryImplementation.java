@@ -37,25 +37,11 @@ public class MovieRepositoryImplementation implements MovieRepository {
     }
 
     @Override
-    public Movie changeTitle(UUID id, String title) {
-        for (Movie movie : movies) {
-            if (movie.getId().equals(id)) {
-                movie.setTitle(title);
-                return movie;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Movie changeCost(UUID id, double cost) {
-        for (Movie movie : movies) {
-            if (movie.getId().equals(id)) {
-                movie.setCost(cost);
-                return movie;
-            }
-        }
-        return null;
+    public Movie updateMovie(UUID id, Movie movie) {
+        Movie updatedMovie = findMovie(id);
+        updatedMovie.setTitle(movie.getTitle());
+        updatedMovie.setCost(movie.getCost());
+        return updatedMovie;
     }
 
     @Override

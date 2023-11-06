@@ -38,16 +38,20 @@ public class ClientController {
 
     @PostMapping
     public ResponseEntity<Client> addClient(@RequestBody Client client) {
-        return new ResponseEntity<>(clientService.addClient(client), HttpStatus.CREATED);
+        Client addedClient = clientService.addClient(client);
+        if(addedClient == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(clientService.addClient(addedClient), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Client> setActive(@PathVariable UUID id, @RequestBody boolean active) {
         return new ResponseEntity<>(clientService.setActive(id, active), HttpStatus.OK);
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Client> changeUsername(@PathVariable UUID id, @RequestBody String username) {
-//        return new ResponseEntity<>(clientService.changeUsername(id, username), HttpStatus.OK);
-//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Client> updateClient(@PathVariable UUID id, @RequestBody Client client) {
+        Client updatedClient = clientService.updateClient(id, client);
+        if(updatedClient == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(clientService.addClient(updatedClient), HttpStatus.OK);
+    }
 }
