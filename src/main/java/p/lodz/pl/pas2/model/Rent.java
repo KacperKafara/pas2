@@ -17,7 +17,6 @@ public class Rent {
     private LocalDate endDate;
 
     public Rent(Client client, Movie movie, LocalDate startDate, LocalDate endDate) {
-        this.id = UUID.randomUUID();
         this.client = client;
         this.movie = movie;
         this.startDate = startDate;

@@ -31,6 +31,7 @@ public class MovieRepositoryImplementation implements MovieRepository {
 
     @Override
     public Movie saveMovie(Movie movie) {
+        movie.setId(UUID.randomUUID());
         movies.add(movie);
         return movie;
     }

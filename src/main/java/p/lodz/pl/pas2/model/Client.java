@@ -15,7 +15,6 @@ public class Client {
     private boolean active;
 
     public Client(String username, ClientType clientType, boolean active) {
-        this.id = UUID.randomUUID();
         this.username = username;
         this.clientType = clientType;
         this.active = active;

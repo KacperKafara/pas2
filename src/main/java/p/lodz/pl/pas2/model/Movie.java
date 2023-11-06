@@ -14,7 +14,6 @@ public class Movie {
     private double cost;
 
     public Movie(String title, double cost) {
-        this.id = UUID.randomUUID();
         this.title = title;
         this.cost = cost;
     }

@@ -43,6 +43,7 @@ public class ClientRepositoryImplementation implements ClientRepository {
 
     @Override
     public Client saveClient(Client client) {
+        client.setId(UUID.randomUUID());
         clients.add(client);
         return client;
     }
