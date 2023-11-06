@@ -52,6 +52,6 @@ public class ClientController {
     public ResponseEntity<Client> updateClient(@PathVariable UUID id, @RequestBody Client client) {
         Client updatedClient = clientService.updateClient(id, client);
         if(updatedClient == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(clientService.addClient(updatedClient), HttpStatus.OK);
+        return new ResponseEntity<>(updatedClient, HttpStatus.OK);
     }
 }
