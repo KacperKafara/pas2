@@ -1,13 +1,17 @@
 package p.lodz.pl.pas2.repositories;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Client;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.UUID;
 
-@Repository
-public interface ClientRepository extends MongoRepository<Client, ObjectId> {
-    Optional<Client> findClientById(ObjectId id);
+public interface ClientRepository {
+    Client findClient(UUID id);
+    Client findClient(String nickname);
+    List<Client> findClientsMatchToValue(String nickname);
+    Client saveClient(Client client);
+    List<Client> findClients();
+    Client setActive(UUID id, boolean active);
+    Client changeUsername(UUID id, String username);
 }
