@@ -46,19 +46,12 @@ public class MovieRepositoryImplementation implements MovieRepository {
 
     @Override
     public boolean deleteMovie(UUID id) {
-        Movie movieToRemove = null;
         for (Movie movie : movies) {
             if (movie.getId().equals(id)) {
-                movieToRemove = movie;
-                break;
+                movies.remove(movie);
+                return true;
             }
         }
-
-        if (movieToRemove != null) {
-            movies.remove(movieToRemove);
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 }
