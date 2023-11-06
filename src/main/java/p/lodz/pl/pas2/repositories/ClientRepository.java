@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface ClientRepository {
     Client findClient(UUID id);
-    Client findClient(String nickname);
-    List<Client> findClientsMatchToValue(String nickname);
+    Client findClient(String username);
+    List<Client> findClientsMatchToValue(String username);
     Client saveClient(Client client);
     List<Client> findClients();
     Client setActive(UUID id, boolean active);

@@ -26,7 +26,7 @@ public class MovieService {
         return repository.findMovies();
     }
 
-    public Movie saveMovie(Movie movie) {
+    public Movie addMovie(Movie movie) {
         return repository.saveMovie(movie);
     }
 

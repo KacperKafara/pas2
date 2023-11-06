@@ -2,40 +2,41 @@ package p.lodz.pl.pas2.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import p.lodz.pl.pas2.dto.ClientDTO;
-import p.lodz.pl.pas2.dto.ClientDTOMapper;
 import p.lodz.pl.pas2.repositories.ClientRepository;
+import p.lodz.pl.pas2.model.Client;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
 public class ClientService {
-
-
     private final ClientRepository repository;
-    private final ClientDTOMapper mapper;
-
     @Autowired
-    public ClientService(ClientRepository repository, ClientDTOMapper mapper) {
+    public ClientService(ClientRepository repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
-    //    public List<ClientDTO> allClients(){
-//        return  repository.findAll()
-//                .stream()
-//                .map(mapper)
-//                .collect(Collectors.toList());
-//    }
-//
-//    public ClientDTO createClient(String name, String lname, Client.Type clientType){
-//        Client client = repository.insert( new Client(name, lname, clientType));
-//
-//        // Dodawanie nowego id do listy id w dokumencie dla innej klasy
-////        mongoTemplate.update(Client.class)
-////                .matching(Criteria.where("id").is(clientId))
-////                .apply(new Update().push("productIds").value(product));
-//        return mapper.apply(client);
-//    }
+    public Client getClient(UUID id) {
+        return repository.findClient(id);
+    }
+
+    public Client getClient(String username) {
+        return repository.findClient(username);
+    }
+
+    public List<Client> getClients() {
+        return repository.findClients();
+    }
+
+    public Client addClient(Client client) {
+        return repository.saveClient(client);
+    }
+
+    public Client setActive(UUID id, boolean active) {
+        return repository.setActive(id, active);
+    }
+
+    public Client changeUsername(UUID id, String username) {
+        return repository.changeUsername(id, username);
+    }
 }
