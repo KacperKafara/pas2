@@ -1,6 +1,5 @@
 package p.lodz.pl.pas2.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,13 +10,13 @@ import java.util.UUID;
 @Setter
 public class Rent {
     private UUID id;
-    private Client client;
+    private User user;
     private Movie movie;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public Rent(Client client, Movie movie, LocalDate startDate, LocalDate endDate) {
-        this.client = client;
+    public Rent(User user, Movie movie, LocalDate startDate, LocalDate endDate) {
+        this.user = user;
         this.movie = movie;
         this.startDate = startDate;
         this.endDate = endDate;

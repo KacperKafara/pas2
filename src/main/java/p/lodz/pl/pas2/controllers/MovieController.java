@@ -32,7 +32,7 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
+    public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
         Movie addedMovie = movieService.addMovie(movie);
         if (addedMovie == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(addedMovie, HttpStatus.CREATED);
@@ -41,7 +41,7 @@ public class MovieController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
         Movie updatedMovie = movieService.updateMovie(id, movie);
-        if(updatedMovie == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        if(updatedMovie == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(updatedMovie, HttpStatus.OK);
     }
 

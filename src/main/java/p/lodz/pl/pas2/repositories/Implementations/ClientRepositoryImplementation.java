@@ -1,7 +1,7 @@
 package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
-import p.lodz.pl.pas2.model.Client;
+import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.repositories.ClientRepository;
 
 import java.util.ArrayList;
@@ -11,65 +11,65 @@ import java.util.UUID;
 @Repository
 public class ClientRepositoryImplementation implements ClientRepository {
 
-    private final List<Client> clients;
+    private final List<User> users;
     public ClientRepositoryImplementation() {
-        clients = new ArrayList<>();
+        users = new ArrayList<>();
     }
 
     @Override
-    public Client findClient(UUID id) {
-        for (Client client : clients) {
-            if (client.getId().equals(id)) {
-                return client;
+    public User findClient(UUID id) {
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                return user;
             }
         }
         return null;
     }
 
     @Override
-    public Client findClient(String username) {
-        for (Client client : clients) {
-            if (client.getUsername().equals(username)) {
-                return client;
+    public User findClient(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
             }
         }
         return null;
     }
 
     @Override
-    public List<Client> findClientsMatchToValue(String username) {
+    public List<User> findClientsMatchToValue(String username) {
         return null;
     }
 
     @Override
-    public Client saveClient(Client client) {
-        client.setId(UUID.randomUUID());
-        clients.add(client);
-        return client;
+    public User saveClient(User user) {
+        user.setId(UUID.randomUUID());
+        users.add(user);
+        return user;
     }
 
     @Override
-    public List<Client> findClients() {
-        return clients;
+    public List<User> findClients() {
+        return users;
     }
 
     @Override
-    public Client setActive(UUID id, boolean active) {
-        for (Client client : clients) {
-            if (client.getId().equals(id)) {
-                client.setActive(active);
-                return client;
+    public User setActive(UUID id, boolean active) {
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                user.setActive(active);
+                return user;
             }
         }
         return null;
     }
 
     @Override
-    public Client updateClient(UUID id, Client client) {
-        Client updatedClient = findClient(id);
-        updatedClient.setUsername(client.getUsername());
-        updatedClient.setClientType(client.getClientType());
-        updatedClient.setActive(client.isActive());
-        return updatedClient;
+    public User updateClient(UUID id, User user) {
+        User updatedUser = findClient(id);
+        updatedUser.setUsername(user.getUsername());
+        updatedUser.setUserType(user.getUserType());
+        updatedUser.setActive(user.isActive());
+        return updatedUser;
     }
 }

@@ -1,17 +1,16 @@
 package p.lodz.pl.pas2.repositories;
 
-import org.springframework.stereotype.Repository;
-import p.lodz.pl.pas2.model.Client;
+import p.lodz.pl.pas2.model.User;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface ClientRepository {
-    Client findClient(UUID id);
-    Client findClient(String username);
-    List<Client> findClientsMatchToValue(String username);
-    Client saveClient(Client client);
-    List<Client> findClients();
-    Client setActive(UUID id, boolean active);
-    Client updateClient(UUID id, Client client);
+    User findClient(UUID id);
+    User findClient(String username);
+    List<User> findClientsMatchToValue(String username);
+    User saveClient(User user);
+    List<User> findClients();
+    User setActive(UUID id, boolean active);
+    User updateClient(UUID id, User user);
 }

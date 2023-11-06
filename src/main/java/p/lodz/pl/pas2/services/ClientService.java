@@ -3,7 +3,7 @@ package p.lodz.pl.pas2.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.repositories.ClientRepository;
-import p.lodz.pl.pas2.model.Client;
+import p.lodz.pl.pas2.model.User;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,31 +16,31 @@ public class ClientService {
         this.repository = repository;
     }
 
-    public Client getClient(UUID id) {
+    public User getClient(UUID id) {
         return repository.findClient(id);
     }
 
-    public Client getClient(String username) {
+    public User getClient(String username) {
         return repository.findClient(username);
     }
 
-    public List<Client> getClients() {
+    public List<User> getClients() {
         return repository.findClients();
     }
 
-    public Client addClient(Client client) {
-        if(client.getUsername().isEmpty()) return null;
-        if(getClient(client.getUsername()) != null) return null;
-        return repository.saveClient(client);
+    public User addClient(User user) {
+        if(user.getUsername().isEmpty()) return null;
+        if(getClient(user.getUsername()) != null) return null;
+        return repository.saveClient(user);
     }
 
-    public Client setActive(UUID id, boolean active) {
+    public User setActive(UUID id, boolean active) {
         return repository.setActive(id, active);
     }
 
-    public Client updateClient(UUID id, Client client) {
-        if(client.getUsername().isEmpty()) return null;
-        if(getClient(client.getUsername()) != null) return null;
-        return repository.updateClient(id, client);
+    public User updateClient(UUID id, User user) {
+        if(user.getUsername().isEmpty()) return null;
+        if(getClient(user.getUsername()) != null) return null;
+        return repository.updateClient(id, user);
     }
 }
