@@ -2,22 +2,22 @@ package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.repositories.ClientRepository;
+import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class ClientRepositoryImplementation implements ClientRepository {
+public class UserRepositoryImplementation implements UserRepository {
 
     private final List<User> users;
-    public ClientRepositoryImplementation() {
+    public UserRepositoryImplementation() {
         users = new ArrayList<>();
     }
 
     @Override
-    public User findClient(UUID id) {
+    public User findUser(UUID id) {
         for (User user : users) {
             if (user.getId().equals(id)) {
                 return user;
@@ -27,7 +27,7 @@ public class ClientRepositoryImplementation implements ClientRepository {
     }
 
     @Override
-    public User findClient(String username) {
+    public User findUser(String username) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {
                 return user;
@@ -37,7 +37,7 @@ public class ClientRepositoryImplementation implements ClientRepository {
     }
 
     @Override
-    public List<User> findClientsMatchToValue(String username) {
+    public List<User> findUsersMatchToValue(String username) {
         return null;
     }
 
@@ -49,7 +49,7 @@ public class ClientRepositoryImplementation implements ClientRepository {
     }
 
     @Override
-    public List<User> findClients() {
+    public List<User> findUsers() {
         return users;
     }
 
@@ -65,8 +65,8 @@ public class ClientRepositoryImplementation implements ClientRepository {
     }
 
     @Override
-    public User updateClient(UUID id, User user) {
-        User updatedUser = findClient(id);
+    public User updateUser(UUID id, User user) {
+        User updatedUser = findUser(id);
         updatedUser.setUsername(user.getUsername());
         updatedUser.setUserType(user.getUserType());
         updatedUser.setActive(user.isActive());

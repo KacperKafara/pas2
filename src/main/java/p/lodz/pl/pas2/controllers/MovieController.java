@@ -23,30 +23,30 @@ public class MovieController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovie(@PathVariable UUID id) {
-        return new ResponseEntity<>(movieService.getMovie(id), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(movieService.getMovie(id));
     }
 
     @GetMapping
     public ResponseEntity<List<Movie>> getMovies() {
-        return new ResponseEntity<>(movieService.getMovies(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(movieService.getMovies());
     }
 
     @PostMapping
     public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
         Movie addedMovie = movieService.addMovie(movie);
-        if (addedMovie == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(addedMovie, HttpStatus.CREATED);
+        if (addedMovie == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedMovie);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
         Movie updatedMovie = movieService.updateMovie(id, movie);
-        if(updatedMovie == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(updatedMovie, HttpStatus.OK);
+        if(updatedMovie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedMovie);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteMovie(@PathVariable UUID id) {
-        return new ResponseEntity<>(movieService.deleteMovie(id), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(movieService.deleteMovie(id));
     }
 }

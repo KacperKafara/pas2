@@ -1,6 +1,7 @@
 package p.lodz.pl.pas2.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class RentService {
     private final RentRepository repository;
 
