@@ -47,6 +47,8 @@ public class MovieController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteMovie(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(movieService.deleteMovie(id));
+        boolean deleteStatus = movieService.deleteMovie(id);
+        if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        return ResponseEntity.status(HttpStatus.OK).body(true);
     }
 }
