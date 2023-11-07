@@ -30,33 +30,17 @@ public class RentController {
         this.movieService = movieService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Rent> getRent(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getRent(id));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Rent>> getRents() {
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getRents());
-    }
-
     @PostMapping
     public ResponseEntity<Rent> addRent(@RequestBody RentRequest rentRequest) {
         User user = userService.getUser(rentRequest.getClientID());
         Movie movie = movieService.getMovie(rentRequest.getMovieID());
         if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(null);
         Rent rent = new Rent(user, movie, rentRequest.getStartDate(), rentRequest.getEndDate());
         Rent addedRent = rentService.addRent(rent);
         if(addedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedRent);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Rent> updateRent(@PathVariable UUID id, @RequestBody Rent rent) {
-        Rent updatedRent = rentService.updateRent(id, rent);
-        if(updatedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
     }
 
     @GetMapping("/current")

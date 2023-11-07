@@ -18,22 +18,9 @@ public class RentService {
         this.repository = repository;
     }
 
-    public Rent getRent(UUID id) {
-        return repository.findRent(id);
-    }
-
-    public List<Rent> getRents() {
-        return repository.findRents();
-    }
-
     public Rent addRent(Rent rent) {
         if(rent.getEndDate().isBefore(rent.getStartDate())) return null;
         return repository.saveRent(rent);
-    }
-
-    public Rent updateRent(UUID id, Rent rent) {
-        if(rent.getEndDate().isBefore(rent.getStartDate())) return null;
-        return repository.updateRent(id, rent);
     }
 
     public boolean deleteRent(UUID id) {

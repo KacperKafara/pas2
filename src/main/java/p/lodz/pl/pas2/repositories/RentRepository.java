@@ -8,8 +8,6 @@ import java.util.UUID;
 public interface RentRepository {
     Rent findRent(UUID id);
     Rent saveRent(Rent rent);
-    List<Rent> findRents();
-    Rent updateRent(UUID id, Rent rent);
     boolean deleteRent(UUID id);
     List<Rent> findCurrentRents();
     List<Rent> findPastRents();
