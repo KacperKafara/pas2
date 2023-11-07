@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/client")
+@RequestMapping("api/v1/clients")
 public class ClientController {
 
     private final UserService userService;
@@ -22,7 +22,7 @@ public class ClientController {
         this.userService = userService;
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/client/id/{id}")
     public ResponseEntity<User> getClientById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
     }
@@ -32,7 +32,7 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
-    @GetMapping("/username/{username}")
+    @GetMapping("/client/username/{username}")
     public ResponseEntity<User> getClientByNickname(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
     }
@@ -44,14 +44,14 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/client/{id}")
     public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
         User updatedUser = userService.setActive(id, Boolean.parseBoolean(active.get("active").toString()));
         if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/client/{id}")
     public ResponseEntity<User> updateClient(@PathVariable UUID id, @RequestBody User user) {
         User updatedUser = userService.updateClient(id, user);
         if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
