@@ -12,47 +12,47 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/clients")
-public class ClientController {
+@RequestMapping("api/v1/client")
+public class UserController {
 
     private final UserService userService;
 
     @Autowired
-    public ClientController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/client/id/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<User> getClientById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getClients() {
+    public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
-    @GetMapping("/client/username/{username}")
-    public ResponseEntity<User> getClientByNickname(@PathVariable String username) {
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
     }
 
     @PostMapping
-    public ResponseEntity<User> addClient(@RequestBody User user) {
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         User addedUser = userService.addClient(user);
         if(addedUser == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
     }
 
-    @PatchMapping("/client/{id}")
+    @PatchMapping("/id/{id}")
     public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
         User updatedUser = userService.setActive(id, Boolean.parseBoolean(active.get("active").toString()));
         if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
-    @PutMapping("/client/{id}")
-    public ResponseEntity<User> updateClient(@PathVariable UUID id, @RequestBody User user) {
+    @PutMapping("/id/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User user) {
         User updatedUser = userService.updateClient(id, user);
         if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);

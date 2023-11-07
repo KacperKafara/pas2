@@ -12,7 +12,9 @@ import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -53,10 +55,17 @@ public class RentController {
         return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Boolean> deleteRent(@PathVariable UUID id) {
         boolean deleteStatus = rentService.deleteRent(id);
         if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
         return ResponseEntity.status(HttpStatus.OK).body(true);
+    }
+
+    @PatchMapping("/id/{id}")
+    public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody Map<String, LocalDate> endTime) {
+        Rent updatedRent = rentService.setEndTime(id, endTime.get("endTime"));
+        if(updatedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
     }
 }

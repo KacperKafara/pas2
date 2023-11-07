@@ -35,21 +35,6 @@ public class RentRepositoryImplementation implements RentRepository {
     }
 
     @Override
-    public List<Rent> findRents() {
-        return rents;
-    }
-
-    @Override
-    public Rent updateRent(UUID id, Rent rent) {
-        Rent updatedRent = findRent(id);
-        updatedRent.setUser(rent.getUser());
-        updatedRent.setMovie(rent.getMovie());
-        updatedRent.setStartDate(rent.getStartDate());
-        updatedRent.setEndDate(rent.getEndDate());
-        return updatedRent;
-    }
-
-    @Override
     public boolean deleteRent(UUID id) {
         for (Rent rent : rents) {
             if (rent.getId().equals(id)) {
@@ -86,5 +71,16 @@ public class RentRepositoryImplementation implements RentRepository {
         }
 
         return pastRents;
+    }
+
+    @Override
+    public Rent updateEndTime(UUID id, LocalDate endTime) {
+        for(Rent rent : rents) {
+            if(rent.getId().equals(id)) {
+                rent.setEndDate(endTime);
+                return rent;
+            }
+        }
+        return null;
     }
 }

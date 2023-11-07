@@ -19,7 +19,12 @@ public class RentService {
     }
 
     public Rent addRent(Rent rent) {
+        if(rent.getStartDate().isBefore(LocalDate.now())) return null;
         if(rent.getEndDate().isBefore(rent.getStartDate())) return null;
+        List<Rent> currentRents = repository.findCurrentRents();
+        for(Rent cRent : currentRents) {
+            if(cRent.getMovie().getId().equals(rent.getId())) return null;
+        }
         return repository.saveRent(rent);
     }
 
@@ -28,6 +33,13 @@ public class RentService {
         if(rentToDelete == null) return false;
         if(rentToDelete.getEndDate().isAfter(LocalDate.now())) return false;
         return repository.deleteRent(id);
+    }
+
+    public Rent setEndTime(UUID id, LocalDate endTime) {
+        Rent rentToUpdate = repository.findRent(id);
+        if(endTime == null) return null;
+        if(rentToUpdate.getStartDate().isAfter(endTime)) return null;
+        return repository.updateEndTime(id, endTime);
     }
 
     public List<Rent> getCurrentRents() {
