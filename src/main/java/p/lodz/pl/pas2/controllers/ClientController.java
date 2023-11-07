@@ -4,54 +4,57 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.model.Client;
-import p.lodz.pl.pas2.services.ClientService;
+import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/client")
+@RequestMapping("api/v1/clients")
 public class ClientController {
 
-    private final ClientService clientService;
+    private final UserService userService;
 
     @Autowired
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
+    public ClientController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Client> getClient(@PathVariable UUID id) {
-        return new ResponseEntity<>(clientService.getClient(id), HttpStatus.OK);
+    @GetMapping("/client/id/{id}")
+    public ResponseEntity<User> getClientById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Client>> getClients() {
-        return new ResponseEntity<>(clientService.getClients(), HttpStatus.OK);
+    public ResponseEntity<List<User>> getClients() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<Client> getClient(@PathVariable String username) {
-        return new ResponseEntity<>(clientService.getClient(username), HttpStatus.OK);
+    @GetMapping("/client/username/{username}")
+    public ResponseEntity<User> getClientByNickname(@PathVariable String username) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
     }
 
     @PostMapping
-    public ResponseEntity<Client> addClient(@RequestBody Client client) {
-        Client addedClient = clientService.addClient(client);
-        if(addedClient == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(clientService.addClient(addedClient), HttpStatus.CREATED);
+    public ResponseEntity<User> addClient(@RequestBody User user) {
+        User addedUser = userService.addClient(user);
+        if(addedUser == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Client> setActive(@PathVariable UUID id, @RequestBody boolean active) {
-        return new ResponseEntity<>(clientService.setActive(id, active), HttpStatus.OK);
+    @PatchMapping("/client/{id}")
+    public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
+        User updatedUser = userService.setActive(id, Boolean.parseBoolean(active.get("active").toString()));
+        if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable UUID id, @RequestBody Client client) {
-        Client updatedClient = clientService.updateClient(id, client);
-        if(updatedClient == null) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(updatedClient, HttpStatus.OK);
+    @PutMapping("/client/{id}")
+    public ResponseEntity<User> updateClient(@PathVariable UUID id, @RequestBody User user) {
+        User updatedUser = userService.updateClient(id, user);
+        if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 }
