@@ -36,12 +36,12 @@ public class RentController {
     }
 
     @PostMapping
-    public ResponseEntity addRent(@RequestBody RentRequest rentRequest) {
+    public ResponseEntity<Rent> addRent(@RequestBody RentRequest rentRequest) {
         User user = userService.getUser(rentRequest.getClientID());
         Movie movie = movieService.getMovie(rentRequest.getMovieID());
         if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body("User is not active");
+        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(null);
 //        Rent rent = new Rent(user, movie, rentRequest.getStartDate(), rentRequest.getEndDate());
         Rent rent = new Rent(user, movie);
         Rent addedRent = rentService.addRent(rent);
