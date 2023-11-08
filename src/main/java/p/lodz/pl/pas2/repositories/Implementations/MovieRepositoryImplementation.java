@@ -15,9 +15,6 @@ public class MovieRepositoryImplementation implements MovieRepository {
     private final List<Movie> movies;
     public MovieRepositoryImplementation() {
         movies = new ArrayList<>();
-        saveMovie(new Movie("Saw", 10));
-        saveMovie(new Movie("saw II", 20));
-        saveMovie(new Movie("saw III", 30));
 
     }
     @Override

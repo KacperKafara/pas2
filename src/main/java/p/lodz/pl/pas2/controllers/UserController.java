@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.model.UserType;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+        userService.addClient(new User("Maciek", UserType.CLIENT, true));
+        userService.addClient(new User("Jacek", UserType.MODERATOR, false));
+        userService.addClient(new User("Kuba", UserType.ADMINISTRATOR, false));
     }
 
     @GetMapping("/id/{id}")

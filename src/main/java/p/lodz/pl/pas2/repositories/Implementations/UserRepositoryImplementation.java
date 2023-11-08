@@ -15,9 +15,7 @@ public class UserRepositoryImplementation implements UserRepository {
     private final List<User> users;
     public UserRepositoryImplementation() {
         users = new ArrayList<>();
-        saveClient(new User("Maciek", UserType.CLIENT, true));
-        saveClient(new User("Jacek", UserType.MODERATOR, false));
-        saveClient(new User("Kuba", UserType.ADMINISTRATOR, false));
+
     }
 
     @Override

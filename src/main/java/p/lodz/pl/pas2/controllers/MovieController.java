@@ -19,6 +19,9 @@ public class MovieController {
     @Autowired
     public MovieController(MovieService movieService) {
         this.movieService = movieService;
+        movieService.addMovie(new Movie("Saw", 10));
+        movieService.addMovie(new Movie("saw II", 20));
+        movieService.addMovie(new Movie("saw III", 30));
     }
 
     @GetMapping("/id/{id}")
