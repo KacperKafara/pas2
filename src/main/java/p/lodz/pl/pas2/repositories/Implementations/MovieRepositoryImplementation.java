@@ -2,6 +2,8 @@ package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.model.UserType;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 
 import java.util.ArrayList;
@@ -13,6 +15,10 @@ public class MovieRepositoryImplementation implements MovieRepository {
     private final List<Movie> movies;
     public MovieRepositoryImplementation() {
         movies = new ArrayList<>();
+        saveMovie(new Movie("Saw", 10));
+        saveMovie(new Movie("saw II", 20));
+        saveMovie(new Movie("saw III", 30));
+
     }
     @Override
     public Movie findMovie(UUID id) {

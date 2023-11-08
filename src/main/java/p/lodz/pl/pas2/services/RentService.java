@@ -20,7 +20,7 @@ public class RentService {
 
     public Rent addRent(Rent rent) {
         if(rent.getStartDate().isBefore(LocalDate.now())) return null;
-        if(rent.getEndDate().isBefore(rent.getStartDate())) return null;
+        if(rent.getEndDate() != null && rent.getEndDate().isBefore(rent.getStartDate())) return null;
         List<Rent> currentRents = repository.findCurrentRents();
         for(Rent cRent : currentRents) {
             if(cRent.getMovie().getId().equals(rent.getId())) return null;

@@ -2,6 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.model.UserType;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ public class UserRepositoryImplementation implements UserRepository {
     private final List<User> users;
     public UserRepositoryImplementation() {
         users = new ArrayList<>();
+        saveClient(new User("Maciek", UserType.CLIENT, true));
+        saveClient(new User("Jacek", UserType.MODERATOR, false));
+        saveClient(new User("Kuba", UserType.ADMINISTRATOR, false));
     }
 
     @Override

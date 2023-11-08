@@ -51,7 +51,7 @@ public class RentRepositoryImplementation implements RentRepository {
         List<Rent> currentRents = new ArrayList<>();
 
         for (Rent rent : rents) {
-            if (rent.getStartDate().isBefore(currentDate) && rent.getEndDate().isAfter(currentDate)) {
+            if ((rent.getStartDate().isBefore(currentDate) ||  rent.getStartDate().isEqual(currentDate)) && (rent.getEndDate() == null || rent.getEndDate().isAfter(currentDate))) {
                 currentRents.add(rent);
             }
         }

@@ -30,16 +30,20 @@ public class RentController {
         this.rentService = rentService;
         this.userService = userService;
         this.movieService = movieService;
+        rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
+        rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
+        rentService.addRent(new Rent(userService.getUser("Jacek"), movieService.getMovies().get(2)));
     }
 
     @PostMapping
-    public ResponseEntity<Rent> addRent(@RequestBody RentRequest rentRequest) {
+    public ResponseEntity addRent(@RequestBody RentRequest rentRequest) {
         User user = userService.getUser(rentRequest.getClientID());
         Movie movie = movieService.getMovie(rentRequest.getMovieID());
         if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(null);
-        Rent rent = new Rent(user, movie, rentRequest.getStartDate(), rentRequest.getEndDate());
+        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body("User is not active");
+//        Rent rent = new Rent(user, movie, rentRequest.getStartDate(), rentRequest.getEndDate());
+        Rent rent = new Rent(user, movie);
         Rent addedRent = rentService.addRent(rent);
         if(addedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedRent);
@@ -63,8 +67,13 @@ public class RentController {
     }
 
     @PatchMapping("/id/{id}")
-    public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody Map<String, LocalDate> endTime) {
-        Rent updatedRent = rentService.setEndTime(id, endTime.get("endTime"));
+    public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, LocalDate> endTime) {
+        Rent updatedRent;
+        if(endTime == null){
+            updatedRent = rentService.setEndTime(id, LocalDate.now());
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
+        }
+        updatedRent = rentService.setEndTime(id, endTime.getOrDefault("endTime", LocalDate.now()));
         if(updatedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
     }

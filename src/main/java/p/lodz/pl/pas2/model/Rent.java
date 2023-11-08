@@ -21,4 +21,11 @@ public class Rent {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    public Rent(User user, Movie movie) {
+        this.user = user;
+        this.movie = movie;
+        startDate = LocalDate.now();
+        endDate = null;
+    }
 }
