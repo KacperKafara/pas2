@@ -2,7 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepository;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -13,9 +13,7 @@ import java.util.UUID;
 public class UserRepositoryImplementation implements UserRepository {
 
     private final List<User> users;
-    private final AbstractMongoRepository repository;
-    public UserRepositoryImplementation(AbstractMongoRepository repository) {
-        this.repository = repository;
+    public UserRepositoryImplementation() {
         users = new ArrayList<>();
 
     }

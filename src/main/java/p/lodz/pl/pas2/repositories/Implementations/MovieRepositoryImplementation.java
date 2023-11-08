@@ -3,7 +3,7 @@ package p.lodz.pl.pas2.repositories.Implementations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepository;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 
 import java.util.ArrayList;
@@ -14,11 +14,7 @@ import java.util.UUID;
 public class MovieRepositoryImplementation implements MovieRepository {
     private final List<Movie> movies;
 
-    private final AbstractMongoRepository repository;
-
-    @Autowired
-    public MovieRepositoryImplementation(AbstractMongoRepository repository) {
-        this.repository = repository;
+    public MovieRepositoryImplementation() {
         movies = new ArrayList<>();
 
     }

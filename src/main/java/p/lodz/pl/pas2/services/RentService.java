@@ -3,6 +3,8 @@ package p.lodz.pl.pas2.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.repositories.Implementations.RentRepositoryImplementation;
+import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.time.LocalDate;
@@ -11,12 +13,18 @@ import java.util.UUID;
 
 @Service
 public class RentService {
-    private final RentRepository repository;
+//    private final RentRepositoryMongoDB repository;
 
+    private final RentRepositoryImplementation repository;
     @Autowired
-    public RentService(RentRepository repository) {
+    public RentService(RentRepositoryImplementation repository) {
         this.repository = repository;
     }
+
+//    @Autowired
+//    public RentService(RentRepositoryMongoDB repository) {
+//        this.repository = repository;
+//    }
 
     public Rent addRent(Rent rent) {
         if(rent.getStartDate().isBefore(LocalDate.now())) return null;
