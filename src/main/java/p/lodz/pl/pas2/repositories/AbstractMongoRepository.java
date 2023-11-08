@@ -13,11 +13,12 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.springframework.stereotype.Component;
 
 
 import java.util.List;
 
+@Component
 @Getter
 public class AbstractMongoRepository implements AutoCloseable {
     private ConnectionString connectionString = new ConnectionString(

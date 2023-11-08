@@ -2,6 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.time.LocalDate;
@@ -12,8 +13,10 @@ import java.util.UUID;
 @Repository
 public class RentRepositoryImplementation implements RentRepository {
     private final List<Rent> rents;
+    private final AbstractMongoRepository repository;
 
-    public RentRepositoryImplementation() {
+    public RentRepositoryImplementation(AbstractMongoRepository repository) {
+        this.repository = repository;
         this.rents = new ArrayList<>();
     }
 
