@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/rent")
+@RequestMapping("api/v1/rents")
 public class RentController {
 
     private final RentService rentService;
