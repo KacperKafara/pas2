@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class MovieRepositoryMongoDB implements MovieRepository {
     private final MongoCollection<Movie> movieMongoCollection;
 
     @Autowired
-    public MovieRepositoryMongoDB(@NotNull MongoClient mongoClient) {
-        this.movieMongoCollection = mongoClient.getDatabase("pas").getCollection("movies", Movie.class);
+    public MovieRepositoryMongoDB(@NotNull AbstractMongoRepositoryConfig mongoRepo) {
+        this.movieMongoCollection = mongoRepo.getDatabase().getCollection("movies", Movie.class);
     }
 
     @Override

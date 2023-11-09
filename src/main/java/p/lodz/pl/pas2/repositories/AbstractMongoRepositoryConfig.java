@@ -14,15 +14,18 @@ import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 
+import java.io.Closeable;
 import java.util.List;
 
-@Configuration
+@Component
 @Getter
-public class AbstractMongoRepositoryConfig {
+public class AbstractMongoRepositoryConfig implements Closeable {
     private MongoClient mongoClient;
     private MongoDatabase database;
+
     ConnectionString connectionString = new ConnectionString(
             "mongodb://localhost:27017,localhost:27018,localhost:27019/pas?replicaSet=replica_set_single"
     );
@@ -47,25 +50,32 @@ public class AbstractMongoRepositoryConfig {
                 .build();
 
         mongoClient = MongoClients.create(settings);
-        database = mongoClient.getDatabase("online-shop");
+        database = mongoClient.getDatabase("pas");
     }
 
-    @Bean
-    public MongoClient mongoClient() {
-        MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(connectionString)
-                .credential(credential)
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .codecRegistry(CodecRegistries.fromRegistries(
-                        CodecRegistries.fromProviders(PojoCodecProvider.builder().build()),
-                        MongoClientSettings.getDefaultCodecRegistry(),
-                        pojoCodecRegistry
-                ))
-                .build();
-        return MongoClients.create(settings);
-    }
+//    @Bean
+//    public MongoClient mongoClient() {
+//        MongoClientSettings settings = MongoClientSettings.builder()
+//                .applyConnectionString(connectionString)
+//                .credential(credential)
+//                .uuidRepresentation(UuidRepresentation.STANDARD)
+//                .codecRegistry(CodecRegistries.fromRegistries(
+//                        CodecRegistries.fromProviders(PojoCodecProvider.builder().build()),
+//                        MongoClientSettings.getDefaultCodecRegistry(),
+//                        pojoCodecRegistry
+//                ))
+//                .build();
+//        mongoClient = MongoClients.create(settings);
+//        return mongoClient;
+//    }
 
     public AbstractMongoRepositoryConfig() {
         initDbConnection();
+    }
+
+    @Override
+    public void close() {
+        database.drop();
+        mongoClient.close();
     }
 }

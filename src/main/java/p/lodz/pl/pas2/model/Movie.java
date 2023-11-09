@@ -1,5 +1,8 @@
 package p.lodz.pl.pas2.model;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,8 +18,12 @@ import java.util.UUID;
 public class Movie {
     @BsonId
     private UUID id;
+    @NotBlank
+    @NotNull
     @BsonProperty("title")
     private String title;
+    @NotNull
+    @Min(0)
     @BsonProperty("cost")
     private double cost;
 

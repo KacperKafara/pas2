@@ -3,11 +3,15 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.Updates;
 import org.bson.BsonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.time.LocalDate;
@@ -20,8 +24,8 @@ public class RentRepositoryMongoDB implements RentRepository {
     private final MongoCollection<Rent> rentMongoCollection;
 
     @Autowired
-    public RentRepositoryMongoDB(MongoClient mongoClient) {
-        this.rentMongoCollection = mongoClient.getDatabase("pas").getCollection("rents", Rent.class);
+    public RentRepositoryMongoDB(AbstractMongoRepositoryConfig mongoRepo) {
+        this.rentMongoCollection = mongoRepo.getDatabase().getCollection("rents", Rent.class);
     }
 
     @Override
@@ -62,16 +66,14 @@ public class RentRepositoryMongoDB implements RentRepository {
         LocalDate currentDate = LocalDate.now();
         return rentMongoCollection.find(Filters.and(
                 Filters.ne("end_date", BsonNull.VALUE),
-                Filters.lt("end_date", currentDate)
-
+                Filters.lte("end_date", currentDate)
         )).into(new ArrayList<>());
     }
 
     @Override
     public Rent updateEndTime(UUID id, LocalDate endTime) {
         return rentMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
-                Updates.set("endTime", endTime)
-
-        ));
+                Updates.set("end_date", endTime)),
+                new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
     }
 }

@@ -1,8 +1,11 @@
 package p.lodz.pl.pas2.controllers;
 
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.services.MovieService;
@@ -32,14 +35,14 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
+    public ResponseEntity<Movie> addMovie(@Valid @RequestBody Movie movie) {
         Movie addedMovie = movieService.addMovie(movie);
         if (addedMovie == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedMovie);
     }
 
     @PutMapping(value = "/id/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable UUID id, @RequestBody Movie movie) {
+    public ResponseEntity<Movie> updateMovie(@PathVariable UUID id,@Valid @RequestBody Movie movie) {
         Movie updatedMovie = movieService.updateMovie(id, movie);
         if(updatedMovie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(updatedMovie);
@@ -50,5 +53,11 @@ public class MovieController {
         boolean deleteStatus = movieService.deleteMovie(id);
         if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
         return ResponseEntity.status(HttpStatus.OK).body(true);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
+        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

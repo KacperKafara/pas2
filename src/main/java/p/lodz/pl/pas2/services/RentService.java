@@ -23,7 +23,7 @@ public class RentService {
         if(rent.getEndDate() != null && rent.getEndDate().isBefore(rent.getStartDate())) return null;
         List<Rent> currentRents = repository.findCurrentRents();
         for(Rent cRent : currentRents) {
-            if(cRent.getMovie().getId().equals(rent.getId())) return null;
+            if(cRent.getMovie().getId().equals(rent.getMovie().getId())) return null;
         }
         return repository.saveRent(rent);
     }
@@ -31,7 +31,7 @@ public class RentService {
     public boolean deleteRent(UUID id) {
         Rent rentToDelete = repository.findRent(id);
         if(rentToDelete == null) return false;
-        if(rentToDelete.getEndDate().isAfter(LocalDate.now())) return false;
+        if(rentToDelete.getEndDate() == null || rentToDelete.getEndDate().isAfter(LocalDate.now())) return false;
         return repository.deleteRent(id);
     }
 
