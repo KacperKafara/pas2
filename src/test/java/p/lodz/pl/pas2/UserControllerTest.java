@@ -1,18 +1,14 @@
 package p.lodz.pl.pas2;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import p.lodz.pl.pas2.controllers.UserController;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
-import p.lodz.pl.pas2.services.UserService;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +21,7 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private p.lodz.pl.pas2.services.UserService userService;
 
     @Test
     public void testGetClientByNickname() throws Exception {

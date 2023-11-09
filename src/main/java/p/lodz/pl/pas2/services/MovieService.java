@@ -1,6 +1,7 @@
 package p.lodz.pl.pas2.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
@@ -17,19 +18,11 @@ import java.util.UUID;
 @Service
 public class MovieService {
 
-//    private final MovieRepositoryMongoDB movieRepository;
-//    private final RentRepositoryMongoDB rentRepository;
-
-    private final MovieRepositoryImplementation movieRepository;
-    private final RentRepositoryImplementation rentRepository;
-//    @Autowired
-//    public MovieService(MovieRepositoryMongoDB movieRepository, RentRepositoryMongoDB rentRepository) {
-//        this.movieRepository = movieRepository;
-//        this.rentRepository = rentRepository;
-//    }
+    private final MovieRepository movieRepository;
+    private final RentRepository rentRepository;
 
     @Autowired
-    public MovieService(MovieRepositoryImplementation movieRepository, RentRepositoryImplementation rentRepository) {
+    public MovieService(@Qualifier("movieRepositoryMongoDB") MovieRepository movieRepository,@Qualifier("rentRepositoryMongoDB") RentRepository rentRepository) {
         this.movieRepository = movieRepository;
         this.rentRepository = rentRepository;
     }

@@ -15,21 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//@Repository
+@Repository
 public class RentRepositoryMongoDB implements RentRepository {
-
-
-//    private final AbstractMongoRepository repository;
-
     private final MongoCollection<Rent> rentMongoCollection;
 
-//    @Autowired
-    public RentRepositoryMongoDB(
-//            AbstractMongoRepository repository,
-            MongoClient mongoClient) {
-//        this.repository = repository;
-//        this.rentMongoCollection = repository.getDatabase().getCollection("rents", Rent.class);
-        this.rentMongoCollection = mongoClient.getDatabase("online-shop").getCollection("rents", Rent.class);
+    @Autowired
+    public RentRepositoryMongoDB(MongoClient mongoClient) {
+        this.rentMongoCollection = mongoClient.getDatabase("pas").getCollection("rents", Rent.class);
     }
 
     @Override
@@ -39,6 +31,7 @@ public class RentRepositoryMongoDB implements RentRepository {
 
     @Override
     public Rent saveRent(Rent rent) {
+        rent.setId(UUID.randomUUID());
         rentMongoCollection.insertOne(rent);
         return rent;
     }

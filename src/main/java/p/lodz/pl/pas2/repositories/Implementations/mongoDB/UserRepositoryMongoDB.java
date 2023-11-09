@@ -13,20 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//@Repository
+@Repository
 public class UserRepositoryMongoDB implements UserRepository {
-
-
-//    private final AbstractMongoRepository repository;
     private final MongoCollection<User> userMongoCollection;
 
 //    @Autowired
-    public UserRepositoryMongoDB(
-//            AbstractMongoRepository repository,
-            MongoClient mongoClient) {
-//        this.repository = repository;
-//        this.userMongoCollection = repository.getDatabase().getCollection("users", User.class);
-        this.userMongoCollection = mongoClient.getDatabase("online-shop").getCollection("users", User.class);
+    public UserRepositoryMongoDB(MongoClient mongoClient) {
+        this.userMongoCollection = mongoClient.getDatabase("pas").getCollection("users", User.class);
     }
 
     @Override
@@ -47,6 +40,7 @@ public class UserRepositoryMongoDB implements UserRepository {
 
     @Override
     public User saveClient(User user) {
+        user.setId(UUID.randomUUID());
         userMongoCollection.insertOne(user);
         return user;
     }

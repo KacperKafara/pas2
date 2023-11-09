@@ -1,6 +1,7 @@
 package p.lodz.pl.pas2.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.repositories.Implementations.UserRepositoryImplementation;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.UserRepositoryMongoDB;
@@ -12,15 +13,10 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-//    private final UserRepositoryMongoDB repository;
-//    @Autowired
-//    public UserService(UserRepositoryMongoDB repository) {
-//        this.repository = repository;
-//    }
 
-    private final UserRepositoryImplementation repository;
+    private final UserRepository repository;
     @Autowired
-    public UserService(UserRepositoryImplementation repository) {
+    public UserService(@Qualifier("userRepositoryMongoDB") UserRepository repository) {
         this.repository = repository;
     }
 

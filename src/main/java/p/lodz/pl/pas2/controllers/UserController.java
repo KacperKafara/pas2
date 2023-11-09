@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
-import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
 import java.util.Map;
@@ -16,14 +15,11 @@ import java.util.UUID;
 @RequestMapping("api/v1/clients")
 public class UserController {
 
-    private final UserService userService;
+    private final p.lodz.pl.pas2.services.UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(p.lodz.pl.pas2.services.UserService userService) {
         this.userService = userService;
-        userService.addClient(new User("Maciek", UserType.CLIENT, true));
-        userService.addClient(new User("Jacek", UserType.MODERATOR, false));
-        userService.addClient(new User("Kuba", UserType.ADMINISTRATOR, false));
     }
 
     @GetMapping("/id/{id}")
