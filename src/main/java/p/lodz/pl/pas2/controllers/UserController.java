@@ -32,6 +32,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
+    @GetMapping("/{pattern}")
+    public ResponseEntity<List<User>> getUsers(@PathVariable String pattern) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersByPattern(pattern));
+    }
+
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));

@@ -32,6 +32,10 @@ public class UserService {
         return repository.findUsers();
     }
 
+    public List<User> getUsersByPattern(String pattern) {
+        return repository.findUsersMatchToValue(pattern);
+    }
+
     public User addClient(User user) {
         if(user.getUsername().isEmpty()) return null;
         if(getUser(user.getUsername()) != null) return null;

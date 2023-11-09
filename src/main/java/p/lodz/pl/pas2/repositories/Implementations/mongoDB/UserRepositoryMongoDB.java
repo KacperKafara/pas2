@@ -35,7 +35,7 @@ public class UserRepositoryMongoDB implements UserRepository {
     //todo znajdywanie po wartosci stringa
     @Override
     public List<User> findUsersMatchToValue(String username) {
-        return null;
+        return userMongoCollection.find(Filters.regex("username", username)).into(new ArrayList<>());
     }
 
     @Override
