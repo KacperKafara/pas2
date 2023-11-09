@@ -2,11 +2,13 @@ package p.lodz.pl.pas2;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import p.lodz.pl.pas2.controllers.UserController;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
@@ -32,12 +34,14 @@ public class UserControllerTest {
     private UserService userService;
 
     @Test
-    public void testGetClientById() throws Exception {
+    public void testGetClientByNickname() throws Exception {
+        //uj wie nie przechodzi
         User user = new User("Jaca", UserType.CLIENT, true);
-        given(userService.getUser("Jaca")).willReturn(user);
-        mockMvc.perform(get("/username/{username}", user.getUserName()))
+        String uri = "/username/Jaca";
+        Mockito.when(userService.getUser(Mockito.anyString())).thenReturn(user);
+        mockMvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) jsonPath("$.userName").value(user.getUserName()))
+                .andExpect((ResultMatcher) jsonPath("$.username").value(user.getUsername()))
                 .andExpect((ResultMatcher) jsonPath("$.userType").value(user.getUserType().toString()))
                 .andExpect((ResultMatcher) jsonPath("$.active").value(user.isActive()));
     }
