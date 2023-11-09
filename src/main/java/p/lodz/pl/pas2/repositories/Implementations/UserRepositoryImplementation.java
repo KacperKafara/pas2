@@ -3,7 +3,7 @@ package p.lodz.pl.pas2.repositories.Implementations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.model.UserType;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;

@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.repositories.Implementations.MovieRepositoryImplementation;
+import p.lodz.pl.pas2.repositories.Implementations.RentRepositoryImplementation;
+import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
+import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
@@ -13,11 +17,19 @@ import java.util.UUID;
 @Service
 public class MovieService {
 
-    private final MovieRepository movieRepository;
-    private final RentRepository rentRepository;
+//    private final MovieRepositoryMongoDB movieRepository;
+//    private final RentRepositoryMongoDB rentRepository;
+
+    private final MovieRepositoryImplementation movieRepository;
+    private final RentRepositoryImplementation rentRepository;
+//    @Autowired
+//    public MovieService(MovieRepositoryMongoDB movieRepository, RentRepositoryMongoDB rentRepository) {
+//        this.movieRepository = movieRepository;
+//        this.rentRepository = rentRepository;
+//    }
 
     @Autowired
-    public MovieService(MovieRepository movieRepository, RentRepository rentRepository) {
+    public MovieService(MovieRepositoryImplementation movieRepository, RentRepositoryImplementation rentRepository) {
         this.movieRepository = movieRepository;
         this.rentRepository = rentRepository;
     }
