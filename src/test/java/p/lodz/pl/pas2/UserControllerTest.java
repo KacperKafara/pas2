@@ -14,15 +14,9 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
 import p.lodz.pl.pas2.services.UserService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -35,15 +29,15 @@ public class UserControllerTest {
 
     @Test
     public void testGetClientByNickname() throws Exception {
-        /*
+
         User user = new User("Jaca", UserType.CLIENT, true);
-        String uri = "/api/v1/clients/username/Jaca";
         Mockito.when(userService.getUser(Mockito.anyString())).thenReturn(user);
-        mockMvc.perform(MockMvcRequestBuilders.get(uri))
+        mockMvc.perform(get("/api/v1/clients/username/{username}", user.getUsername()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect( jsonPath("$.userType").value(user.getUserType().toString()))
-                .andExpect(jsonPath("$.active").value(user.isActive())); */
+                .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
+                 .andExpect(jsonPath("$.active").value(user.isActive()));
+
     }
 
 }
