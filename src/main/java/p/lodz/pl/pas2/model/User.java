@@ -39,4 +39,8 @@ public class User {
         this.userType = userType;
         this.active = active;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }
