@@ -61,7 +61,8 @@ public class UserRepositoryMongoDB implements UserRepository {
     public User updateUser(UUID id, User user) {
         return userMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                 Updates.set("username", user.getUsername()),
-                Updates.set("user_type", user.getUserType())
+                Updates.set("user_type", user.getUserType()),
+                Updates.set("active", user.isActive())
         ));
     }
 }
