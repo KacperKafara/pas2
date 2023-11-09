@@ -9,13 +9,15 @@ import java.util.UUID;
 @Setter
 public class User {
     private UUID id;
-    private String username;
+    private String userName;
     private UserType userType;
     private boolean active;
 
     public User(String username, UserType userType, boolean active) {
-        this.username = username;
+        this.userName = username;
         this.userType = userType;
         this.active = active;
     }
+
+
 }

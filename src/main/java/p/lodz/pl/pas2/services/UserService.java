@@ -24,13 +24,17 @@ public class UserService {
         return repository.findUser(username);
     }
 
+    public UUID getUserID(User user) {
+        return repository.findUser(user.getId()).getId();
+    }
+
     public List<User> getUsers() {
         return repository.findUsers();
     }
 
     public User addClient(User user) {
-        if(user.getUsername().isEmpty()) return null;
-        if(getUser(user.getUsername()) != null) return null;
+        if(user.getUserName().isEmpty()) return null;
+        if(getUser(user.getUserName()) != null) return null;
         return repository.saveClient(user);
     }
 
@@ -39,8 +43,8 @@ public class UserService {
     }
 
     public User updateClient(UUID id, User user) {
-        if(user.getUsername().isEmpty()) return null;
-        if(getUser(user.getUsername()) != null) return null;
+        if(user.getUserName().isEmpty()) return null;
+        if(getUser(user.getUserName()) != null) return null;
         return repository.updateUser(id, user);
     }
 }

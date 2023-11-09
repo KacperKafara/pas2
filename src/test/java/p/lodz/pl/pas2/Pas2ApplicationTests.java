@@ -8,6 +8,7 @@ class Pas2ApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }
