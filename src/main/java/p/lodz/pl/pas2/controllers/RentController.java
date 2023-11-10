@@ -86,6 +86,15 @@ public class RentController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: ");
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(DateTimeParseException e) {
+//        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect date format");
+
     }
 }
