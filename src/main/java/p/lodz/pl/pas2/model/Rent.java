@@ -1,5 +1,9 @@
 package p.lodz.pl.pas2.model;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,12 +20,19 @@ import java.util.UUID;
 public class Rent {
     @BsonId
     private UUID id;
+    @NotNull
+    @NotBlank
     @BsonProperty("user")
     private User user;
+    @NotNull
+    @NotBlank
     @BsonProperty("movie")
     private Movie movie;
+    @NotNull
+    @FutureOrPresent
     @BsonProperty("start_date")
     private LocalDate startDate;
+    @FutureOrPresent
     @BsonProperty("end_date")
     private LocalDate endDate;
 
@@ -50,6 +61,13 @@ public class Rent {
         this.user = user;
         this.movie = movie;
         startDate = LocalDate.now();
+        endDate = null;
+    }
+
+    public Rent(User user, Movie movie, LocalDate startDate) {
+        this.user = user;
+        this.movie = movie;
+        this.startDate = startDate;
         endDate = null;
     }
 }

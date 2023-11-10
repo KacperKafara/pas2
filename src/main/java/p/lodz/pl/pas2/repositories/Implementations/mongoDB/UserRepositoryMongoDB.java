@@ -7,6 +7,7 @@ import com.mongodb.client.model.Updates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public class UserRepositoryMongoDB implements UserRepository {
     private final MongoCollection<User> userMongoCollection;
 
 //    @Autowired
-    public UserRepositoryMongoDB(MongoClient mongoClient) {
-        this.userMongoCollection = mongoClient.getDatabase("pas").getCollection("users", User.class);
+    public UserRepositoryMongoDB(AbstractMongoRepositoryConfig mongoRepo) {
+        this.userMongoCollection = mongoRepo.getDatabase().getCollection("users", User.class);
     }
 
     @Override
@@ -32,10 +33,9 @@ public class UserRepositoryMongoDB implements UserRepository {
         return userMongoCollection.find(Filters.eq("username", username)).first();
     }
 
-    //todo znajdywanie po wartosci stringa
     @Override
     public List<User> findUsersMatchToValue(String username) {
-        return null;
+        return userMongoCollection.find(Filters.regex("username", username)).into(new ArrayList<>());
     }
 
     @Override
@@ -61,7 +61,8 @@ public class UserRepositoryMongoDB implements UserRepository {
     public User updateUser(UUID id, User user) {
         return userMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                 Updates.set("username", user.getUsername()),
-                Updates.set("user_type", user.getUserType())
+                Updates.set("user_type", user.getUserType()),
+                Updates.set("active", user.isActive())
         ));
     }
 }

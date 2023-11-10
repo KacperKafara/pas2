@@ -1,5 +1,8 @@
 package p.lodz.pl.pas2.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,10 +18,14 @@ import java.util.UUID;
 public class User {
     @BsonId
     private UUID id;
+    @NotNull
+    @NotBlank
     @BsonProperty("username")
     private String username;
+    @NotNull
     @BsonProperty("user_type")
     private UserType userType;
+
     @BsonProperty("active")
     private boolean active;
 

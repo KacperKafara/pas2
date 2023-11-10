@@ -33,6 +33,7 @@ public class Pas2Application {
             movieService.addMovie(new Movie("Saw", 10));
             movieService.addMovie(new Movie("saw II", 20));
             movieService.addMovie(new Movie("saw III", 30));
+            movieService.addMovie(new Movie("Saw IV", 14));
             userService.addClient(new User("Maciek", UserType.CLIENT, true));
             userService.addClient(new User("Jacek", UserType.MODERATOR, false));
             userService.addClient(new User("Kuba", UserType.ADMINISTRATOR, false));

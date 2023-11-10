@@ -1,8 +1,10 @@
 package p.lodz.pl.pas2.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
@@ -12,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/clients")
+@RequestMapping("api/v1/users")
 public class UserController {
 
     private final p.lodz.pl.pas2.services.UserService userService;
@@ -32,13 +34,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
+    @GetMapping("/{pattern}")
+    public ResponseEntity<List<User>> getUsers(@PathVariable String pattern) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersByPattern(pattern));
+    }
+
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         User addedUser = userService.addClient(user);
         if(addedUser == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
@@ -52,9 +59,15 @@ public class UserController {
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable UUID id,@Valid @RequestBody User user) {
         User updatedUser = userService.updateClient(id, user);
         if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
+        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
