@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.services.MovieService;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,11 +17,8 @@ public class MovieController {
     private final MovieService movieService;
 
     @Autowired
-    public MovieController(MovieService movieService) {
+    public MovieController(p.lodz.pl.pas2.services.MovieService movieService) {
         this.movieService = movieService;
-        movieService.addMovie(new Movie("Saw", 10));
-        movieService.addMovie(new Movie("saw II", 20));
-        movieService.addMovie(new Movie("saw III", 30));
     }
 
     @GetMapping("/id/{id}")

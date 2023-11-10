@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Movie;
@@ -13,25 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//@Repository
+@Repository
 public class MovieRepositoryMongoDB implements MovieRepository {
-
-
-//    private final AbstractMongoRepository repository;
-
 
     private final MongoCollection<Movie> movieMongoCollection;
 
-//    private final MongoClient mongoClient;
-
-//    @Autowired
-    public MovieRepositoryMongoDB(
-//            AbstractMongoRepository repository,
-            MongoClient mongoClient) {
-//        this.repository = repository;
-//        this.movieMongoCollection = repository.getDatabase().getCollection("movies", Movie.class);
-//        this.mongoClient = mongoClient;
-        this.movieMongoCollection = mongoClient.getDatabase("online-shop").getCollection("movies", Movie.class);
+    @Autowired
+    public MovieRepositoryMongoDB(@NotNull MongoClient mongoClient) {
+        this.movieMongoCollection = mongoClient.getDatabase("pas").getCollection("movies", Movie.class);
     }
 
     @Override
@@ -46,6 +36,7 @@ public class MovieRepositoryMongoDB implements MovieRepository {
 
     @Override
     public Movie saveMovie(Movie movie) {
+        movie.setId(UUID.randomUUID());
         movieMongoCollection.insertOne(movie);
         return movie;
     }

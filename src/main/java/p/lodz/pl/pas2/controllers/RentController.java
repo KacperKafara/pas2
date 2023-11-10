@@ -26,13 +26,10 @@ public class RentController {
     private final MovieService movieService;
 
     @Autowired
-    public RentController(RentService rentService, UserService userService, MovieService movieService) {
+    public RentController(p.lodz.pl.pas2.services.RentService rentService, UserService userService, MovieService movieService) {
         this.rentService = rentService;
         this.userService = userService;
         this.movieService = movieService;
-        rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
-        rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
-        rentService.addRent(new Rent(userService.getUser("Jacek"), movieService.getMovies().get(2)));
     }
 
     @PostMapping
@@ -42,7 +39,6 @@ public class RentController {
         if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(null);
-//        Rent rent = new Rent(user, movie, rentRequest.getStartDate(), rentRequest.getEndDate());
         Rent rent = new Rent(user, movie);
         Rent addedRent = rentService.addRent(rent);
         if(addedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
