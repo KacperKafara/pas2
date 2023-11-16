@@ -76,7 +76,8 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
-                .andExpect(jsonPath("$.active").value(user.isActive()));
+                .andExpect(jsonPath("$.active").value(user.isActive()))
+                .andExpect(jsonPath("$.id").value(user.getId().toString()));;
     }
 
     @Test
@@ -91,6 +92,11 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
                 .andExpect(jsonPath("$.active").value(user.isActive()));
+        Mockito.when(userService.addClient(Mockito.any(User.class))).thenReturn(null);
+        mockMvc.perform(post("/api/v1/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest());
 
     }
     @Test
@@ -105,7 +111,14 @@ public class UserControllerTest {
                 .content("{\"active\": true}"))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
-                .andExpect(jsonPath("$.active").value(user.isActive()));
+                .andExpect(jsonPath("$.active").value(user.isActive()))
+                .andExpect(jsonPath("$.id").value(user.getId().toString()));
+        Mockito.when(userService.setActive(userId,true)).thenReturn(null);
+        mockMvc.perform(patch("/api/v1/users/id/{id}", user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"active\": true}"))
+                .andExpect(status().isNotFound());
+
     }
      @Test
     public void testUpdateUser() throws Exception {
@@ -121,7 +134,13 @@ public class UserControllerTest {
                  .andExpect(status().isOk())
                  .andExpect(jsonPath("$.username").value(user.getUsername()))
                  .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
-                 .andExpect(jsonPath("$.active").value(user.isActive()));
+                 .andExpect(jsonPath("$.active").value(user.isActive()))
+                .andExpect(jsonPath("$.id").isNotEmpty());
+         Mockito.when(userService.updateClient(Mockito.any(), Mockito.any(User.class))).thenReturn(null);
+         mockMvc.perform(put("/api/v1/users/id/{id}", user.getId())
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .content(objectMapper.writeValueAsString(user)))
+                 .andExpect(status().isNotFound());
 
     }
 

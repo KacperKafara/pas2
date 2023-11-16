@@ -69,6 +69,13 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.cost").value(movie.getCost()))
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()));
+
+        Mockito.when(movieService.updateMovie(Mockito.any(),Mockito.any(Movie.class))).thenReturn(null);
+        mockMvc.perform(put("/api/v1/movies/id/{id}",movieId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(movie)))
+                .andExpect(status().isNotFound());
+
     }
 
     @Test
@@ -83,6 +90,13 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.cost").value(movie.getCost()))
                 .andExpect(jsonPath("$.id").value(movie.getId()));
+
+        Mockito.when(movieService.addMovie(Mockito.any(Movie.class))).thenReturn(null);
+        mockMvc.perform(post("/api/v1/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(movie)))
+                .andExpect(status().isBadRequest());
+
     }
 
 
@@ -94,6 +108,11 @@ public class MovieControllerTest {
         mockMvc.perform(delete("/api/v1/movies/id/{id}", movieId))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
+
+        Mockito.when(movieService.deleteMovie(movieId)).thenReturn(false);
+        mockMvc.perform(delete("/api/v1/movies/id/{id}", movieId))
+                .andExpect(status().isBadRequest());
+
     }
 
     // Helper method to convert objects to JSON format
