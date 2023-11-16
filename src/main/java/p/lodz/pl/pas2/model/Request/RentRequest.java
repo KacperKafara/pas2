@@ -23,4 +23,13 @@ public class RentRequest {
     @NotNull
     LocalDate startDate;
     LocalDate endDate;
+    public RentRequest(){
+
+    }
+
+    public RentRequest(UUID clientID, UUID movieID, LocalDate startDate) {
+        this.clientID = clientID;
+        this.movieID = movieID;
+        this.startDate = startDate;
+    }
 }

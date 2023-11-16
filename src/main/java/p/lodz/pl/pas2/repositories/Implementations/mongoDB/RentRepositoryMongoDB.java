@@ -14,6 +14,7 @@ import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
+import java.nio.file.DirectoryStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,7 @@ public class RentRepositoryMongoDB implements RentRepository {
                 Filters.ne("end_date", BsonNull.VALUE),
                 Filters.lte("end_date", currentDate)
         )).into(new ArrayList<>());
+
     }
 
     @Override

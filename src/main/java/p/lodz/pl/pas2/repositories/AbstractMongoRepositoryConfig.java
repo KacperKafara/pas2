@@ -27,7 +27,7 @@ public class AbstractMongoRepositoryConfig implements Closeable {
     private MongoDatabase database;
 
     ConnectionString connectionString = new ConnectionString(
-            "mongodb://localhost:27017,localhost:27018,localhost:27019/pas?replicaSet=replica_set_single"
+            "mongodb://localhost:27017"
     );
     MongoCredential credential = MongoCredential.createCredential("admin",
             "admin", "adminpassword".toCharArray());
@@ -40,7 +40,7 @@ public class AbstractMongoRepositoryConfig implements Closeable {
     private void initDbConnection() {
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
-                .credential(credential)
+                //.credential(credential)
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .codecRegistry(CodecRegistries.fromRegistries(
                         CodecRegistries.fromProviders(PojoCodecProvider.builder().build()),
