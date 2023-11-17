@@ -36,13 +36,10 @@ public class MovieService {
     }
 
     public Movie addMovie(Movie movie) {
-        if(movie.getCost() <= 0) return null;
-        if(movie.getTitle().isEmpty()) return null;
         return movieRepository.saveMovie(movie);
     }
 
     public Movie updateMovie(UUID id, Movie movie) {
-        if(movie.getTitle().isEmpty() || movie.getCost() <= 0) return null;
         return movieRepository.updateMovie(id, movie);
     }
 

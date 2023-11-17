@@ -3,8 +3,9 @@ package p.lodz.pl.pas2.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import p.lodz.pl.pas2.repositories.Implementations.UserRepositoryImplementation;
-import p.lodz.pl.pas2.repositories.Implementations.mongoDB.UserRepositoryMongoDB;
+import p.lodz.pl.pas2.exceptions.UserNotFound;
+import p.lodz.pl.pas2.exceptions.UsernameInUse;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
 import p.lodz.pl.pas2.model.User;
 
@@ -36,19 +37,18 @@ public class UserService {
         return repository.findUsersMatchToValue(pattern);
     }
 
-    public User addClient(User user) {
-        if(user.getUsername().isEmpty()) return null;
-        if(getUser(user.getUsername()) != null) return null;
+    public User addUser(User user) {
+        if(getUser(user.getUsername()) != null) throw new UsernameInUse(UserMsg.USERNAME_IN_USE);
         return repository.saveClient(user);
     }
 
     public User setActive(UUID id, boolean active) {
+        if(getUser(id) == null) throw new UserNotFound(UserMsg.USER_NOT_FOUND);
         return repository.setActive(id, active);
     }
 
-    public User updateClient(UUID id, User user) {
-        if(user.getUsername().isEmpty()) return null;
-        if(getUser(user.getUsername()) != null) return null;
+    public User updateUser(UUID id, User user) {
+        if(getUser(id) == null) throw new UserNotFound(UserMsg.USER_NOT_FOUND);
         return repository.updateUser(id, user);
     }
 }

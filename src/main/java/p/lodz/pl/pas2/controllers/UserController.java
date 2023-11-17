@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.exceptions.UserNotFound;
+import p.lodz.pl.pas2.exceptions.UsernameInUse;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.model.UserType;
+import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
 import java.util.Map;
@@ -17,10 +19,10 @@ import java.util.UUID;
 @RequestMapping("api/v1/users")
 public class UserController {
 
-    private final p.lodz.pl.pas2.services.UserService userService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(p.lodz.pl.pas2.services.UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -45,24 +47,30 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        User addedUser = userService.addClient(user);
-        if(addedUser == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
+    public ResponseEntity<?> addUser(@Valid @RequestBody User user) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
+        } catch (UsernameInUse e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PatchMapping("/id/{id}")
-    public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
-        User updatedUser = userService.setActive(id, Boolean.parseBoolean(active.get("active").toString()));
-        if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    public ResponseEntity<?> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
+        } catch (UserNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id,@Valid @RequestBody User user) {
-        User updatedUser = userService.updateClient(id, user);
-        if(updatedUser == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    public ResponseEntity<?> updateUser(@PathVariable UUID id,@Valid @RequestBody User user) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));
+        } catch (UserNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

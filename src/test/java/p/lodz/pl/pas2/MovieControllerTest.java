@@ -96,7 +96,6 @@ public class MovieControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(movie)))
                 .andExpect(status().isBadRequest());
-
     }
 
 

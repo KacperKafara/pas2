@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.UserController;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
-import p.lodz.pl.pas2.services.UserService;
 
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class UserControllerTest {
     @Test
     public void testAddUser() throws Exception {
         User user = new User("Maciek", UserType.CLIENT, true);
-        Mockito.when(userService.addClient(Mockito.any(User.class))).thenReturn(user);
+        Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user);
         ObjectMapper objectMapper= new ObjectMapper();
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +94,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
                 .andExpect(jsonPath("$.active").value(user.isActive()));
-        Mockito.when(userService.addClient(Mockito.any(User.class))).thenReturn(null);
+        Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(null);
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
@@ -130,7 +129,7 @@ public class UserControllerTest {
          User user = new User("Jaca", UserType.CLIENT, true);
          UUID userId = UUID.randomUUID();
          user.setId(userId);
-         Mockito.when(userService.updateClient(Mockito.any(), Mockito.any(User.class))).thenReturn(user);
+         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user);
          mockMvc.perform(put("/api/v1/users/id/{id}", user.getId())
                          .contentType(MediaType.APPLICATION_JSON)
                          .content(objectMapper.writeValueAsString(user)))
@@ -139,7 +138,7 @@ public class UserControllerTest {
                  .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
                  .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-         Mockito.when(userService.updateClient(Mockito.any(), Mockito.any(User.class))).thenReturn(null);
+         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(null);
          mockMvc.perform(put("/api/v1/users/id/{id}", user.getId())
                          .contentType(MediaType.APPLICATION_JSON)
                          .content(objectMapper.writeValueAsString(user)))

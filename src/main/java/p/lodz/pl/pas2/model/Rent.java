@@ -20,18 +20,22 @@ import java.util.UUID;
 public class Rent {
     @BsonId
     private UUID id;
+
     @NotNull
     @NotBlank
     @BsonProperty("user")
     private User user;
+
     @NotNull
     @NotBlank
     @BsonProperty("movie")
     private Movie movie;
+
     @NotNull
     @FutureOrPresent
     @BsonProperty("start_date")
     private LocalDate startDate;
+
     @FutureOrPresent
     @BsonProperty("end_date")
     private LocalDate endDate;
