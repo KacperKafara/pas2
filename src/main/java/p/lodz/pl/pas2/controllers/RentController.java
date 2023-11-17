@@ -6,10 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.exceptions.EndDateException;
+import p.lodz.pl.pas2.exceptions.MovieException;
+import p.lodz.pl.pas2.exceptions.RentNotExistException;
+import p.lodz.pl.pas2.exceptions.RentalStillOngoingException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.msg.MovieMsg;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -40,13 +46,18 @@ public class RentController {
     public ResponseEntity<?> addRent(@Valid @RequestBody RentRequest rentRequest) {
         User user = userService.getUser(rentRequest.getClientID());
         Movie movie = movieService.getMovie(rentRequest.getMovieID());
-        if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with this id does not exist");
-        if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie with this id does not exist");
-        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body("User is not active");
+        if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(UserMsg.USER_NOT_FOUND);
+        if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MovieMsg.MOVIE_NOT_FOUND);
+        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(UserMsg.USER_NOT_ACTIVE);
         Rent rent = new Rent(user, movie, rentRequest.getStartDate());
-        Rent addedRent = rentService.addRent(rent);
-        if(addedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Movie already rented or date is incorrect");
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedRent);
+        try {
+            Rent addedRent = rentService.addRent(rent);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedRent);
+        } catch (EndDateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (MovieException e) {
+            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
+        }
     }
 
     @GetMapping("/current")
@@ -60,40 +71,40 @@ public class RentController {
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<Boolean> deleteRent(@PathVariable UUID id) {
-        boolean deleteStatus = rentService.deleteRent(id);
-        if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-        return ResponseEntity.status(HttpStatus.OK).body(true);
+    public ResponseEntity<?> deleteRent(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.deleteRent(id));
+        } catch (RentNotExistException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RentalStillOngoingException e) {
+            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
+        }
     }
 
     @PatchMapping("/id/{id}")
     public ResponseEntity<?> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
-        LocalDate endDateParsed;
-        try {
-            endDateParsed = LocalDate.parse(endDate.get("endDate"));
-        } catch (DateTimeParseException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date");
-        }
-//        if(endTime == null){
-//            updatedRent = rentService.setEndTime(id, LocalDate.now());
-//            return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
+        LocalDate endDateParsed = LocalDate.parse(endDate.get("endDate"));
+//        try {
+//            endDateParsed = LocalDate.parse(endDate.get("endDate"));
+//        } catch (DateTimeParseException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date");
 //        }
-        Rent updatedRent = rentService.setEndTime(id, endDateParsed);
-        if(updatedRent == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
+        try {
+            Rent updatedRent = rentService.setEndTime(id, endDateParsed);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
+        } catch (EndDateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-//        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: ");
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<String> handleConstraintViolationException(DateTimeParseException e) {
-//        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect date format");
 
     }

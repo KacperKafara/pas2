@@ -16,6 +16,9 @@ import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.model.Request.RentRequest;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
+import p.lodz.pl.pas2.msg.MovieMsg;
+import p.lodz.pl.pas2.msg.RentMsg;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -74,14 +77,14 @@ public class RentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("User with this id does not exist"));
+                .andExpect(content().string(UserMsg.USER_NOT_FOUND));
         //Uzytkownik nie aktywny
         Mockito.when(userService.getUser(clientId)).thenReturn(inactiveUser);
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isLocked())
-                .andExpect(content().string("User is not active"));
+                .andExpect(content().string(UserMsg.USER_NOT_ACTIVE));
 
         // Film nie aktynwy
         Mockito.when(userService.getUser(clientId)).thenReturn(activeUser);
@@ -91,16 +94,7 @@ public class RentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Movie with this id does not exist"));
-
-        Mockito.when(userService.getUser(clientId)).thenReturn(activeUser);
-        Mockito.when(movieService.getMovie(movieId)).thenReturn(availableMovie);
-        Mockito.when(rentService.addRent(Mockito.any())).thenReturn(null);
-        mockMvc.perform(post("/api/v1/rents")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(rentRequest)))
-                .andExpect(content().string("Movie already rented or date is incorrect"));
-
+                .andExpect(content().string(MovieMsg.MOVIE_NOT_FOUND));
     }
     @Test
 
@@ -222,7 +216,7 @@ public class RentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidEndDateMap)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid date"));
+                .andExpect(content().string("Incorrect date format"));
     }
 
     private static String asJsonString(final Object obj) {
