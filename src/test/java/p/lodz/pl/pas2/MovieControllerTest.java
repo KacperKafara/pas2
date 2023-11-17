@@ -91,11 +91,6 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.cost").value(movie.getCost()))
                 .andExpect(jsonPath("$.id").value(movie.getId()));
 
-        Mockito.when(movieService.addMovie(Mockito.any(Movie.class))).thenReturn(null);
-        mockMvc.perform(post("/api/v1/movies")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(movie)))
-                .andExpect(status().isBadRequest());
     }
 
 

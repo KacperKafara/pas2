@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class RentService {
     private final RentRepository repository;
-    @Autowired
+   // @Autowired
     public RentService(@Qualifier("rentRepositoryMongoDB") RentRepository repository) {
         this.repository = repository;
     }

@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.MovieController;
 import p.lodz.pl.pas2.controllers.RentController;
+import p.lodz.pl.pas2.exceptions.RentNotExistException;
+import p.lodz.pl.pas2.exceptions.RentalStillOngoingException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.model.Request.RentRequest;
@@ -63,7 +65,6 @@ public class RentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isCreated())
-                //.andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.user.username").value(activeUser.getUsername()))
                 .andExpect(jsonPath("$.user.userType").value(activeUser.getUserType().toString()))
                 .andExpect(jsonPath("$.user.active").value(activeUser.isActive()))
@@ -161,7 +162,12 @@ public class RentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
-        Mockito.when(rentService.deleteRent(rentId)).thenReturn(false);
+        Mockito.when(rentService.deleteRent(rentId))
+                .thenThrow(new RentalStillOngoingException(RentMsg.RENT_NOT_ENDED))
+                .thenThrow(new RentNotExistException(RentMsg.RENT_NOT_FOUND));
+        mockMvc.perform(delete("/api/v1/rents/id/{id}", rentId))
+                .andExpect(status().isLocked());
+
         mockMvc.perform(delete("/api/v1/rents/id/{id}", rentId))
                 .andExpect(status().isBadRequest());
 
@@ -173,7 +179,6 @@ public class RentControllerTest {
         LocalDate endDate = LocalDate.now().plusDays(5);
         Map<String, String> endDateMap = Collections.singletonMap("endDate", endDate.toString());
 
-        // Create a consistent Rent instance for the Mockito setup and the expected result
         Rent existingRent = new Rent(rentId, new User("user", UserType.CLIENT, true), new Movie("movie", 10), LocalDate.now(), null);
         Rent updatedRent = new Rent(rentId, existingRent.getUser(), existingRent.getMovie(), existingRent.getStartDate(), endDate);
 

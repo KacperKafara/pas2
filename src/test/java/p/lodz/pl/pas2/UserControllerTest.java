@@ -12,8 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.UserController;
+import p.lodz.pl.pas2.exceptions.UserNotFound;
+import p.lodz.pl.pas2.exceptions.UsernameInUse;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.model.UserType;
+import p.lodz.pl.pas2.msg.UserMsg;
+import p.lodz.pl.pas2.services.UserService;
 
 
 import java.util.ArrayList;
@@ -94,7 +98,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
                 .andExpect(jsonPath("$.active").value(user.isActive()));
-        Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(null);
+        Mockito.when(userService.addUser(Mockito.any(User.class))).thenThrow(new UsernameInUse(UserMsg.USERNAME_IN_USE));
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
@@ -115,7 +119,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").value(user.getId().toString()));
-        Mockito.when(userService.setActive(userId,true)).thenReturn(null);
+        Mockito.when(userService.setActive(userId,true)).thenThrow(new UserNotFound(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(patch("/api/v1/users/id/{id}", user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"active\": true}"))
@@ -138,7 +142,7 @@ public class UserControllerTest {
                  .andExpect(jsonPath("$.userType").value(user.getUserType().toString()))
                  .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(null);
+         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenThrow(new UserNotFound(UserMsg.USER_NOT_FOUND));
          mockMvc.perform(put("/api/v1/users/id/{id}", user.getId())
                          .contentType(MediaType.APPLICATION_JSON)
                          .content(objectMapper.writeValueAsString(user)))
