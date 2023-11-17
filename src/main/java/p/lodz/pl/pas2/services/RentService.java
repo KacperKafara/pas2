@@ -37,7 +37,7 @@ public class RentService {
 
     public Rent setEndTime(UUID id, LocalDate endTime) {
         Rent rentToUpdate = repository.findRent(id);
-        if(endTime == null) return null;
+//        if(endTime == null) return null;
         if(rentToUpdate.getStartDate().isAfter(endTime)) return null;
         return repository.updateEndTime(id, endTime);
     }
