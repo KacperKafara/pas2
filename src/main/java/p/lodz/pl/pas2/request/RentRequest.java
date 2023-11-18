@@ -29,6 +29,8 @@ public class RentRequest {
 
     private LocalDate endDate;
 
+    RentRequest(){}
+
     public RentRequest(UUID clientID, UUID movieID, LocalDate startDate) {
         this.clientID = clientID;
         this.movieID = movieID;

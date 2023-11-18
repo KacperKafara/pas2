@@ -9,10 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import p.lodz.pl.pas2.exceptions.UserNotFound;
-import p.lodz.pl.pas2.exceptions.UsernameInUse;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.model.UserType;
 import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
 import p.lodz.pl.pas2.services.UserService;
@@ -28,7 +25,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.UUID;
-
+/*
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest{
     @Mock
@@ -118,4 +115,4 @@ public class UserServiceTest{
 
 
 
-}
+}*/

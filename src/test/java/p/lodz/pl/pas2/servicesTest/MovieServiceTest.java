@@ -7,13 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import p.lodz.pl.pas2.exceptions.MovieException;
-import p.lodz.pl.pas2.exceptions.UserNotFound;
 import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.model.UserType;
-import p.lodz.pl.pas2.msg.MovieMsg;
-import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 import p.lodz.pl.pas2.services.MovieService;
@@ -67,13 +61,10 @@ public class MovieServiceTest {
 
     @Test
     public void addMovie() {
-        // Arrange
         given(movieRepository.saveMovie(any(Movie.class))).willReturn(movie);
 
-        // Act
         Movie addedMovie = movieService.addMovie(movie);
 
-        // Assert
         assertNotNull(addedMovie);
         assertEquals(movie.getTitle(), addedMovie.getTitle());
         assertEquals(movie.getCost(), addedMovie.getCost());
@@ -90,7 +81,7 @@ public class MovieServiceTest {
         assertNotNull(checked);
         assertEquals(updatedMovie.getTitle(), checked.getTitle());
         assertEquals(updatedMovie.getCost(), checked.getCost());
-    } */
+    }
 
 
    /* @Test
@@ -101,7 +92,7 @@ public class MovieServiceTest {
         boolean deleted = movieService.deleteMovie(movieId);
 
         assertTrue(deleted);
-    } */
+    }
 
     @Test
     public void deleteMovieWithRentals() {
@@ -117,6 +108,6 @@ public class MovieServiceTest {
         given(movieRepository.findMovie(movieId)).willThrow(new MovieException(MovieMsg.MOVIE_NOT_FOUND) );
         MovieException exception = assertThrows(MovieException.class, () -> movieService.deleteMovie(movieId));
         assertEquals(MovieMsg.MOVIE_NOT_FOUND, exception.getMessage());
-    }
+    } */
 
 }

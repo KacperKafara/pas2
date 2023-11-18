@@ -22,6 +22,7 @@ public class Client extends User {
     @NotBlank
     @BsonProperty("lastname")
     private String lastName;
+    public Client(){}
 
     public Client(String username, boolean active, String firstName, String lastName) {
         super(username, active);

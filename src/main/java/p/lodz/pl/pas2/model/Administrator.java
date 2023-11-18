@@ -10,7 +10,9 @@ public class Administrator extends User {
     public Administrator(String username, boolean active) {
         super(username, active);
     }
+    public Administrator(){
 
+    }
     public Administrator(UUID id,
                          String username,
                          boolean active) {

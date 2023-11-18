@@ -10,6 +10,9 @@ public class Moderator extends User {
     public Moderator(String username, boolean active) {
         super(username, active);
     }
+    public Moderator(){
+
+    }
 
     public Moderator(UUID id,
                      String username,

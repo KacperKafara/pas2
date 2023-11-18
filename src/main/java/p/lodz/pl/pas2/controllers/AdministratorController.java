@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/administrators")
+@RequestMapping("api/v1/clients")
 public class AdministratorController {
 
     private final UserService userService;
