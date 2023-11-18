@@ -48,16 +48,6 @@ public class RentRepositoryImplementation implements RentRepository {
         return false;
     }
 
-    @Override
-    public boolean findMovieById(UUID id) {
-        List<Movie > movies = new ArrayList<>();
-        for (Rent rent : rents) {
-            if (rent.getMovie().getId().equals(id)) {
-                movies.add(rent.getMovie());
-            }
-        }
-        return !movies.isEmpty();
-    }
 
     @Override
     public List<Rent> findCurrentRents() {

@@ -12,7 +12,6 @@ public interface RentRepository {
     Rent saveRent(Rent rent);
     boolean deleteRent(UUID id);
 
-    boolean findMovieById(UUID id);
     List<Rent> findCurrentRents();
     List<Rent> findPastRents();
     Rent updateEndTime(UUID id, LocalDate endTime);
