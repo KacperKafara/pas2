@@ -3,8 +3,10 @@ package p.lodz.pl.pas2.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import p.lodz.pl.pas2.exceptions.MovieException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.repositories.Implementations.MovieRepositoryImplementation;
 import p.lodz.pl.pas2.repositories.Implementations.RentRepositoryImplementation;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
@@ -44,10 +46,9 @@ public class MovieService {
     }
 
     public boolean deleteMovie(UUID id) {
-        List<Rent> rents = rentRepository.findCurrentRents();
-        for(Rent rent : rents) {
-            if(rent.getMovie().getId() == id) return false;
-        }
+        if(rentRepository.findMovieById(id)) throw new MovieException(MovieMsg.MOVIE_IS_RENTED);
+        Movie movie = movieRepository.findMovie(id);
+        if (movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
         return movieRepository.deleteMovie(id);
     }
 }

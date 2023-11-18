@@ -1,4 +1,4 @@
-package p.lodz.pl.pas2;
+package p.lodz.pl.pas2.controllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

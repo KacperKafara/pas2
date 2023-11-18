@@ -2,6 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +22,8 @@ public class MovieRepositoryMongoDB implements MovieRepository {
     private final MongoCollection<Movie> movieMongoCollection;
 
     @Autowired
-    public MovieRepositoryMongoDB(@NotNull AbstractMongoRepositoryConfig mongoRepo) {
-        this.movieMongoCollection = mongoRepo.getDatabase().getCollection("movies", Movie.class);
+    public MovieRepositoryMongoDB(@NotNull MongoDatabase mongoRepo) {
+        this.movieMongoCollection = mongoRepo.getCollection("movies", Movie.class);
     }
 
     @Override

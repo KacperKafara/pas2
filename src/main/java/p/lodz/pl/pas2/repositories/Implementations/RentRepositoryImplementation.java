@@ -1,6 +1,7 @@
 package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
+import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.RentRepository;
@@ -45,6 +46,17 @@ public class RentRepositoryImplementation implements RentRepository {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean findMovieById(UUID id) {
+        List<Movie > movies = new ArrayList<>();
+        for (Rent rent : rents) {
+            if (rent.getMovie().getId().equals(id)) {
+                movies.add(rent.getMovie());
+            }
+        }
+        return !movies.isEmpty();
     }
 
     @Override

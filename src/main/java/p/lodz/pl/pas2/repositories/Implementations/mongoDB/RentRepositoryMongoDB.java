@@ -2,6 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
@@ -25,8 +26,8 @@ public class RentRepositoryMongoDB implements RentRepository {
     private final MongoCollection<Rent> rentMongoCollection;
 
     @Autowired
-    public RentRepositoryMongoDB(AbstractMongoRepositoryConfig mongoRepo) {
-        this.rentMongoCollection = mongoRepo.getDatabase().getCollection("rents", Rent.class);
+    public RentRepositoryMongoDB(MongoDatabase mongoRepo) {
+        this.rentMongoCollection = mongoRepo.getCollection("rents", Rent.class);
     }
 
     @Override
@@ -46,6 +47,12 @@ public class RentRepositoryMongoDB implements RentRepository {
         Rent rent = rentMongoCollection.findOneAndDelete(Filters.eq("_id", id));
         return rent != null;
     }
+
+    @Override
+    public boolean findMovieById(UUID id) {
+        return rentMongoCollection.countDocuments(Filters.eq("movie.id", id)) > 0;
+    }
+
     // TODO do sprawdzenia czy działaja metody find past i current rents
     @Override
     public List<Rent> findCurrentRents() {
