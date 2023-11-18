@@ -1,11 +1,13 @@
-package p.lodz.pl.pas2.model.Request;
+package p.lodz.pl.pas2.request;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.model.User;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -16,20 +18,24 @@ import java.util.UUID;
 public class RentRequest {
 
     @NotNull
-    UUID clientID;
+    private UUID clientID;
+
     @NotNull
-    UUID movieID;
+    private UUID movieID;
+
     @FutureOrPresent
     @NotNull
-    LocalDate startDate;
-    LocalDate endDate;
-    public RentRequest(){
+    private LocalDate startDate;
 
-    }
+    private LocalDate endDate;
 
     public RentRequest(UUID clientID, UUID movieID, LocalDate startDate) {
         this.clientID = clientID;
         this.movieID = movieID;
         this.startDate = startDate;
+    }
+
+    public static Rent rentRequestToRent(User user, Movie movie, LocalDate startDate) {
+        return new Rent(user, movie, startDate);
     }
 }

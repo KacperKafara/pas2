@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.UserNotFound;
-import p.lodz.pl.pas2.exceptions.UsernameInUse;
+import p.lodz.pl.pas2.exceptions.UserNotFoundException;
+import p.lodz.pl.pas2.exceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.services.UserService;
 
@@ -44,33 +44,6 @@ public class UserController {
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
-    }
-
-    @PostMapping
-    public ResponseEntity<?> addUser(@Valid @RequestBody User user) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
-        } catch (UsernameInUse e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/id/{id}")
-    public ResponseEntity<?> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
-        } catch (UserNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/id/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable UUID id,@Valid @RequestBody User user) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));
-        } catch (UserNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -30,25 +30,32 @@ public class MovieService {
     }
 
     public Movie getMovie(UUID id) {
-        return movieRepository.findMovie(id);
+        Movie movie = movieRepository.findMovie(id);
+        if(movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        return movie;
     }
 
     public List<Movie> getMovies() {
-        return movieRepository.findMovies();
+        List<Movie> movies = movieRepository.findMovies();
+        if(movies.isEmpty()) throw new MovieException(MovieMsg.MOVIES_NOT_FOUND);
+        return movies;
     }
 
     public Movie addMovie(Movie movie) {
         return movieRepository.saveMovie(movie);
     }
 
-    public Movie updateMovie(UUID id, Movie movie) {
-        return movieRepository.updateMovie(id, movie);
+    public Movie updateMovie(UUID id, Movie updatedMovie) {
+        Movie movie = movieRepository.findMovie(id);
+        if(movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        return movieRepository.updateMovie(id, updatedMovie);
     }
 
     public boolean deleteMovie(UUID id) {
-        if(rentRepository.findMovieById(id)) throw new MovieException(MovieMsg.MOVIE_IS_RENTED);
-        Movie movie = movieRepository.findMovie(id);
-        if (movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        List<Rent> rents = rentRepository.findCurrentRents();
+        for(Rent rent : rents) {
+            if(rent.getMovie().getId() == id) throw new MovieException(MovieMsg.MOVIE_IS_RENTED);
+        }
         return movieRepository.deleteMovie(id);
     }
 }

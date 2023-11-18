@@ -1,6 +1,5 @@
 package p.lodz.pl.pas2.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.exceptions.*;
@@ -49,10 +48,14 @@ public class RentService {
     }
 
     public List<Rent> getCurrentRents() {
+        List<Rent> rents = repository.findCurrentRents();
+        if(rents.isEmpty()) throw new RentsNotFoundException();
         return repository.findCurrentRents();
     }
 
     public List<Rent> getPastRents() {
+        List<Rent> rents = repository.findPastRents();
+        if(rents.isEmpty()) throw new RentsNotFoundException();
         return repository.findPastRents();
     }
 }

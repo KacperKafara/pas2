@@ -16,14 +16,13 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class Movie {
+
     @BsonId
     private UUID id;
-    @NotBlank
-    @NotNull
+
     @BsonProperty("title")
     private String title;
-    @NotNull
-    @Min(0)
+
     @BsonProperty("cost")
     private double cost;
 
@@ -39,7 +38,6 @@ public class Movie {
         this.id = id;
         this.title = title;
         this.cost = cost;
-
     }
 
     public Movie(String title, double cost) {

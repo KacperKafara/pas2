@@ -9,15 +9,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import p.lodz.pl.pas2.controllers.MovieController;
 import p.lodz.pl.pas2.controllers.RentController;
 import p.lodz.pl.pas2.exceptions.RentNotExistException;
 import p.lodz.pl.pas2.exceptions.RentalStillOngoingException;
+import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.model.Request.RentRequest;
+import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.model.UserType;
 import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.msg.UserMsg;
@@ -50,8 +49,8 @@ public class RentControllerTest {
         UUID clientId = UUID.randomUUID();
         UUID movieId = UUID.randomUUID();
 
-        User activeUser = new User("ActiveUser", UserType.CLIENT, true);
-        User inactiveUser = new User("InactiveUser", UserType.CLIENT, false);
+        User activeUser = new Moderator("ActiveUser", true);
+        User inactiveUser = new Moderator("InactiveUser", false);
         Movie availableMovie = new Movie("AvailableMovie", 20);
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, LocalDate.now());
@@ -66,7 +65,6 @@ public class RentControllerTest {
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.user.username").value(activeUser.getUsername()))
-                .andExpect(jsonPath("$.user.userType").value(activeUser.getUserType().toString()))
                 .andExpect(jsonPath("$.user.active").value(activeUser.isActive()))
                 .andExpect(jsonPath("$.movie.title").value(availableMovie.getTitle()))
                 .andExpect(jsonPath("$.movie.cost").value(availableMovie.getCost()))
@@ -100,8 +98,8 @@ public class RentControllerTest {
     @Test
 
         public void getCurrentRents() throws Exception {
-            Rent rent1 = new Rent(UUID.randomUUID(), new User("user1", UserType.CLIENT, true), new Movie("movie1", 10), LocalDate.now(), null);
-            Rent rent2 = new Rent(UUID.randomUUID(), new User("user2", UserType.CLIENT, true), new Movie("movie2", 15), LocalDate.now(), null);
+            Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now(), null);
+            Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now(), null);
             List<Rent> currentRents = Arrays.asList(rent1, rent2);
 
             Mockito.when(rentService.getCurrentRents()).thenReturn(currentRents);
@@ -111,14 +109,12 @@ public class RentControllerTest {
                     .andExpect(jsonPath("$", hasSize(2)))
                     .andExpect(jsonPath("$[0].id").value(rent1.getId().toString()))
                     .andExpect(jsonPath("$[0].user.username").value(rent1.getUser().getUsername()))
-                    .andExpect(jsonPath("$[0].user.userType").value(rent1.getUser().getUserType().toString()))
                     .andExpect(jsonPath("$[0].user.active").value(rent1.getUser().isActive()))
                     .andExpect(jsonPath("$[0].movie.title").value(rent1.getMovie().getTitle()))
                     .andExpect(jsonPath("$[0].movie.cost").value(rent1.getMovie().getCost()))
                     .andExpect(jsonPath("$[0].startDate").value(rent1.getStartDate().toString()))
                     .andExpect(jsonPath("$[1].id").value(rent2.getId().toString()))
                     .andExpect(jsonPath("$[1].user.username").value(rent2.getUser().getUsername()))
-                    .andExpect(jsonPath("$[1].user.userType").value(rent2.getUser().getUserType().toString()))
                     .andExpect(jsonPath("$[1].user.active").value(rent2.getUser().isActive()))
                     .andExpect(jsonPath("$[1].movie.title").value(rent2.getMovie().getTitle()))
                     .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
@@ -126,8 +122,8 @@ public class RentControllerTest {
         }
     @Test
     public void getPastRents() throws Exception {
-        Rent rent1 = new Rent(UUID.randomUUID(), new User("user1", UserType.CLIENT, true), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
-        Rent rent2 = new Rent(UUID.randomUUID(), new User("user2", UserType.CLIENT, true), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
+        Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
+        Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
         List<Rent> pastRents = Arrays.asList(rent1, rent2);
 
         Mockito.when(rentService.getPastRents()).thenReturn(pastRents);
@@ -137,7 +133,6 @@ public class RentControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(rent1.getId().toString()))
                 .andExpect(jsonPath("$[0].user.username").value(rent1.getUser().getUsername()))
-                .andExpect(jsonPath("$[0].user.userType").value(rent1.getUser().getUserType().toString()))
                 .andExpect(jsonPath("$[0].user.active").value(rent1.getUser().isActive()))
                 .andExpect(jsonPath("$[0].movie.title").value(rent1.getMovie().getTitle()))
                 .andExpect(jsonPath("$[0].movie.cost").value(rent1.getMovie().getCost()))
@@ -145,7 +140,6 @@ public class RentControllerTest {
                 .andExpect(jsonPath("$[0].endDate").value(rent1.getEndDate().toString()))
                 .andExpect(jsonPath("$[1].id").value(rent2.getId().toString()))
                 .andExpect(jsonPath("$[1].user.username").value(rent2.getUser().getUsername()))
-                .andExpect(jsonPath("$[1].user.userType").value(rent2.getUser().getUserType().toString()))
                 .andExpect(jsonPath("$[1].user.active").value(rent2.getUser().isActive()))
                 .andExpect(jsonPath("$[1].movie.title").value(rent2.getMovie().getTitle()))
                 .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
@@ -179,7 +173,7 @@ public class RentControllerTest {
         LocalDate endDate = LocalDate.now().plusDays(5);
         Map<String, String> endDateMap = Collections.singletonMap("endDate", endDate.toString());
 
-        Rent existingRent = new Rent(rentId, new User("user", UserType.CLIENT, true), new Movie("movie", 10), LocalDate.now(), null);
+        Rent existingRent = new Rent(rentId, new Moderator("user", true), new Movie("movie", 10), LocalDate.now(), null);
         Rent updatedRent = new Rent(rentId, existingRent.getUser(), existingRent.getMovie(), existingRent.getStartDate(), endDate);
 
         Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent);
@@ -190,7 +184,6 @@ public class RentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(updatedRent.getId().toString()))
                 .andExpect(jsonPath("$.user.username").value(updatedRent.getUser().getUsername()))
-                .andExpect(jsonPath("$.user.userType").value(updatedRent.getUser().getUserType().toString()))
                 .andExpect(jsonPath("$.user.active").value(updatedRent.getUser().isActive()))
                 .andExpect(jsonPath("$.movie.title").value(updatedRent.getMovie().getTitle()))
                 .andExpect(jsonPath("$.movie.cost").value(updatedRent.getMovie().getCost()))

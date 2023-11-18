@@ -70,7 +70,6 @@ public class UserRepositoryImplementation implements UserRepository {
     public User updateUser(UUID id, User user) {
         User updatedUser = findUser(id);
         updatedUser.setUsername(user.getUsername());
-        updatedUser.setUserType(user.getUserType());
         updatedUser.setActive(user.isActive());
         return updatedUser;
     }
