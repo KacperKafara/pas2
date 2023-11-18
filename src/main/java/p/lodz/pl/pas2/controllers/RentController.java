@@ -6,12 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.EndDateException;
-import p.lodz.pl.pas2.exceptions.MovieException;
-import p.lodz.pl.pas2.exceptions.RentNotExistException;
-import p.lodz.pl.pas2.exceptions.RentalStillOngoingException;
+import p.lodz.pl.pas2.exceptions.*;
 import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.model.Request.RentRequest;
+import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.MovieMsg;
@@ -22,6 +19,7 @@ import p.lodz.pl.pas2.services.UserService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -35,7 +33,7 @@ public class RentController {
     private final MovieService movieService;
 
     @Autowired
-    public RentController(p.lodz.pl.pas2.services.RentService rentService, UserService userService, MovieService movieService) {
+    public RentController(RentService rentService, UserService userService, MovieService movieService) {
         this.rentService = rentService;
         this.userService = userService;
         this.movieService = movieService;
@@ -49,10 +47,11 @@ public class RentController {
         if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(UserMsg.USER_NOT_FOUND);
         if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MovieMsg.MOVIE_NOT_FOUND);
         if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(UserMsg.USER_NOT_ACTIVE);
-        Rent rent = new Rent(user, movie, rentRequest.getStartDate());
+        Rent rent = RentRequest.rentRequestToRent(userService.getUser(rentRequest.getClientID()),
+                movieService.getMovie(rentRequest.getMovieID()),
+                rentRequest.getStartDate());
         try {
-            Rent addedRent = rentService.addRent(rent);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addedRent);
+            return ResponseEntity.status(HttpStatus.CREATED).body(rentService.addRent(rent));
         } catch (EndDateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (MovieException e) {
@@ -62,12 +61,20 @@ public class RentController {
 
     @GetMapping("/current")
     public ResponseEntity<List<Rent>> getCurrentRents() {
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRents());
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRents());
+        } catch (RentsNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+        }
     }
 
     @GetMapping("/past")
     public ResponseEntity<List<Rent>> getPastRents() {
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
+        } catch (RentsNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+        }
     }
 
     @DeleteMapping("/id/{id}")

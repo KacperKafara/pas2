@@ -15,6 +15,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import p.lodz.pl.pas2.CustomCodecProvider;
 
 
 import java.io.Closeable;
@@ -39,11 +40,12 @@ public class AbstractMongoRepositoryConfig implements Closeable {
 
     private void initDbConnection() {
         MongoClientSettings settings = MongoClientSettings.builder()
+                .uuidRepresentation(UuidRepresentation.STANDARD)
                 .applyConnectionString(connectionString)
                 .credential(credential)
                 .uuidRepresentation(UuidRepresentation.STANDARD)
                 .codecRegistry(CodecRegistries.fromRegistries(
-                        CodecRegistries.fromProviders(PojoCodecProvider.builder().build()),
+                        CodecRegistries.fromProviders(new CustomCodecProvider()),
                         MongoClientSettings.getDefaultCodecRegistry(),
                         pojoCodecRegistry
                 ))
@@ -52,22 +54,6 @@ public class AbstractMongoRepositoryConfig implements Closeable {
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("pas");
     }
-
-//    @Bean
-//    public MongoClient mongoClient() {
-//        MongoClientSettings settings = MongoClientSettings.builder()
-//                .applyConnectionString(connectionString)
-//                .credential(credential)
-//                .uuidRepresentation(UuidRepresentation.STANDARD)
-//                .codecRegistry(CodecRegistries.fromRegistries(
-//                        CodecRegistries.fromProviders(PojoCodecProvider.builder().build()),
-//                        MongoClientSettings.getDefaultCodecRegistry(),
-//                        pojoCodecRegistry
-//                ))
-//                .build();
-//        mongoClient = MongoClients.create(settings);
-//        return mongoClient;
-//    }
 
     public AbstractMongoRepositoryConfig() {
         initDbConnection();

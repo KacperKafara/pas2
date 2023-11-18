@@ -10,40 +10,35 @@ import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public abstract class User {
     @BsonId
-    private UUID id;
+    protected UUID id;
+
     @NotNull
     @NotBlank
     @BsonProperty("username")
-    private String username;
-    @NotNull
-    @BsonProperty("user_type")
-    private UserType userType;
+    protected String username;
 
     @BsonProperty("active")
-    private boolean active;
-
+    protected boolean active;
 
     @BsonCreator
     public User(@BsonId UUID id,
                 @BsonProperty("username") String username,
-                @BsonProperty("userType") UserType userType,
                 @BsonProperty("active") boolean active) {
+        this.id = id;
         this.username = username;
-        this.userType = userType;
         this.active = active;
     }
 
-
-    public User(String username, UserType userType, boolean active) {
+    public User(String username, boolean active) {
         this.username = username;
-        this.userType = userType;
         this.active = active;
     }
 

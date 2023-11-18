@@ -3,8 +3,10 @@ package p.lodz.pl.pas2.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import p.lodz.pl.pas2.exceptions.MovieException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.repositories.Implementations.MovieRepositoryImplementation;
 import p.lodz.pl.pas2.repositories.Implementations.RentRepositoryImplementation;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
@@ -28,25 +30,31 @@ public class MovieService {
     }
 
     public Movie getMovie(UUID id) {
-        return movieRepository.findMovie(id);
+        Movie movie = movieRepository.findMovie(id);
+        if(movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        return movie;
     }
 
     public List<Movie> getMovies() {
-        return movieRepository.findMovies();
+        List<Movie> movies = movieRepository.findMovies();
+        if(movies.isEmpty()) throw new MovieException(MovieMsg.MOVIES_NOT_FOUND);
+        return movies;
     }
 
     public Movie addMovie(Movie movie) {
         return movieRepository.saveMovie(movie);
     }
 
-    public Movie updateMovie(UUID id, Movie movie) {
-        return movieRepository.updateMovie(id, movie);
+    public Movie updateMovie(UUID id, Movie updatedMovie) {
+        Movie movie = movieRepository.findMovie(id);
+        if(movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        return movieRepository.updateMovie(id, updatedMovie);
     }
 
     public boolean deleteMovie(UUID id) {
         List<Rent> rents = rentRepository.findCurrentRents();
         for(Rent rent : rents) {
-            if(rent.getMovie().getId() == id) return false;
+            if(rent.getMovie().getId() == id) throw new MovieException(MovieMsg.MOVIE_IS_RENTED);
         }
         return movieRepository.deleteMovie(id);
     }
