@@ -10,6 +10,7 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -41,6 +42,11 @@ public class UserController {
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
+    }
+
+    @PatchMapping("/id/{id}")
+    public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
     }
 
     @ExceptionHandler(UserNotFoundException.class)

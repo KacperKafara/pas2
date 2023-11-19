@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.request.ClientRequest;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.Map;
@@ -23,17 +24,12 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@Valid @RequestBody Client user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
-    }
-
-    @PatchMapping("/id/{id}")
-    public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
+    public ResponseEntity<User> addUser(@Valid @RequestBody ClientRequest user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
     }
 
     @PutMapping("/id/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody Client user) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody ClientRequest user) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
     }
 }

@@ -14,11 +14,9 @@ public class MovieRequest {
 
     @NotBlank
     @NotNull
-    @BsonProperty("title")
     private String title;
 
     @NotNull
     @Min(0)
-    @BsonProperty("cost")
     private double cost;
 }

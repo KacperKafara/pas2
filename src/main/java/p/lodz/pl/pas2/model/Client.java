@@ -13,13 +13,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Client extends User {
+
     @BsonProperty("firstname")
-    @NotNull
-    @NotBlank
     private String firstName;
 
-    @NotNull
-    @NotBlank
     @BsonProperty("lastname")
     private String lastName;
     public Client(){}
