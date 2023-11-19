@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class UserController {
         List<User> usersList = userService.getUsers();
         return usersList != null
                 ? ResponseEntity.status(HttpStatus.OK).body(usersList)
-                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no user with given username");
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserMsg.USER_WITH_GIVEN_USERNAME_NOT_FOUND);
     }
 
 //    @GetMapping("/{pattern}")
@@ -62,7 +63,7 @@ public class UserController {
 //        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
 //    }
 
-    @PatchMapping("/id/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
     }
