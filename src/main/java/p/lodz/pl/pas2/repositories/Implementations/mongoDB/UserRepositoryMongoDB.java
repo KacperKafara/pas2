@@ -64,4 +64,9 @@ public class UserRepositoryMongoDB implements UserRepository {
                 Updates.set("active", user.isActive())
         ));
     }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userMongoCollection.countDocuments(Filters.eq("username", username)) > 0;
+    }
 }

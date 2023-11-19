@@ -10,8 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.RentController;
-import p.lodz.pl.pas2.exceptions.RentNotExistException;
-import p.lodz.pl.pas2.exceptions.RentalStillOngoingException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentalStillOngoingException;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
@@ -158,7 +158,7 @@ public class RentControllerTest {
 
         Mockito.when(rentService.deleteRent(rentId))
                 .thenThrow(new RentalStillOngoingException(RentMsg.RENT_NOT_ENDED))
-                .thenThrow(new RentNotExistException(RentMsg.RENT_NOT_FOUND));
+                .thenThrow(new RentNotFoundException(RentMsg.RENT_NOT_FOUND));
         mockMvc.perform(delete("/api/v1/rents/id/{id}", rentId))
                 .andExpect(status().isLocked());
 

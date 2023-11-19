@@ -21,12 +21,9 @@ public class AppConfig {
             movieService.addMovie(new Movie("saw II", 20));
             movieService.addMovie(new Movie("saw III", 30));
             movieService.addMovie(new Movie("Saw IV", 14));
-            User user1 = new Moderator("Maciek", true);
-            User user2 = new Administrator("Jacek", false);
-            User user3 = new Client("Kuba", false, "Kuba", "Aaa");
-            userService.addUser(user1);
-            userService.addUser(user2);
-            userService.addUser(user3);
+            userService.addUser(new Moderator("Maciek", true));
+            userService.addUser(new Administrator("Jacek", true));
+            userService.addUser(new Client("Kuba", false, "Kuba", "Aaa"));
             rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
             rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
             rentService.addRent(new Rent(userService.getUser("Jacek"), movieService.getMovies().get(2)));

@@ -3,14 +3,13 @@ package p.lodz.pl.pas2.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import p.lodz.pl.pas2.exceptions.MovieException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.msg.MovieMsg;
-import p.lodz.pl.pas2.repositories.Implementations.MovieRepositoryImplementation;
-import p.lodz.pl.pas2.repositories.Implementations.RentRepositoryImplementation;
-import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
-import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
@@ -31,13 +30,13 @@ public class MovieService {
 
     public Movie getMovie(UUID id) {
         Movie movie = movieRepository.findMovie(id);
-        if(movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        if(movie == null) throw new MovieNotFoundException(MovieMsg.MOVIE_NOT_FOUND);
         return movie;
     }
 
     public List<Movie> getMovies() {
         List<Movie> movies = movieRepository.findMovies();
-        if(movies.isEmpty()) throw new MovieException(MovieMsg.MOVIES_NOT_FOUND);
+        if(movies.isEmpty()) throw new MoviesNotFoundException(MovieMsg.MOVIES_NOT_FOUND);
         return movies;
     }
 
@@ -47,14 +46,14 @@ public class MovieService {
 
     public Movie updateMovie(UUID id, Movie updatedMovie) {
         Movie movie = movieRepository.findMovie(id);
-        if(movie == null) throw new MovieException(MovieMsg.MOVIE_NOT_FOUND);
+        if(movie == null) throw new ThereIsNoSuchMovieToUpdateException(MovieMsg.MOVIE_NOT_FOUND);
         return movieRepository.updateMovie(id, updatedMovie);
     }
 
     public boolean deleteMovie(UUID id) {
         List<Rent> rents = rentRepository.findCurrentRents();
         for(Rent rent : rents) {
-            if(rent.getMovie().getId() == id) throw new MovieException(MovieMsg.MOVIE_IS_RENTED);
+            if(rent.getMovie().getId() == id) throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
         }
         return movieRepository.deleteMovie(id);
     }

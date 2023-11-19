@@ -73,4 +73,9 @@ public class UserRepositoryImplementation implements UserRepository {
         updatedUser.setActive(user.isActive());
         return updatedUser;
     }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return this.findUser(username) != null;
+    }
 }
