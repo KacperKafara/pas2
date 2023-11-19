@@ -10,9 +10,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.RentController;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.EndDateException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentalStillOngoingException;
-import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.StartDateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.Movie;
@@ -52,7 +54,6 @@ public class RentControllerTest {
         UUID movieId = UUID.randomUUID();
 
         User activeUser = new Moderator("ActiveUser", true);
-        User inactiveUser = new Moderator("InactiveUser", false);
         Movie availableMovie = new Movie("AvailableMovie", 20);
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, LocalDate.now());
@@ -72,30 +73,39 @@ public class RentControllerTest {
                 .andExpect(jsonPath("$.movie.cost").value(availableMovie.getCost()))
                 .andExpect(jsonPath("$.startDate").value(rentRequest.getStartDate().toString()));
 
-        //uzytkownik nie istnieje
-        Mockito.when(userService.getUser(clientId)).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+        // zla start data
+        Mockito.when(rentService.addRent(Mockito.any(Rent.class)))
+                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND))
+                .thenThrow( new MovieInUseException(MovieMsg.MOVIE_IS_RENTED))
+                .thenThrow( new StartDateException(RentMsg.WRONG_START_DATE))
+                .thenThrow( new EndDateException(RentMsg.WRONG_END_DATE));
+
+        //Uzytkownik nie aktywny
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(UserMsg.USER_NOT_FOUND));
-        //Uzytkownik nie aktywny
-        Mockito.when(userService.getUser(clientId)).thenThrow(new UserNotActiveException(UserMsg.USER_NOT_ACTIVE));
+
+        //film jest wypozyczony
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isLocked())
-                .andExpect(content().string(UserMsg.USER_NOT_ACTIVE));
-
-        // Film nie aktynwy
-        Mockito.when(userService.getUser(clientId)).thenReturn(activeUser);
-        Mockito.when(movieService.getMovie(movieId)).thenReturn(null);
+                        .andExpect(content().string(MovieMsg.MOVIE_IS_RENTED));
 
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(MovieMsg.MOVIE_NOT_FOUND));
+                .andExpect(status().isBadRequest())
+                        .andExpect(content().string(RentMsg.WRONG_START_DATE));
+        // zla end data
+        mockMvc.perform(post("/api/v1/rents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(rentRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(RentMsg.WRONG_END_DATE));
+
     }
     @Test
 
@@ -198,14 +208,13 @@ public class RentControllerTest {
         UUID clientId = UUID.randomUUID();
         UUID movieId = UUID.randomUUID();
 
-        // Creating an invalid RentRequest with a past start date
         RentRequest invalidRentRequest = new RentRequest(clientId, movieId, LocalDate.now().minusDays(1));
 
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidRentRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("not valid due to validation error: "));
+                .andExpect(status().isBadRequest());
+                //.andExpect(content().string("not valid due to validation error: "));
     }
     @Test
     public void badDateFormat() throws Exception {

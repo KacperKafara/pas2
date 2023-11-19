@@ -74,7 +74,6 @@ public class MovieControllerTest {
 
         Mockito.when(movieService.updateMovie(Mockito.any(),Mockito.any(Movie.class))).thenThrow(new ThereIsNoSuchMovieToUpdateException(MovieMsg.MOVIE_NOT_FOUND));
         mockMvc.perform(put("/api/v1/movies/{id}",movieId)
-
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(movie)))
                 .andExpect(status().isNotFound());
@@ -95,6 +94,14 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.id").value(movie.getId()));
 
     }
+    @Test
+    public void addMovieButTitleBlank() throws Exception {
+        Movie movie = new Movie("", 25);
+        mockMvc.perform(post("/api/v1/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(movie)))
+                .andExpect(status().isBadRequest());
+    }
 
 
     @Test
@@ -112,7 +119,6 @@ public class MovieControllerTest {
 
     }
 
-    // Helper method to convert objects to JSON format
     private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);

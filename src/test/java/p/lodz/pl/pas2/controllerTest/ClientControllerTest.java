@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.ClientController;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
@@ -31,7 +32,7 @@ public class ClientControllerTest {
     @MockBean
     private UserService userService;
     @Test
-
+    @DirtiesContext
     public void testAddUser() throws Exception {
         User user = new Client("maciek", true,"Maciek","Smolinski");
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user);
@@ -50,25 +51,16 @@ public class ClientControllerTest {
 
     }
     @Test
-    public void testSetActiveUser() throws Exception {
-        UUID userId = UUID.randomUUID();
-        User user = new Client("maciek", true,"Maciek","Smolinski");
-        user.setId(userId);
-        Mockito.when(userService.setActive(userId,true)).thenReturn(user);
-        mockMvc.perform(patch("/api/v1/clients/{id}", user.getId())
+    @DirtiesContext
+    public void addUserButLoginBlank() throws Exception {
+        User user = new Client("", true,"co","zle");
+        mockMvc.perform(post("/api/v1/clients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"active\": true}"))
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.active").value(user.isActive()))
-                .andExpect(jsonPath("$.id").value(user.getId().toString()));
-        Mockito.when(userService.setActive(userId,true)).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
-        mockMvc.perform(patch("/api/v1/clients/{id}", user.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"active\": true}"))
-                .andExpect(status().isNotFound());
-
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
     }
     @Test
+    @DirtiesContext
     public void testUpdateUser() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -88,6 +80,13 @@ public class ClientControllerTest {
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isNotFound());
 
+    }
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

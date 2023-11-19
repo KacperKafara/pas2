@@ -14,6 +14,7 @@ import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -52,8 +53,10 @@ public class MovieService {
 
     public boolean deleteMovie(UUID id) {
         List<Rent> rents = rentRepository.findCurrentRents();
+        Movie movie = movieRepository.findMovie(id);
+        if (movie == null) throw new MovieNotFoundException(MovieMsg.MOVIE_NOT_FOUND);
         for(Rent rent : rents) {
-            if(rent.getMovie().getId() == id) throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
+            if(Objects.equals(rent.getMovie().getId().toString(), id.toString())) throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
         }
         return movieRepository.deleteMovie(id);
     }

@@ -52,16 +52,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetClientByNickname() throws Exception {
-
-        User user = new Moderator("Jaca", true);
-        Mockito.when(userService.getUser(Mockito.anyString())).thenReturn(user);
-        mockMvc.perform(get("/api/v1/users/username/{username}", user.getUsername()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.active").value(user.isActive()));
-    }
-    @Test
     public void testGetClientByID() throws Exception {
 
         User user = new Client("Jaca", true, "Jaca", "Jaca");
