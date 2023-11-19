@@ -27,7 +27,7 @@ import java.util.List;
 public class ExceptionHandlingController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: " + e.getFieldErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler(DateTimeParseException.class)

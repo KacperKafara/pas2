@@ -12,11 +12,11 @@ import p.lodz.pl.pas2.model.Movie;
 @Getter
 public class MovieRequest {
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "title cannot be empty")
+    @NotNull(message = "title not given")
     private String title;
 
-    @NotNull
-    @Min(0)
+    @NotNull(message = "cost not given")
+    @Min(value = 0, message = "cost cannot be less than 0")
     private double cost;
 }

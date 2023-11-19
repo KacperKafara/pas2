@@ -6,8 +6,8 @@ import lombok.Getter;
 
 @Getter
 public abstract class UserRequest {
-    @NotNull
-    @NotBlank
+    @NotNull(message = "username not given")
+    @NotBlank(message = "username cannot be empty")
     protected String username;
     protected boolean active;
 
