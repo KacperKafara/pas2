@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.RentController;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentalStillOngoingException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
@@ -71,14 +73,14 @@ public class RentControllerTest {
                 .andExpect(jsonPath("$.startDate").value(rentRequest.getStartDate().toString()));
 
         //uzytkownik nie istnieje
-        Mockito.when(userService.getUser(clientId)).thenReturn(null);
+        Mockito.when(userService.getUser(clientId)).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(UserMsg.USER_NOT_FOUND));
         //Uzytkownik nie aktywny
-        Mockito.when(userService.getUser(clientId)).thenReturn(inactiveUser);
+        Mockito.when(userService.getUser(clientId)).thenThrow(new UserNotActiveException(UserMsg.USER_NOT_ACTIVE));
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))

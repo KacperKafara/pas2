@@ -46,7 +46,7 @@ public class ClientControllerTest {
         mockMvc.perform(post("/api/v1/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
 
     }
     @Test
