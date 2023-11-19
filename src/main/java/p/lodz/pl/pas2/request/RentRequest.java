@@ -36,8 +36,4 @@ public class RentRequest {
         this.movieID = movieID;
         this.startDate = startDate;
     }
-
-    public static Rent rentRequestToRent(User user, Movie movie, LocalDate startDate) {
-        return new Rent(user, movie, startDate);
-    }
 }

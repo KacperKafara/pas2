@@ -6,13 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.*;
-import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.EndDateException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentalStillOngoingException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentsNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.msg.MovieMsg;
-import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -41,78 +44,33 @@ public class RentController {
 
     //todo przypadek nieprawidłowej daty np startDate=abcde
     @PostMapping
-    public ResponseEntity<?> addRent(@Valid @RequestBody RentRequest rentRequest) {
-        User user = userService.getUser(rentRequest.getClientID());
-        Movie movie = movieService.getMovie(rentRequest.getMovieID());
-        if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(UserMsg.USER_NOT_FOUND);
-        if(movie == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MovieMsg.MOVIE_NOT_FOUND);
-        if(!user.isActive()) return ResponseEntity.status(HttpStatus.LOCKED).body(UserMsg.USER_NOT_ACTIVE);
-        Rent rent = RentRequest.rentRequestToRent(userService.getUser(rentRequest.getClientID()),
+    public ResponseEntity<Rent> addRent(@Valid @RequestBody RentRequest rentRequest) {
+        Rent rent = new Rent(userService.getUser(rentRequest.getClientID()),
                 movieService.getMovie(rentRequest.getMovieID()),
                 rentRequest.getStartDate());
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(rentService.addRent(rent));
-        } catch (EndDateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (MovieException e) {
-            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
-        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(rentService.addRent(rent));
     }
 
     @GetMapping("/current")
     public ResponseEntity<List<Rent>> getCurrentRents() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRents());
-        } catch (RentsNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRents());
     }
 
     @GetMapping("/past")
     public ResponseEntity<List<Rent>> getPastRents() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
-        } catch (RentsNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<?> deleteRent(@PathVariable UUID id) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.deleteRent(id));
-        } catch (RentNotExistException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (RentalStillOngoingException e) {
-            return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
-        }
+    public ResponseEntity<Boolean> deleteRent(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(rentService.deleteRent(id));
     }
 
     @PatchMapping("/id/{id}")
-    public ResponseEntity<?> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
+    public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
         LocalDate endDateParsed = LocalDate.parse(endDate.get("endDate"));
-//        try {
-//            endDateParsed = LocalDate.parse(endDate.get("endDate"));
-//        } catch (DateTimeParseException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid date");
-//        }
-        try {
-            Rent updatedRent = rentService.setEndTime(id, endDateParsed);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
-        } catch (EndDateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: ");
-    }
-
-    @ExceptionHandler(DateTimeParseException.class)
-    ResponseEntity<String> handleConstraintViolationException(DateTimeParseException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect date format");
-
+        Rent updatedRent = rentService.setEndTime(id, endDateParsed);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
     }
 }

@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.UserNotFoundException;
-import p.lodz.pl.pas2.exceptions.UsernameInUseException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.services.UserService;
 

@@ -21,8 +21,4 @@ public class MovieRequest {
     @Min(0)
     @BsonProperty("cost")
     private double cost;
-
-    public static Movie movieRequestToMovie(MovieRequest movie) {
-        return new Movie(movie.getTitle(), movie.getCost());
-    }
 }

@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.UserNotFoundException;
-import p.lodz.pl.pas2.exceptions.UsernameInUseException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.services.UserService;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/clients")
+@RequestMapping("api/v1/administrators")
 public class AdministratorController {
 
     private final UserService userService;
