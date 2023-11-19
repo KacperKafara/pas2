@@ -3,7 +3,6 @@ package p.lodz.pl.pas2.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.User;
@@ -52,16 +51,6 @@ public class UserController {
                 ? ResponseEntity.status(HttpStatus.OK).body(usersList)
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserMsg.USER_WITH_GIVEN_USERNAME_NOT_FOUND);
     }
-
-//    @GetMapping("/{pattern}")
-//    public ResponseEntity<List<User>> getUsers(@PathVariable String pattern) {
-//        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersByPattern(pattern));
-//    }
-
-//    @GetMapping("/username/{username}")
-//    public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
-//        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
-//    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {

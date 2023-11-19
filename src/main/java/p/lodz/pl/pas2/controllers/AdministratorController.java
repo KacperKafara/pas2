@@ -4,16 +4,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
-import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.request.AdministratorRequest;
 import p.lodz.pl.pas2.services.UserService;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -28,35 +24,12 @@ public class AdministratorController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addUser(@Valid @RequestBody Administrator user) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
-        } catch (UsernameInUseException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<User> addUser(@Valid @RequestBody AdministratorRequest user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(new Administrator(user.getUsername(), user.isActive())));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable UUID id,@Valid @RequestBody Administrator user) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<User> updateUser(@PathVariable UUID id,@Valid @RequestBody AdministratorRequest user) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Administrator(user.getUsername(), user.isActive())));
     }
 }
