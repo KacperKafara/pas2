@@ -2,6 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class UserRepositoryMongoDB implements UserRepository {
     private final MongoCollection<User> userMongoCollection;
 
     //    @Autowired
-    public UserRepositoryMongoDB(AbstractMongoRepositoryConfig mongoRepo) {
-        this.userMongoCollection = mongoRepo.getDatabase().getCollection("users", User.class);
+    public UserRepositoryMongoDB(MongoDatabase mongoRepo) {
+        this.userMongoCollection = mongoRepo.getCollection("users", User.class);
     }
 
     @Override

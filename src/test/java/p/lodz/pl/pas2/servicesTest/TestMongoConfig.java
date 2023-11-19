@@ -17,30 +17,36 @@ import org.springframework.context.annotation.Profile;
 import p.lodz.pl.pas2.CustomCodecProvider;
 import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 
+import java.io.Closeable;
 import java.util.List;
 
 @Configuration
 @Profile("test")
-public class TestMongoConfig  {
-    MongoDatabase database;
-    TestMongoConfig(){
-        initDbConnection();
-    }
-    protected void initDbConnection() {
-        ConnectionString testConnectionString = new ConnectionString(
-                "mongodb://localhost:27017,localhost:27018,localhost:27019/test_pas?replicaSet=replica_set_test"
-        );
-        CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
-                .automatic(true)
-                .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
-                .build());
-        MongoCredential testCredential = MongoCredential.createCredential("admin",
-                "adminpassword", "adminpassword".toCharArray());
+public class TestMongoConfig implements Closeable {
+    private MongoClient mongoClient;
+    private MongoDatabase database;
 
-        MongoClientSettings testSettings = MongoClientSettings.builder()
+    ConnectionString connectionString = new ConnectionString(
+            "mongodb://localhost:27017/pas?replicaSet=replica_set_single"
+    );
+    MongoCredential credential = MongoCredential.createCredential("admin",
+            "admin", "adminpassword".toCharArray());
+    CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder()
+            .automatic(true)
+            .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
+            .build());
+
+    @Bean
+    public MongoDatabase getdataBase(){
+        return database;
+    }
+
+    private void initDbConnection() {
+        MongoClientSettings settings = MongoClientSettings.builder()
                 .uuidRepresentation(UuidRepresentation.STANDARD)
-                .applyConnectionString(testConnectionString)
-                .credential(testCredential)
+                .applyConnectionString(connectionString)
+                .credential(credential)
+                .uuidRepresentation(UuidRepresentation.STANDARD)
                 .codecRegistry(CodecRegistries.fromRegistries(
                         CodecRegistries.fromProviders(new CustomCodecProvider()),
                         MongoClientSettings.getDefaultCodecRegistry(),
@@ -48,11 +54,17 @@ public class TestMongoConfig  {
                 ))
                 .build();
 
-        MongoClient mongoClient = MongoClients.create(testSettings);
-          database = mongoClient.getDatabase("test_pas");
+        mongoClient = MongoClients.create(settings);
+        database = mongoClient.getDatabase("pas");
     }
-    /*@Bean
-    MongoDatabase getDatabase() {
-        return database;
-    } */
+
+    public TestMongoConfig() {
+        initDbConnection();
+    }
+
+    @Override
+    public void close() {
+        database.drop();
+        mongoClient.close();
+    }
 }

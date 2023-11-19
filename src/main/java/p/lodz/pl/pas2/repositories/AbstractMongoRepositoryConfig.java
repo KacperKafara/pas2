@@ -37,6 +37,10 @@ public class AbstractMongoRepositoryConfig implements Closeable {
             .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
             .build());
 
+    @Bean
+    public MongoDatabase getdataBase(){
+        return database;
+    }
 
     private void initDbConnection() {
         MongoClientSettings settings = MongoClientSettings.builder()
