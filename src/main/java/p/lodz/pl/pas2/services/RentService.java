@@ -53,13 +53,13 @@ public class RentService {
 
     public List<Rent> getCurrentRents() {
         List<Rent> rents = repository.findCurrentRents();
-        if(rents.isEmpty()) throw new RentsNotFoundException();
+        if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
         return repository.findCurrentRents();
     }
 
     public List<Rent> getPastRents() {
         List<Rent> rents = repository.findPastRents();
-        if(rents.isEmpty()) throw new RentsNotFoundException();
+        if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
         return repository.findPastRents();
     }
 }
