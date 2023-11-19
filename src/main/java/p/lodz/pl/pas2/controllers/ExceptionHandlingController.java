@@ -9,12 +9,10 @@ import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.EndDateException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.RentalStillOngoingException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.RentsNotFoundException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Movie;
 
 import java.time.format.DateTimeParseException;
@@ -58,6 +56,10 @@ public class ExceptionHandlingController {
     ResponseEntity<String> handleEndDateException(EndDateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+    @ExceptionHandler(StartDateException.class)
+    ResponseEntity<String> handleEndDateException(StartDateException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
     @ExceptionHandler(RentsNotFoundException.class)
     ResponseEntity<List<?>> handleRentsNotFoundException(RentsNotFoundException e) {
@@ -77,6 +79,10 @@ public class ExceptionHandlingController {
     @ExceptionHandler(UserNotFoundException.class)
     ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+    @ExceptionHandler(UsernameInUseException.class)
+    ResponseEntity<String> UsernameInUseExceptionException(UsernameInUseException e) {
+        return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
     }
 
     @ExceptionHandler(UserNotActiveException.class)

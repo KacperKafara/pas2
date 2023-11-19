@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import p.lodz.pl.pas2.exceptions.UserNotFoundException;
-import p.lodz.pl.pas2.exceptions.UsernameInUseException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.UserMsg;
@@ -75,14 +75,17 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void getUsersByPattern() {
-        User user2 = new Administrator("John", false);
+        User user2 = new Administrator("Bartek", false);
         userService.addUser(user2);
         List<User> users = new ArrayList<>();
         users.add(user);
         users.add(user2);
-        assertThat(userService.getUsersByPattern("Bar").size()).isEqualTo(1);
-        assertThat(userService.getUsersByPattern("John").size()).isEqualTo(1);
-        assertThat(userService.getUsersByPattern("xyz").size()).isEqualTo(0);
+        assertThat(userService.getUsersByPattern("Bar").size()).isEqualTo(2);
+        assertThat(userService.getUsersByPattern("Bart").size()).isEqualTo(2);
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+            userService.getUsersByPattern("xyz");
+        });
+        assertEquals(UserMsg.USERS_NOT_FOUND, exception.getMessage());
     }
 
     @Test

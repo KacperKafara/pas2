@@ -12,8 +12,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import p.lodz.pl.pas2.exceptions.MovieException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
@@ -65,7 +67,7 @@ public class MovieServiceTest {
     @DirtiesContext
     public void getMovieByIdAndMovieNotExisted() {
         UUID nonExistentMovieId = UUID.randomUUID();
-        MovieException exception = assertThrows(MovieException.class, () -> {
+        MovieNotFoundException exception = assertThrows(MovieNotFoundException.class, () -> {
             movieService.getMovie(nonExistentMovieId);
         });
         assertEquals(MovieMsg.MOVIE_NOT_FOUND, exception.getMessage());
@@ -88,7 +90,7 @@ public class MovieServiceTest {
     @DirtiesContext
     public void getMoviesAndListIsEmpty(){
         movieService.deleteMovie(movieId);
-        MovieException exception = assertThrows(MovieException.class, () -> {
+        MoviesNotFoundException exception = assertThrows(MoviesNotFoundException.class, () -> {
             movieService.getMovies();
         });
         assertEquals(MovieMsg.MOVIES_NOT_FOUND, exception.getMessage());
@@ -106,7 +108,7 @@ public class MovieServiceTest {
     public void updateMovieAndMovieNotExisted(){
         UUID nonExistentMovieId = UUID.randomUUID();
         Movie movie2 = new Movie("test2",32);
-        MovieException exception = assertThrows(MovieException.class, () -> {
+        ThereIsNoSuchMovieToUpdateException exception = assertThrows(ThereIsNoSuchMovieToUpdateException.class, () -> {
             movieService.updateMovie(nonExistentMovieId,movie2);
         });
         assertEquals(MovieMsg.MOVIE_NOT_FOUND, exception.getMessage());
@@ -117,9 +119,7 @@ public class MovieServiceTest {
     public void deleteMovieButMovieIsRented(){
         User user = new Administrator( UUID.randomUUID(),"Bartosz",true);
         rentService.addRent(new Rent(user,movie, LocalDate.now()));
-        System.out.println("przed funkcja movieId"+movie.getId());
-        System.out.println("przed funkcja w rent "+rentService.getCurrentRents().get(0).getMovie().getId());
-        MovieException exception = assertThrows(MovieException.class, () -> {
+        MovieInUseException exception = assertThrows(MovieInUseException.class, () -> {
             movieService.deleteMovie(movie.getId());
         });
         assertEquals(MovieMsg.MOVIE_IS_RENTED, exception.getMessage());
@@ -129,7 +129,7 @@ public class MovieServiceTest {
     @DirtiesContext
     public void deleteMovieAndMovieNotExisted(){
         UUID nonExistentMovieId = UUID.randomUUID();
-        MovieException exception = assertThrows(MovieException.class, () -> {
+        MovieNotFoundException exception = assertThrows(MovieNotFoundException.class, () -> {
             movieService.deleteMovie(nonExistentMovieId);
         });
         assertEquals(MovieMsg.MOVIE_NOT_FOUND, exception.getMessage());

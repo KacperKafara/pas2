@@ -9,7 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.MovieController;
+import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.services.MovieService;
 
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.cost").value(movie.getCost()))
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()));
 
-        Mockito.when(movieService.updateMovie(Mockito.any(),Mockito.any(Movie.class))).thenReturn(null);
+        Mockito.when(movieService.updateMovie(Mockito.any(),Mockito.any(Movie.class))).thenThrow(new ThereIsNoSuchMovieToUpdateException(MovieMsg.MOVIE_NOT_FOUND));
         mockMvc.perform(put("/api/v1/movies/id/{id}",movieId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(movie)))
@@ -92,6 +94,14 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.id").value(movie.getId()));
 
     }
+    @Test
+    public void addMovieButTitleBlank() throws Exception {
+        Movie movie = new Movie("", 25);
+        mockMvc.perform(post("/api/v1/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(movie)))
+                .andExpect(status().isBadRequest());
+    }
 
 
     @Test
@@ -109,7 +119,6 @@ public class MovieControllerTest {
 
     }
 
-    // Helper method to convert objects to JSON format
     private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);

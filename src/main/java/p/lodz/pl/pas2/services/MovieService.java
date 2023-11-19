@@ -14,6 +14,7 @@ import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
