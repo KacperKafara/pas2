@@ -40,17 +40,17 @@ public class AdministratorControllerTest {
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user1)
                 .thenThrow(new UsernameInUseException(UserMsg.USERNAME_IN_USE));
         ObjectMapper objectMapper= new ObjectMapper();
-        mockMvc.perform(post("/api/v1/clients")
+        mockMvc.perform(post("/api/v1/administrators")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()));
 
-        mockMvc.perform(post("/api/v1/clients")
+        mockMvc.perform(post("/api/v1/administrators")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isLocked());
+                .andExpect(status().isConflict());
 
     }
 
@@ -65,14 +65,14 @@ public class AdministratorControllerTest {
 
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user2)
                 .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
-        mockMvc.perform(put("/api/v1/clients/id/{id}", id)
+        mockMvc.perform(put("/api/v1/administrators/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-        mockMvc.perform(put("/api/v1/clients/id/{id}", user2.getId())
+        mockMvc.perform(put("/api/v1/administrators/{id}", user2.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isNotFound());

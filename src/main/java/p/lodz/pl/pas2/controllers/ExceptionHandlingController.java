@@ -14,6 +14,7 @@ import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.model.Rent;
 
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -26,13 +27,18 @@ public class ExceptionHandlingController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: " + e.getMessage());
     }
 
+    @ExceptionHandler(DateTimeParseException.class)
+    ResponseEntity<String> handleConstraintViolationException(DateTimeParseException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect date format");
+    }
+
     @ExceptionHandler(MovieNotFoundException.class)
     ResponseEntity<Movie> handleMovieNotFoundException(MovieNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     @ExceptionHandler(MoviesNotFoundException.class)
-    ResponseEntity<?> handleMoviesNotFoundException(MoviesNotFoundException e) {
+    ResponseEntity<List<Movie>> handleMoviesNotFoundException(MoviesNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
     }
 
@@ -46,12 +52,6 @@ public class ExceptionHandlingController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(DateTimeParseException.class)
-    ResponseEntity<String> handleConstraintViolationException(DateTimeParseException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect date format");
-
-    }
-
     @ExceptionHandler(EndDateException.class)
     ResponseEntity<String> handleEndDateException(EndDateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -62,7 +62,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(RentsNotFoundException.class)
-    ResponseEntity<List<?>> handleRentsNotFoundException(RentsNotFoundException e) {
+    ResponseEntity<List<Rent>> handleRentsNotFoundException(RentsNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
     }
 
@@ -80,13 +80,15 @@ public class ExceptionHandlingController {
     ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
-    @ExceptionHandler(UsernameInUseException.class)
-    ResponseEntity<String> UsernameInUseExceptionException(UsernameInUseException e) {
-        return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
-    }
+
 
     @ExceptionHandler(UserNotActiveException.class)
     ResponseEntity<String> handleUserNotActiveException(UserNotActiveException e) {
         return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UsernameInUseException.class)
+    ResponseEntity<String> handleUsernameInUseException(UsernameInUseException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 }

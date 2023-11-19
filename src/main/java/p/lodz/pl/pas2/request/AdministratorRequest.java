@@ -5,3 +5,4 @@ public class AdministratorRequest extends UserRequest {
         super(username, active);
     }
 }
+

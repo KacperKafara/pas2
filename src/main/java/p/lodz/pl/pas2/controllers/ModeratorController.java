@@ -13,7 +13,7 @@ import p.lodz.pl.pas2.services.UserService;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/clients")
+@RequestMapping("api/v1/moderators")
 public class ModeratorController {
 
     private final UserService userService;
@@ -28,7 +28,7 @@ public class ModeratorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(new Moderator(user.getUsername(), user.isActive())));
     }
 
-    @PutMapping("/id/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody ModeratorRequest user) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Moderator(user.getUsername(), user.isActive())));
     }

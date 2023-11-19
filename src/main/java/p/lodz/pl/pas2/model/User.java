@@ -20,8 +20,6 @@ public abstract class User {
     @BsonId
     protected UUID id;
 
-    @NotNull
-    @NotBlank
     @BsonProperty("username")
     protected String username;
 

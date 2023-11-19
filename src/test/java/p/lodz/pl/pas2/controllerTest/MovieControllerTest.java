@@ -54,7 +54,7 @@ public class MovieControllerTest {
         Movie movie = new Movie("testMovie", 50);
         Mockito.when(movieService.getMovie(movieId)).thenReturn(movie);
 
-        mockMvc.perform(get("/api/v1/movies/id/{id}", movieId))
+        mockMvc.perform(get("/api/v1/movies/{id}", movieId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.cost").value(movie.getCost()));
@@ -65,7 +65,7 @@ public class MovieControllerTest {
         Movie movie = new Movie("testMovie", 50);
         movie.setId(movieId);
         Mockito.when(movieService.updateMovie(Mockito.any(),Mockito.any(Movie.class))).thenReturn(movie);
-        mockMvc.perform(put("/api/v1/movies/id/{id}",movieId)
+        mockMvc.perform(put("/api/v1/movies/{id}",movieId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(movie)))
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
@@ -73,7 +73,7 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()));
 
         Mockito.when(movieService.updateMovie(Mockito.any(),Mockito.any(Movie.class))).thenThrow(new ThereIsNoSuchMovieToUpdateException(MovieMsg.MOVIE_NOT_FOUND));
-        mockMvc.perform(put("/api/v1/movies/id/{id}",movieId)
+        mockMvc.perform(put("/api/v1/movies/{id}",movieId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(movie)))
                 .andExpect(status().isNotFound());
@@ -109,12 +109,12 @@ public class MovieControllerTest {
         UUID movieId = UUID.randomUUID();
         Mockito.when(movieService.deleteMovie(movieId)).thenReturn(true);
 
-        mockMvc.perform(delete("/api/v1/movies/id/{id}", movieId))
+        mockMvc.perform(delete("/api/v1/movies/{id}", movieId))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
         Mockito.when(movieService.deleteMovie(movieId)).thenReturn(false);
-        mockMvc.perform(delete("/api/v1/movies/id/{id}", movieId))
+        mockMvc.perform(delete("/api/v1/movies/{id}", movieId))
                 .andExpect(status().isBadRequest());
 
     }

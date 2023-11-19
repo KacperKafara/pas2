@@ -4,17 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.request.MovieRequest;
 import p.lodz.pl.pas2.services.MovieService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +23,7 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovie(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.getMovie(id));
     }
@@ -45,12 +39,12 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedMovie);
     }
 
-    @PutMapping(value = "/id/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable UUID id, @Valid @RequestBody MovieRequest movie) {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.updateMovie(id, new Movie(movie.getTitle(), movie.getCost())));
     }
 
-    @DeleteMapping("/id/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteMovie(@PathVariable UUID id) {
         boolean deleteStatus = movieService.deleteMovie(id);
         if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);

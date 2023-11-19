@@ -27,7 +27,7 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
     }
 
-    @PutMapping("/id/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody ClientRequest user) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
     }
