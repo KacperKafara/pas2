@@ -56,29 +56,4 @@ public class MovieController {
         if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
         return ResponseEntity.status(HttpStatus.OK).body(true);
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: " + e.getMessage());
-    }
-
-    @ExceptionHandler(MovieNotFoundException.class)
-    ResponseEntity<Movie> handleMovieNotFoundException(MovieNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    @ExceptionHandler(MoviesNotFoundException.class)
-    ResponseEntity<?> handleMoviesNotFoundException(MoviesNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
-    }
-
-    @ExceptionHandler(MovieInUseException.class)
-    ResponseEntity<String> handleMovieInUseException(MovieInUseException e) {
-        return ResponseEntity.status(HttpStatus.LOCKED).body(e.getMessage());
-    }
-
-    @ExceptionHandler(ThereIsNoSuchMovieToUpdateException.class)
-    ResponseEntity<String> handleThereIsNoSuchMovieToUpdateException(ThereIsNoSuchMovieToUpdateException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
 }
