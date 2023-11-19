@@ -29,7 +29,7 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovie(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.getMovie(id));
     }
@@ -45,12 +45,12 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedMovie);
     }
 
-    @PutMapping(value = "/id/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable UUID id, @Valid @RequestBody MovieRequest movie) {
         return ResponseEntity.status(HttpStatus.OK).body(movieService.updateMovie(id, new Movie(movie.getTitle(), movie.getCost())));
     }
 
-    @DeleteMapping("/id/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteMovie(@PathVariable UUID id) {
         boolean deleteStatus = movieService.deleteMovie(id);
         if(!deleteStatus) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);

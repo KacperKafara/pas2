@@ -32,7 +32,7 @@ public class ClientController {
         }
     }
 
-    @PatchMapping("/id/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
@@ -41,7 +41,7 @@ public class ClientController {
         }
     }
 
-    @PutMapping("/id/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable UUID id,@Valid @RequestBody Client user) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));

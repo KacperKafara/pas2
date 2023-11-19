@@ -33,7 +33,7 @@ public class ModeratorController {
         }
     }
 
-    @PatchMapping("/id/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
@@ -42,7 +42,7 @@ public class ModeratorController {
         }
     }
 
-    @PutMapping("/id/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable UUID id,@Valid @RequestBody Moderator user) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));

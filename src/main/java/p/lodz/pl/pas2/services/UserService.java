@@ -42,7 +42,7 @@ public class UserService {
     public List<User> getUsersByPattern(String pattern) {
         List<User> users = repository.findUsersMatchToValue(pattern);
         if(users.isEmpty()) throw new UserNotFoundException(UserMsg.USERS_NOT_FOUND);
-        return repository.findUsers();
+        return users;
     }
 
     public User addUser(User user) {

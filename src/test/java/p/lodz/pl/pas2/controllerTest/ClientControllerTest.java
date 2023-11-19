@@ -55,14 +55,14 @@ public class ClientControllerTest {
         User user = new Client("maciek", true,"Maciek","Smolinski");
         user.setId(userId);
         Mockito.when(userService.setActive(userId,true)).thenReturn(user);
-        mockMvc.perform(patch("/api/v1/clients/id/{id}", user.getId())
+        mockMvc.perform(patch("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"active\": true}"))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").value(user.getId().toString()));
         Mockito.when(userService.setActive(userId,true)).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
-        mockMvc.perform(patch("/api/v1/clients/id/{id}", user.getId())
+        mockMvc.perform(patch("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"active\": true}"))
                 .andExpect(status().isNotFound());
@@ -75,7 +75,7 @@ public class ClientControllerTest {
         User user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski");
         user.setUsername("Nowe");
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user);
-        mockMvc.perform(put("/api/v1/clients/id/{id}", user.getId())
+        mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
@@ -83,7 +83,7 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
-        mockMvc.perform(put("/api/v1/clients/id/{id}", user.getId())
+        mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isNotFound());

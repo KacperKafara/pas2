@@ -3,6 +3,7 @@ package p.lodz.pl.pas2.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Client extends User {
     @BsonProperty("firstname")
     @NotNull
@@ -22,7 +24,7 @@ public class Client extends User {
     @NotBlank
     @BsonProperty("lastname")
     private String lastName;
-    public Client(){}
+
 
     public Client(String username, boolean active, String firstName, String lastName) {
         super(username, active);

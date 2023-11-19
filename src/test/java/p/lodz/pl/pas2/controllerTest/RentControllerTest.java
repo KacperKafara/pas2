@@ -152,17 +152,17 @@ public class RentControllerTest {
 
         Mockito.when(rentService.deleteRent(rentId)).thenReturn(true);
 
-        mockMvc.perform(delete("/api/v1/rents/id/{id}", rentId))
+        mockMvc.perform(delete("/api/v1/rents/{id}", rentId))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
         Mockito.when(rentService.deleteRent(rentId))
                 .thenThrow(new RentalStillOngoingException(RentMsg.RENT_NOT_ENDED))
                 .thenThrow(new RentNotFoundException(RentMsg.RENT_NOT_FOUND));
-        mockMvc.perform(delete("/api/v1/rents/id/{id}", rentId))
+        mockMvc.perform(delete("/api/v1/rents/{id}", rentId))
                 .andExpect(status().isLocked());
 
-        mockMvc.perform(delete("/api/v1/rents/id/{id}", rentId))
+        mockMvc.perform(delete("/api/v1/rents/{id}", rentId))
                 .andExpect(status().isBadRequest());
 
     }
@@ -178,7 +178,7 @@ public class RentControllerTest {
 
         Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent);
 
-        mockMvc.perform(patch("/api/v1/rents/id/{id}", rentId)
+        mockMvc.perform(patch("/api/v1/rents/{id}", rentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(endDateMap)))
                 .andExpect(status().isOk())
@@ -210,7 +210,7 @@ public class RentControllerTest {
         UUID rentId = UUID.randomUUID();
         Map<String, String> invalidEndDateMap = Collections.singletonMap("endDate", "invalid-date");
 
-        mockMvc.perform(patch("/api/v1/rents/id/{id}",rentId)
+        mockMvc.perform(patch("/api/v1/rents/{id}",rentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidEndDateMap)))
                 .andExpect(status().isBadRequest())

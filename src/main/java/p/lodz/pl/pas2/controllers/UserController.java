@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -22,25 +24,42 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> getClientById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
+    public ResponseEntity<?> getUsers(@RequestParam(required = false) String username) {
+        if (Objects.nonNull(username)){
+            try {
+                User user = userService.getUser(username);
+                return ResponseEntity.status(HttpStatus.OK).body(user);
+            } catch (UserNotFoundException e1){
+
+                try {
+                    List<User> users = userService.getUsersByPattern(username);
+                    return ResponseEntity.status(HttpStatus.OK).body(users);
+                }catch (UserNotFoundException ignored){
+
+                }
+            }
+        }
+        List<User> usersList = userService.getUsers();
+        return usersList != null
+                ? ResponseEntity.status(HttpStatus.OK).body(usersList)
+                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no user with given username");
     }
 
-    @GetMapping("/{pattern}")
-    public ResponseEntity<List<User>> getUsers(@PathVariable String pattern) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersByPattern(pattern));
-    }
+//    @GetMapping("/{pattern}")
+//    public ResponseEntity<List<User>> getUsers(@PathVariable String pattern) {
+//        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersByPattern(pattern));
+//    }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
-    }
+//    @GetMapping("/username/{username}")
+//    public ResponseEntity<User> getUserByNickname(@PathVariable String username) {
+//        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

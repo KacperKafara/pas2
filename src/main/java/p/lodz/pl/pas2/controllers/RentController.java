@@ -62,12 +62,12 @@ public class RentController {
         return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
     }
 
-    @DeleteMapping("/id/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteRent(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(rentService.deleteRent(id));
     }
 
-    @PatchMapping("/id/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
         LocalDate endDateParsed = LocalDate.parse(endDate.get("endDate"));
         Rent updatedRent = rentService.setEndTime(id, endDateParsed);
