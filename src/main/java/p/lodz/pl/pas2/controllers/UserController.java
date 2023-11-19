@@ -10,6 +10,7 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -61,9 +62,13 @@ public class UserController {
 //        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(username));
 //    }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    @PatchMapping("/id/{id}")
+    public ResponseEntity<User> setActive(@PathVariable UUID id, @RequestBody Map<String, Boolean> active) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.setActive(id, Boolean.parseBoolean(active.get("active").toString())));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
     }
 }

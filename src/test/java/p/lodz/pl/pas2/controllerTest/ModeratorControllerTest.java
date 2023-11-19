@@ -35,17 +35,17 @@ public class ModeratorControllerTest {
         User user = new Moderator("Maciek", true);
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user);
         ObjectMapper objectMapper= new ObjectMapper();
-        mockMvc.perform(post("/api/v1/clients")
+        mockMvc.perform(post("/api/v1/moderators")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()));
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenThrow(new UsernameInUseException(UserMsg.USERNAME_IN_USE));
-        mockMvc.perform(post("/api/v1/clients")
+        mockMvc.perform(post("/api/v1/moderators")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
 
     }
     @Test
@@ -55,6 +55,7 @@ public class ModeratorControllerTest {
         user.setId(userId);
         Mockito.when(userService.setActive(userId,true)).thenReturn(user);
         mockMvc.perform(patch("/api/v1/clients/{id}", user.getId())
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"active\": true}"))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
@@ -62,6 +63,7 @@ public class ModeratorControllerTest {
                 .andExpect(jsonPath("$.id").value(user.getId().toString()));
         Mockito.when(userService.setActive(userId,true)).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(patch("/api/v1/clients/{id}", user.getId())
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"active\": true}"))
                 .andExpect(status().isNotFound());
@@ -76,6 +78,7 @@ public class ModeratorControllerTest {
         user.setUsername("Nowe");
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user);
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
@@ -84,6 +87,7 @@ public class ModeratorControllerTest {
                 .andExpect(jsonPath("$.id").isNotEmpty());
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
+
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isNotFound());

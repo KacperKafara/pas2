@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Client;
+import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.request.ClientRequest;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.Map;
@@ -49,4 +51,5 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
 }
