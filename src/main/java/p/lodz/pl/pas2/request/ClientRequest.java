@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 public class ClientRequest extends UserRequest {
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "first name not given")
+    @NotBlank(message = "first name cannot be empty")
     private final String firstName;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "last name not given")
+    @NotBlank(message = "last name cannot be empty")
     private final String lastName;
     public ClientRequest(String username, boolean active, String firstName, String lastName) {
         super(username, active);
