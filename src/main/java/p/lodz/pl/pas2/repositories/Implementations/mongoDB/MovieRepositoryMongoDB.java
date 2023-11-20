@@ -4,6 +4,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,9 @@ public class MovieRepositoryMongoDB implements MovieRepository {
     private final MongoCollection<Movie> movieMongoCollection;
 
     @Autowired
-    public MovieRepositoryMongoDB(MongoDatabase mongoRepo) {
-        this.movieMongoCollection = mongoRepo.getCollection("movies", Movie.class);
+    public MovieRepositoryMongoDB(MongoCollection<Movie> movieMongoCollection) {
+        this.movieMongoCollection = movieMongoCollection;
+
     }
 
     @Override

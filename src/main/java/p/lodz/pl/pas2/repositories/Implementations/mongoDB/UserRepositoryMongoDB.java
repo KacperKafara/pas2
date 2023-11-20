@@ -1,14 +1,13 @@
 package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -19,9 +18,10 @@ import java.util.UUID;
 public class UserRepositoryMongoDB implements UserRepository {
     private final MongoCollection<User> userMongoCollection;
 
-    //    @Autowired
-    public UserRepositoryMongoDB(MongoDatabase mongoRepo) {
-        this.userMongoCollection = mongoRepo.getCollection("users", User.class);
+    public UserRepositoryMongoDB(MongoCollection<User> userMongoCollection) {
+        this.userMongoCollection = userMongoCollection;
+        this.userMongoCollection.createIndex(Indexes.ascending("username"),
+                new IndexOptions().unique(true));
     }
 
     @Override

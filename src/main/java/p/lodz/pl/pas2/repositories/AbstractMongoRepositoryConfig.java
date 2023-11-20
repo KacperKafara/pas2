@@ -2,22 +2,29 @@ package p.lodz.pl.pas2.repositories;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCommandException;
 import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.ValidationOptions;
 import lombok.Getter;
+import org.bson.Document;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import p.lodz.pl.pas2.CustomCodecProvider;
+import p.lodz.pl.pas2.model.Movie;
+import p.lodz.pl.pas2.model.User;
 
 
+import javax.print.Doc;
 import java.io.Closeable;
 import java.util.List;
 
@@ -38,7 +45,7 @@ public class AbstractMongoRepositoryConfig implements Closeable {
             .build());
 
     @Bean
-    public MongoDatabase getdataBase(){
+    public MongoDatabase getDataBase(){
         return database;
     }
 
@@ -57,6 +64,77 @@ public class AbstractMongoRepositoryConfig implements Closeable {
 
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("pas");
+    }
+
+    @Bean
+    public MongoCollection<Movie> createMovieCollection() {
+        Document validator = Document.parse("""
+                    {
+                        $jsonSchema:{
+                            "bsonType": "object",
+                            "required": ["title", "cost"],
+                            "properties": {
+                                "title": {
+                                    "bsonType": "string",
+                                    "minLength": 1
+                                },
+                                "cost": {
+                                    "bsonType": "double",
+                                    "minimum": 0
+                                }
+                            }
+                        }
+                    }
+                """);
+        try {
+            ValidationOptions validationOptions = new ValidationOptions().validator(validator);
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions().validationOptions(validationOptions);
+            database.createCollection("movies", createCollectionOptions);
+            return database.getCollection("movies", Movie.class);
+        } catch (MongoCommandException ignored) {
+            Document command = new Document("collMod", "movies").append("validator", validator);
+            database.runCommand(command);
+            return database.getCollection("movies", Movie.class);
+        }
+    }
+
+    @Bean
+    public MongoCollection<User> createUserCollection() {
+        Document validator = Document.parse("""
+                    {
+                        $jsonSchema: {
+                            "bsonType": "object",
+                            "required": ["username", "active"],
+                            "properties": {
+                                "title": {
+                                    "bsonType": "string",
+                                    "minLength": 1
+                                },
+                                "active": {
+                                    "bsonType": "bool"
+                                },
+                                "firstname": {
+                                    "bsonType": "string",
+                                    "minLength": 1
+                                },
+                                "lastName": {
+                                    "bsonType": "string",
+                                    "minLength": 1
+                                }
+                            }
+                        }
+                    }
+                """);
+        try {
+            ValidationOptions validationOptions = new ValidationOptions().validator(validator);
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions().validationOptions(validationOptions);
+            database.createCollection("users", createCollectionOptions);
+            return database.getCollection("users", User.class);
+        } catch (MongoCommandException ignored) {
+            Document command = new Document("collMod", "users").append("validator", validator);
+            database.runCommand(command);
+            return database.getCollection("users", User.class);
+        }
     }
 
     public AbstractMongoRepositoryConfig() {
