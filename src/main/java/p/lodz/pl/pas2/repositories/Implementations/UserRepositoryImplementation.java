@@ -1,20 +1,21 @@
 package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Repository
 public class UserRepositoryImplementation implements UserRepository {
 
     private final List<User> users;
     public UserRepositoryImplementation() {
-        users = new ArrayList<>();
+        users = new CopyOnWriteArrayList<>();
 
     }
 
@@ -45,9 +46,13 @@ public class UserRepositoryImplementation implements UserRepository {
 
     @Override
     public User saveClient(User user) {
-        user.setId(UUID.randomUUID());
-        users.add(user);
-        return user;
+        if(isUsernameUnique(user.getUsername())) {
+            user.setId(UUID.randomUUID());
+            users.add(user);
+            return user;
+        } else {
+            throw new UsernameInUseException(UserMsg.USERNAME_IN_USE);
+        }
     }
 
     @Override
@@ -74,8 +79,12 @@ public class UserRepositoryImplementation implements UserRepository {
         return updatedUser;
     }
 
-    @Override
-    public boolean existsByUsername(String username) {
-        return this.findUser(username) != null;
+    private boolean isUsernameUnique(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

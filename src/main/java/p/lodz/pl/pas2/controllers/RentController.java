@@ -31,7 +31,11 @@ public class RentController {
         this.movieService = movieService;
     }
 
-    //todo przypadek nieprawidłowej daty np startDate=abcde
+    @GetMapping("/{id}")
+    public ResponseEntity<Rent> getRent(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(rentService.getRent(id));
+    }
+
     @PostMapping
     public ResponseEntity<Rent> addRent(@Valid @RequestBody RentRequest rentRequest) {
         Rent rent = new Rent(userService.getUser(rentRequest.getClientID()),

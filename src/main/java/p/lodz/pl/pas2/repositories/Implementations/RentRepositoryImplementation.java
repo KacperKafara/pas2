@@ -1,15 +1,14 @@
 package p.lodz.pl.pas2.repositories.Implementations;
 
 import org.springframework.stereotype.Repository;
-import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Repository
 public class RentRepositoryImplementation implements RentRepository {
@@ -17,7 +16,7 @@ public class RentRepositoryImplementation implements RentRepository {
 
 
     public RentRepositoryImplementation() {
-        this.rents = new ArrayList<>();
+        this.rents = new CopyOnWriteArrayList<>();
     }
 
     @Override

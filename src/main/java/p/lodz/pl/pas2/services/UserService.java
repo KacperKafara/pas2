@@ -46,7 +46,6 @@ public class UserService {
     }
 
     public User addUser(User user) {
-        if (repository.existsByUsername(user.getUsername())) throw new UsernameInUseException(UserMsg.USERNAME_IN_USE);
         return repository.saveClient(user);
     }
 

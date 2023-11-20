@@ -13,5 +13,4 @@ public interface UserRepository {
     List<User> findUsers();
     User setActive(UUID id, boolean active);
     User updateUser(UUID id, User user);
-    boolean existsByUsername(String username);
 }

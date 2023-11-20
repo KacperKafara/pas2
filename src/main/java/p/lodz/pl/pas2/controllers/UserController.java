@@ -36,14 +36,9 @@ public class UserController {
             try {
                 User user = userService.getUser(username);
                 return ResponseEntity.status(HttpStatus.OK).body(user);
-            } catch (UserNotFoundException e1){
-
-                try {
-                    List<User> users = userService.getUsersByPattern(username);
-                    return ResponseEntity.status(HttpStatus.OK).body(users);
-                }catch (UserNotFoundException ignored){
-
-                }
+            } catch (UserNotFoundException e1) {
+                List<User> users = userService.getUsersByPattern(username);
+                return ResponseEntity.status(HttpStatus.OK).body(users);
             }
         }
         List<User> usersList = userService.getUsers();

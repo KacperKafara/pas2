@@ -7,7 +7,9 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Updates;
 import org.springframework.stereotype.Repository;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -41,9 +43,13 @@ public class UserRepositoryMongoDB implements UserRepository {
 
     @Override
     public User saveClient(User user) {
-        user.setId(UUID.randomUUID());
-        userMongoCollection.insertOne(user);
-        return user;
+        if (isUsernameUnique(user.getUsername())) {
+            user.setId(UUID.randomUUID());
+            userMongoCollection.insertOne(user);
+            return user;
+        } else {
+            throw new UsernameInUseException(UserMsg.USERNAME_IN_USE);
+        }
     }
 
     @Override
@@ -66,8 +72,8 @@ public class UserRepositoryMongoDB implements UserRepository {
         ));
     }
 
-    @Override
-    public boolean existsByUsername(String username) {
-        return userMongoCollection.countDocuments(Filters.eq("username", username)) > 0;
+    private boolean isUsernameUnique(String username) {
+        long count = userMongoCollection.countDocuments(Filters.eq("username", username));
+        return count == 0;
     }
 }

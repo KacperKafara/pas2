@@ -23,6 +23,10 @@ public class RentService {
         this.repository = repository;
     }
 
+    public Rent getRent(UUID id) {
+        return repository.findRent(id);
+    }
+
     public Rent addRent(Rent rent) {
         if(!rent.getUser().isActive()) throw new UserNotActiveException(UserMsg.USER_NOT_ACTIVE);
         if(rent.getStartDate().isBefore(LocalDate.now())) throw new StartDateException(RentMsg.WRONG_START_DATE);
