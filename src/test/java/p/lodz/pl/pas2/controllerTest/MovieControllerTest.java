@@ -8,16 +8,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import p.lodz.pl.pas2.controllers.MovieController;
 import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.msg.MovieMsg;
+import p.lodz.pl.pas2.request.MovieRequest;
 import p.lodz.pl.pas2.services.MovieService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -96,11 +99,15 @@ public class MovieControllerTest {
     }
     @Test
     public void addMovieButTitleBlank() throws Exception {
-        Movie movie = new Movie("", 25);
-        mockMvc.perform(post("/api/v1/movies")
+        MovieRequest movie = new MovieRequest("", 25);
+        MvcResult result = mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(movie)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("title cannot be empty");
     }
 
 

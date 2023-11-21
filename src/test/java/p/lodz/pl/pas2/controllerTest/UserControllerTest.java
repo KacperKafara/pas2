@@ -9,9 +9,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.UserController;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.services.UserService;
 
 
@@ -53,17 +55,25 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId()));
 
-        List<User> users_list1 = new ArrayList<>();
-        users_list1.add(user);
-
-        Mockito.when(userService.getUsersByPattern("ca")).thenReturn(users_list1);
-        mockMvc.perform(get("/api/v1/users").param("username", "ca"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
 
         Mockito.when(userService.getUsers()).thenReturn(null);
         mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isNoContent());
+    }
+    @Test
+    public void getUserByPatter() throws Exception {
+        User user = new Moderator("Jaca", true);
+        List<User> usersList = new ArrayList<>();
+        usersList.add(user);
+
+        Mockito.when(userService.getUser("Ja")).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+        Mockito.when(userService.getUsersByPattern("Ja")).thenReturn(usersList);
+
+        mockMvc.perform(get("/api/v1/users").param("username", "Ja"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].username").value(user.getUsername()))
+                .andExpect(jsonPath("$[0].active").value(user.isActive()));
     }
 
     @Test
@@ -84,7 +94,7 @@ public class UserControllerTest {
     public void setActiveTest() throws Exception {
         UUID userId = UUID.randomUUID();
         Map<String, Boolean> body = new HashMap<>();
-        body.put("active", true);
+        body.put("active", false);
 
         User user = new Client("Jaca", false, "Jaca", "Jaca");
         Mockito.when(userService.setActive(userId, false)).thenReturn(user);
@@ -92,8 +102,10 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(body)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Jaca"))
+                .andExpect(jsonPath("$.lastName").value("Jaca"))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.active").value(false));
     }
 
     private static String asJsonString(final Object obj) {

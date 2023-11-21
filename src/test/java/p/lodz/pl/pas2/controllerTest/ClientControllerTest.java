@@ -9,16 +9,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import p.lodz.pl.pas2.controllers.ClientController;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.UserMsg;
+import p.lodz.pl.pas2.request.ClientRequest;
+import p.lodz.pl.pas2.request.UserRequest;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,11 +57,15 @@ public class ClientControllerTest {
     @Test
     @DirtiesContext
     public void addUserButLoginBlank() throws Exception {
-        User user = new Client("", true,"co","zle");
-        mockMvc.perform(post("/api/v1/clients")
+        ClientRequest user = new ClientRequest("", true, "co", "zle") {
+        };
+        MvcResult result =  mockMvc.perform(post("/api/v1/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).contains("username cannot be empty");
     }
     @Test
     @DirtiesContext
