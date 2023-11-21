@@ -3,6 +3,7 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.User;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
+@Scope("singleton")
 public class UserRepositoryMongoDB implements UserRepository {
     private final MongoCollection<User> userMongoCollection;
     private final FindOneAndUpdateOptions options;

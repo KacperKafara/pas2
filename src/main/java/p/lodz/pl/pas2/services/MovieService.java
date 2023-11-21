@@ -2,6 +2,7 @@ package p.lodz.pl.pas2.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@Scope("prototype")
 public class MovieService {
 
     private final MovieRepository movieRepository;
