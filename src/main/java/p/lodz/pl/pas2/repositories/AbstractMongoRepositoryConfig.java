@@ -9,6 +9,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.ValidationOptions;
 import lombok.Getter;
 import org.bson.Document;
@@ -64,6 +66,11 @@ public class AbstractMongoRepositoryConfig implements Closeable {
 
         mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("pas");
+    }
+
+    @Bean
+    public FindOneAndUpdateOptions findOneAndUpdateOptions() {
+        return new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER);
     }
 
     @Bean

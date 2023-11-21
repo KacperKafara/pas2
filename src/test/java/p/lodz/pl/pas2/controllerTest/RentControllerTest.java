@@ -228,6 +228,27 @@ public class RentControllerTest {
                 .andExpect(content().string("Incorrect date format"));
     }
 
+    @Test
+    public void getRentById() throws Exception {
+        UUID clientId = UUID.randomUUID();
+        UUID movieId = UUID.randomUUID();
+        UUID rentId = UUID.randomUUID();
+        LocalDate date = LocalDate.now();
+
+        User activeUser = new Moderator("ActiveUser", true);
+        Movie availableMovie = new Movie("AvailableMovie", 20);
+
+        RentRequest rentRequest = new RentRequest(clientId, movieId, date);
+        Rent rent = new Rent(activeUser,availableMovie,rentRequest.getStartDate());
+        Mockito.when(rentService.getRent(rentId)).thenReturn(rent);
+
+        mockMvc.perform(get("/api/v1/rents/{id}", rentId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.id").value(activeUser.getId()))
+                .andExpect(jsonPath("$.movie.id").value(availableMovie.getId()))
+                .andExpect(jsonPath("$.startDate").value(date.toString()));
+    }
+
     private static String asJsonString(final Object obj) {
         try {
 

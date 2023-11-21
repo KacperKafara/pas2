@@ -3,10 +3,7 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,10 +19,12 @@ import java.util.UUID;
 public class MovieRepositoryMongoDB implements MovieRepository {
 
     private final MongoCollection<Movie> movieMongoCollection;
+    private final FindOneAndUpdateOptions options;
 
     @Autowired
-    public MovieRepositoryMongoDB(MongoCollection<Movie> movieMongoCollection) {
+    public MovieRepositoryMongoDB(MongoCollection<Movie> movieMongoCollection, FindOneAndUpdateOptions options) {
         this.movieMongoCollection = movieMongoCollection;
+        this.options = options;
 
     }
 
@@ -51,7 +50,7 @@ public class MovieRepositoryMongoDB implements MovieRepository {
         return movieMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                 Updates.set("title", movie.getTitle()),
                 Updates.set("cost", movie.getCost())
-        ));
+        ), options);
     }
 
     @Override

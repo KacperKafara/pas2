@@ -9,6 +9,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.model.ValidationOptions;
 import org.bson.Document;
 import org.bson.UuidRepresentation;
@@ -134,6 +136,11 @@ public class TestMongoConfig implements Closeable {
             database.runCommand(command);
             return database.getCollection("users", User.class);
         }
+    }
+
+    @Bean
+    public FindOneAndUpdateOptions findOneAndUpdateOptions() {
+        return new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER);
     }
 
     public TestMongoConfig() {

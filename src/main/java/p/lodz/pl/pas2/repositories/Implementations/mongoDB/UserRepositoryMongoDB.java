@@ -2,10 +2,7 @@ package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.model.*;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.User;
@@ -19,11 +16,13 @@ import java.util.UUID;
 @Repository
 public class UserRepositoryMongoDB implements UserRepository {
     private final MongoCollection<User> userMongoCollection;
+    private final FindOneAndUpdateOptions options;
 
-    public UserRepositoryMongoDB(MongoCollection<User> userMongoCollection) {
+    public UserRepositoryMongoDB(MongoCollection<User> userMongoCollection, FindOneAndUpdateOptions options) {
         this.userMongoCollection = userMongoCollection;
         this.userMongoCollection.createIndex(Indexes.ascending("username"),
                 new IndexOptions().unique(true));
+        this.options = options;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class UserRepositoryMongoDB implements UserRepository {
     public User setActive(UUID id, boolean active) {
         return userMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                 Updates.set("active", active)
-        ));
+        ), options);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class UserRepositoryMongoDB implements UserRepository {
         return userMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                 Updates.set("username", user.getUsername()),
                 Updates.set("active", user.isActive())
-        ));
+        ), options);
     }
 
     private boolean isUsernameUnique(String username) {

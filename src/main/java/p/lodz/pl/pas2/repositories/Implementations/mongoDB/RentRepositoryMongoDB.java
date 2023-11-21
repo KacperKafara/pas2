@@ -25,9 +25,12 @@ import java.util.UUID;
 public class RentRepositoryMongoDB implements RentRepository {
     private final MongoCollection<Rent> rentMongoCollection;
 
+    private final FindOneAndUpdateOptions options;
+
     @Autowired
-    public RentRepositoryMongoDB(MongoDatabase mongoRepo) {
+    public RentRepositoryMongoDB(MongoDatabase mongoRepo, FindOneAndUpdateOptions options) {
         this.rentMongoCollection = mongoRepo.getCollection("rents", Rent.class);
+        this.options = options;
     }
 
     @Override
@@ -77,6 +80,6 @@ public class RentRepositoryMongoDB implements RentRepository {
     public Rent updateEndTime(UUID id, LocalDate endTime) {
         return rentMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                         Updates.set("end_date", endTime)),
-                new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER));
+                options);
     }
 }
