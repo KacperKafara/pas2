@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentsNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.services.MovieService;
@@ -12,6 +15,7 @@ import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,5 +69,10 @@ public class RentController {
         LocalDate endDateParsed = LocalDate.parse(endDate.get("endDate"));
         Rent updatedRent = rentService.setEndTime(id, endDateParsed);
         return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
+    }
+
+    @ExceptionHandler(RentNotFoundException.class)
+    ResponseEntity<Rent> handleRentNotFoundException(RentNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

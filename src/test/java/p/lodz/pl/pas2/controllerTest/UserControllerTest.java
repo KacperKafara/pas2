@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.UserController;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
 import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.User;
@@ -57,6 +58,10 @@ public class UserControllerTest {
 
 
         Mockito.when(userService.getUsers()).thenReturn(null);
+        mockMvc.perform(get("/api/v1/users"))
+                .andExpect(status().isNoContent());
+
+        Mockito.when(userService.getUsers()).thenThrow(UsersNotFoundException.class);
         mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isNoContent());
     }

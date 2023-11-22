@@ -26,7 +26,9 @@ public class RentService {
     }
 
     public Rent getRent(UUID id) {
-        return repository.findRent(id);
+        Rent rent = repository.findRent(id);
+        if(rent == null) throw new RentNotFoundException(RentMsg.RENT_NOT_FOUND);
+        return rent;
     }
 
     public Rent addRent(Rent rent) {
@@ -46,7 +48,7 @@ public class RentService {
 
     public boolean deleteRent(UUID id) {
         Rent rentToDelete = repository.findRent(id);
-        if(rentToDelete == null) throw new RentNotFoundException(RentMsg.RENT_NOT_FOUND);
+        if(rentToDelete == null) throw new ThereIsNoSuchRentToDelete(RentMsg.RENT_NOT_FOUND);
         if(rentToDelete.getEndDate() == null || rentToDelete.getEndDate().isAfter(LocalDate.now())) throw new RentalStillOngoingException(RentMsg.RENT_NOT_ENDED);
         return repository.deleteRent(id);
     }

@@ -10,6 +10,7 @@ import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
+import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
@@ -52,6 +53,11 @@ public class ExceptionHandlingController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
+    @ExceptionHandler(ThereIsNoSuchRentToDelete.class)
+    ResponseEntity<String> handleThereIsNoSuchRentToDeleteException(ThereIsNoSuchRentToDelete e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
     @ExceptionHandler(EndDateException.class)
     ResponseEntity<String> handleEndDateException(EndDateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -90,5 +96,10 @@ public class ExceptionHandlingController {
     @ExceptionHandler(UsernameInUseException.class)
     ResponseEntity<String> handleUsernameInUseException(UsernameInUseException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ThereIsNoUserToUpdateException.class)
+    ResponseEntity<String> handleThereIsNoUserToUpdateException(ThereIsNoUserToUpdateException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

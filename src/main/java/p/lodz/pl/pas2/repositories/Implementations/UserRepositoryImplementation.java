@@ -1,5 +1,6 @@
 package p.lodz.pl.pas2.repositories.Implementations;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.User;
@@ -11,6 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Repository
+@Scope("singleton")
 public class UserRepositoryImplementation implements UserRepository {
 
     private final List<User> users;

@@ -11,10 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.RentController;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.EndDateException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.RentalStillOngoingException;
-import p.lodz.pl.pas2.exceptions.rentExceptions.StartDateException;
+import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.Movie;
@@ -170,12 +167,12 @@ public class RentControllerTest {
 
         Mockito.when(rentService.deleteRent(rentId))
                 .thenThrow(new RentalStillOngoingException(RentMsg.RENT_NOT_ENDED))
-                .thenThrow(new RentNotFoundException(RentMsg.RENT_NOT_FOUND));
+                .thenThrow(new ThereIsNoSuchRentToDelete(RentMsg.RENT_NOT_FOUND));
         mockMvc.perform(delete("/api/v1/rents/{id}", rentId))
                 .andExpect(status().isLocked());
 
         mockMvc.perform(delete("/api/v1/rents/{id}", rentId))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
     }
 
@@ -240,13 +237,17 @@ public class RentControllerTest {
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, date);
         Rent rent = new Rent(activeUser,availableMovie,rentRequest.getStartDate());
-        Mockito.when(rentService.getRent(rentId)).thenReturn(rent);
+        Mockito.when(rentService.getRent(rentId)).thenReturn(rent)
+                .thenThrow(RentNotFoundException.class);
 
         mockMvc.perform(get("/api/v1/rents/{id}", rentId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user.id").value(activeUser.getId()))
                 .andExpect(jsonPath("$.movie.id").value(availableMovie.getId()))
                 .andExpect(jsonPath("$.startDate").value(date.toString()));
+
+        mockMvc.perform(get("/api/v1/rents/{id}", rentId))
+                .andExpect(status().isNoContent());
     }
 
     private static String asJsonString(final Object obj) {

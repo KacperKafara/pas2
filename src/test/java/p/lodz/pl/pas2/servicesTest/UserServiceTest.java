@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.UserMsg;
@@ -82,7 +83,7 @@ public class UserServiceTest {
         users.add(user2);
         assertThat(userService.getUsersByPattern("Bar").size()).isEqualTo(2);
         assertThat(userService.getUsersByPattern("Bart").size()).isEqualTo(2);
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+        UsersNotFoundException exception = assertThrows(UsersNotFoundException.class, () -> {
             userService.getUsersByPattern("xyz");
         });
         assertEquals(UserMsg.USERS_NOT_FOUND, exception.getMessage());

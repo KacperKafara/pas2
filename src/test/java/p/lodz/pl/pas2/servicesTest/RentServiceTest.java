@@ -121,7 +121,7 @@ public class RentServiceTest {
     @DirtiesContext
     public void deleteRentNotFound() {
         UUID nonExistentRentId = UUID.randomUUID();
-        RentNotFoundException exception = assertThrows(RentNotFoundException.class, () -> {
+        ThereIsNoSuchRentToDelete exception = assertThrows(ThereIsNoSuchRentToDelete.class, () -> {
             rentService.deleteRent(nonExistentRentId);
         });
         assertEquals(RentMsg.RENT_NOT_FOUND, exception.getMessage());
