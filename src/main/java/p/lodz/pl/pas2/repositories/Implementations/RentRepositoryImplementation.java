@@ -56,7 +56,11 @@ public class RentRepositoryImplementation implements RentRepository {
         List<Rent> currentRents = new ArrayList<>();
 
         for (Rent rent : rents) {
-            if ((rent.getStartDate().isBefore(currentDate) ||  rent.getStartDate().isEqual(currentDate)) && (rent.getEndDate() == null || rent.getEndDate().isAfter(currentDate))) {
+            boolean isStartDateBeforeOrEqual = rent.getStartDate().isBefore(currentDate) || rent.getStartDate().isEqual(currentDate);
+            boolean isEndDateNullOrAfter = rent.getEndDate() == null || rent.getEndDate().isAfter(currentDate);
+            boolean isEndDateNullAndStartDateAfter = rent.getEndDate() == null && rent.getStartDate().isAfter(currentDate);
+
+            if ((isStartDateBeforeOrEqual && isEndDateNullOrAfter) || isEndDateNullAndStartDateAfter) {
                 currentRents.add(rent);
             }
         }
@@ -70,7 +74,7 @@ public class RentRepositoryImplementation implements RentRepository {
         List<Rent> pastRents = new ArrayList<>();
 
         for (Rent rent : rents) {
-            if (rent.getEndDate().isBefore(currentDate)) {
+            if (rent.getEndDate() != null && rent.getEndDate().isBefore(currentDate)) {
                 pastRents.add(rent);
             }
         }
