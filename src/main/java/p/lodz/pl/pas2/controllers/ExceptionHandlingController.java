@@ -5,10 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.*;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
@@ -106,5 +103,10 @@ public class ExceptionHandlingController {
     @ExceptionHandler(ThereIsNoSuchRentToUpdateException.class)
     ResponseEntity<String> handleThereIsNoSuchRentToUpdateException(ThereIsNoSuchRentToUpdateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ThereIsNoSuchMovieToDeleteException.class)
+    ResponseEntity<String> handleThereIsNoSuchMovieToDeleteException(ThereIsNoSuchMovieToDeleteException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

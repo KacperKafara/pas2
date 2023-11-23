@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import p.lodz.pl.pas2.controllers.MovieController;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToDeleteException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.msg.MovieMsg;
@@ -80,6 +81,7 @@ public class MovieControllerTest {
         mockMvc.perform(put("/api/v1/movies/{id}",movieId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(movie)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.cost").value(movie.getCost()))
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()));
@@ -129,9 +131,13 @@ public class MovieControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
-        Mockito.when(movieService.deleteMovie(movieId)).thenReturn(false);
+        Mockito.when(movieService.deleteMovie(movieId)).thenReturn(false)
+                        .thenThrow(ThereIsNoSuchMovieToDeleteException.class);
         mockMvc.perform(delete("/api/v1/movies/{id}", movieId))
                 .andExpect(status().isBadRequest());
+
+        mockMvc.perform(delete("/api/v1/movies/{id}", movieId))
+                .andExpect(status().isNotFound());
 
     }
 

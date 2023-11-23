@@ -115,8 +115,9 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButMovieRented() {
+        User user2 = new Administrator(UUID.randomUUID(), "Mateusz", true);
         MovieInUseException exception = assertThrows(MovieInUseException.class, () -> {
-            rentService.addRent(new Rent(user, movie, LocalDate.now(), LocalDate.now()));
+            rentService.addRent(new Rent(user2, movie, LocalDate.now(), LocalDate.now()));
         });
         assertEquals(MovieMsg.MOVIE_IS_RENTED, exception.getMessage());
     }

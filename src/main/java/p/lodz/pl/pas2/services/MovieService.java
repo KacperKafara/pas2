@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.*;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.msg.MovieMsg;
@@ -56,7 +53,7 @@ public class MovieService {
     public boolean deleteMovie(UUID id) {
         List<Rent> rents = rentRepository.findCurrentRents();
         Movie movie = movieRepository.findMovie(id);
-        if (movie == null) throw new MovieNotFoundException(MovieMsg.MOVIE_NOT_FOUND);
+        if (movie == null) throw new ThereIsNoSuchMovieToDeleteException(MovieMsg.MOVIE_NOT_FOUND);
         for(Rent rent : rents) {
             if(Objects.equals(rent.getMovie().getId().toString(), id.toString())) throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
         }

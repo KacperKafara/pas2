@@ -12,10 +12,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
-import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.*;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.Rent;
@@ -129,7 +126,7 @@ public class MovieServiceTest {
     @DirtiesContext
     public void deleteMovieAndMovieNotExisted(){
         UUID nonExistentMovieId = UUID.randomUUID();
-        MovieNotFoundException exception = assertThrows(MovieNotFoundException.class, () -> {
+        ThereIsNoSuchMovieToDeleteException exception = assertThrows(ThereIsNoSuchMovieToDeleteException.class, () -> {
             movieService.deleteMovie(nonExistentMovieId);
         });
         assertEquals(MovieMsg.MOVIE_NOT_FOUND, exception.getMessage());

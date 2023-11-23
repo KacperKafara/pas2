@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.UserController;
+import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
 import p.lodz.pl.pas2.model.Client;
@@ -108,7 +109,8 @@ public class UserControllerTest {
         body.put("active", false);
 
         User user = new Client("Jaca", false, "Jaca", "Jaca");
-        Mockito.when(userService.setActive(userId, false)).thenReturn(user);
+        Mockito.when(userService.setActive(userId, false)).thenReturn(user)
+                .thenThrow(ThereIsNoUserToUpdateException.class);
         mockMvc.perform(patch("/api/v1/users/{id}", userId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(body)))
@@ -117,6 +119,11 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastName").value("Jaca"))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(false));
+
+        mockMvc.perform(patch("/api/v1/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(body)))
+                .andExpect(status().isNotFound());
     }
 
     private static String asJsonString(final Object obj) {
