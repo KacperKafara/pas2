@@ -92,7 +92,13 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
-                .andExpect(jsonPath("$.id").value(user.getId().toString()));;
+                .andExpect(jsonPath("$.id").value(user.getId().toString()));
+
+        UUID uuid = UUID.randomUUID();
+
+        Mockito.when(userService.getUser(uuid)).thenThrow(UserNotFoundException.class);
+        mockMvc.perform(get("/api/v1/users/{id}", uuid))
+                .andExpect(status().isNoContent());
     }
 
     @Test

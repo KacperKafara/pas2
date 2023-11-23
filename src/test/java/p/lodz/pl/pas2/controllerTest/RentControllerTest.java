@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.RentController;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
+import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
+import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.Movie;
@@ -72,7 +74,7 @@ public class RentControllerTest {
 
         // zla start data
         Mockito.when(rentService.addRent(Mockito.any(Rent.class)))
-                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND))
+                .thenThrow( new UserNotActiveException(UserMsg.USER_NOT_ACTIVE))
                 .thenThrow( new MovieInUseException(MovieMsg.MOVIE_IS_RENTED))
                 .thenThrow( new StartDateException(RentMsg.WRONG_START_DATE))
                 .thenThrow( new EndDateException(RentMsg.WRONG_END_DATE));
@@ -81,8 +83,8 @@ public class RentControllerTest {
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(UserMsg.USER_NOT_FOUND));
+                .andExpect(status().isLocked())
+                .andExpect(content().string(UserMsg.USER_NOT_ACTIVE));
 
         //film jest wypozyczony
         mockMvc.perform(post("/api/v1/rents")
@@ -105,37 +107,41 @@ public class RentControllerTest {
 
     }
     @Test
+    public void getCurrentRents() throws Exception {
+        Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now(), null);
+        Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now(), null);
+        List<Rent> currentRents = Arrays.asList(rent1, rent2);
 
-        public void getCurrentRents() throws Exception {
-            Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now(), null);
-            Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now(), null);
-            List<Rent> currentRents = Arrays.asList(rent1, rent2);
+        Mockito.when(rentService.getCurrentRents()).thenReturn(currentRents)
+                .thenThrow(RentsNotFoundException.class);
 
-            Mockito.when(rentService.getCurrentRents()).thenReturn(currentRents);
+        mockMvc.perform(get("/api/v1/rents/current"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(rent1.getId().toString()))
+                .andExpect(jsonPath("$[0].user.username").value(rent1.getUser().getUsername()))
+                .andExpect(jsonPath("$[0].user.active").value(rent1.getUser().isActive()))
+                .andExpect(jsonPath("$[0].movie.title").value(rent1.getMovie().getTitle()))
+                .andExpect(jsonPath("$[0].movie.cost").value(rent1.getMovie().getCost()))
+                .andExpect(jsonPath("$[0].startDate").value(rent1.getStartDate().toString()))
+                .andExpect(jsonPath("$[1].id").value(rent2.getId().toString()))
+                .andExpect(jsonPath("$[1].user.username").value(rent2.getUser().getUsername()))
+                .andExpect(jsonPath("$[1].user.active").value(rent2.getUser().isActive()))
+                .andExpect(jsonPath("$[1].movie.title").value(rent2.getMovie().getTitle()))
+                .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
+                .andExpect(jsonPath("$[1].startDate").value(rent2.getStartDate().toString()));
 
-            mockMvc.perform(get("/api/v1/rents/current"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(2)))
-                    .andExpect(jsonPath("$[0].id").value(rent1.getId().toString()))
-                    .andExpect(jsonPath("$[0].user.username").value(rent1.getUser().getUsername()))
-                    .andExpect(jsonPath("$[0].user.active").value(rent1.getUser().isActive()))
-                    .andExpect(jsonPath("$[0].movie.title").value(rent1.getMovie().getTitle()))
-                    .andExpect(jsonPath("$[0].movie.cost").value(rent1.getMovie().getCost()))
-                    .andExpect(jsonPath("$[0].startDate").value(rent1.getStartDate().toString()))
-                    .andExpect(jsonPath("$[1].id").value(rent2.getId().toString()))
-                    .andExpect(jsonPath("$[1].user.username").value(rent2.getUser().getUsername()))
-                    .andExpect(jsonPath("$[1].user.active").value(rent2.getUser().isActive()))
-                    .andExpect(jsonPath("$[1].movie.title").value(rent2.getMovie().getTitle()))
-                    .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
-                    .andExpect(jsonPath("$[1].startDate").value(rent2.getStartDate().toString()));
-        }
+        mockMvc.perform(get("/api/v1/rents/current"))
+                .andExpect(status().isNoContent());
+    }
     @Test
     public void getPastRents() throws Exception {
         Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
         Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
         List<Rent> pastRents = Arrays.asList(rent1, rent2);
 
-        Mockito.when(rentService.getPastRents()).thenReturn(pastRents);
+        Mockito.when(rentService.getPastRents()).thenReturn(pastRents)
+                .thenThrow(RentsNotFoundException.class);
 
         mockMvc.perform(get("/api/v1/rents/past"))
                 .andExpect(status().isOk())
@@ -154,6 +160,9 @@ public class RentControllerTest {
                 .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
                 .andExpect(jsonPath("$[1].startDate").value(rent2.getStartDate().toString()))
                 .andExpect(jsonPath("$[1].endDate").value(rent2.getEndDate().toString()));
+
+        mockMvc.perform(get("/api/v1/rents/past"))
+                .andExpect(status().isNoContent());
     }
     @Test
     public void deleteRent() throws Exception {
@@ -185,7 +194,8 @@ public class RentControllerTest {
         Rent existingRent = new Rent(rentId, new Moderator("user", true), new Movie("movie", 10), LocalDate.now(), null);
         Rent updatedRent = new Rent(rentId, existingRent.getUser(), existingRent.getMovie(), existingRent.getStartDate(), endDate);
 
-        Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent);
+        Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent)
+                .thenThrow(ThereIsNoSuchRentToUpdateException.class);
 
         mockMvc.perform(patch("/api/v1/rents/{id}", rentId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -198,6 +208,11 @@ public class RentControllerTest {
                 .andExpect(jsonPath("$.movie.cost").value(updatedRent.getMovie().getCost()))
                 .andExpect(jsonPath("$.startDate").value(updatedRent.getStartDate().toString()))
                 .andExpect(jsonPath("$.endDate").value(updatedRent.getEndDate().toString()));
+
+        mockMvc.perform(patch("/api/v1/rents/{id}", rentId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(endDateMap)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

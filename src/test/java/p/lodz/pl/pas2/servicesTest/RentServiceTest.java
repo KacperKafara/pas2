@@ -58,6 +58,18 @@ public class RentServiceTest {
         rentId = rentService.getCurrentRents().get(0).getId();
     }
 
+
+    @Test
+    @DirtiesContext
+    public void getRentById() {
+        assertEquals(rent.getId(), rentService.getRent(rentId).getId());
+        assertEquals(rent.getUser().getId(), rentService.getRent(rentId).getUser().getId());
+        assertEquals(rent.getMovie().getId(), rentService.getRent(rentId).getMovie().getId());
+        assertThrows(RentNotFoundException.class, () -> {
+            rentService.getRent(UUID.randomUUID());
+        });
+    }
+
     @Test
     @DirtiesContext
     public void addRentCorrectly() {
@@ -143,6 +155,10 @@ public class RentServiceTest {
         LocalDate newEndTime = LocalDate.now().plusDays(2);
         Rent updatedRent = rentService.setEndTime(rentId, newEndTime);
         assertThat(updatedRent.getEndDate()).isEqualTo(newEndTime);
+        assertThrows(ThereIsNoSuchRentToUpdateException.class,
+                () -> {
+                    rentService.setEndTime(UUID.randomUUID(), newEndTime);
+                });
     }
 
     @Test

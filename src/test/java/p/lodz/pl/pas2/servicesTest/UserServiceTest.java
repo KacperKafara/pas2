@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
@@ -118,7 +119,7 @@ public class UserServiceTest {
     @DirtiesContext
     public void setActiveForNonexistentUser() {
         UUID nonExistentUserId = UUID.randomUUID();
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+        ThereIsNoUserToUpdateException exception = assertThrows(ThereIsNoUserToUpdateException.class, () -> {
             userService.setActive(nonExistentUserId, true);
         });
         assertEquals(UserMsg.USER_NOT_FOUND, exception.getMessage());
@@ -138,7 +139,7 @@ public class UserServiceTest {
     public void updateUserForNonexistentUser() {
         UUID nonExistentUserId = UUID.randomUUID();
         User updatedUser = new Administrator("UpdatedName", false);
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+        ThereIsNoUserToUpdateException exception = assertThrows(ThereIsNoUserToUpdateException.class, () -> {
             userService.updateUser(nonExistentUserId, updatedUser);
         });
         assertEquals(UserMsg.USER_NOT_FOUND, exception.getMessage());

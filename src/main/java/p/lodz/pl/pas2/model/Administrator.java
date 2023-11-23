@@ -1,5 +1,6 @@
 package p.lodz.pl.pas2.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonId;

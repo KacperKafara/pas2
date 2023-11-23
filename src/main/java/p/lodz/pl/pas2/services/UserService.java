@@ -54,12 +54,12 @@ public class UserService {
     }
 
     public User setActive(UUID id, boolean active) {
-        if(getUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
+        if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
         return repository.setActive(id, active);
     }
 
     public User updateUser(UUID id, User user) {
-        if(getUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
+        if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
         return repository.updateUser(id, user);
     }
 }

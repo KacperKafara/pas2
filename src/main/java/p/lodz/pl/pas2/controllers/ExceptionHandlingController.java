@@ -100,6 +100,11 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(ThereIsNoUserToUpdateException.class)
     ResponseEntity<String> handleThereIsNoUserToUpdateException(ThereIsNoUserToUpdateException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ThereIsNoSuchRentToUpdateException.class)
+    ResponseEntity<String> handleThereIsNoSuchRentToUpdateException(ThereIsNoSuchRentToUpdateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

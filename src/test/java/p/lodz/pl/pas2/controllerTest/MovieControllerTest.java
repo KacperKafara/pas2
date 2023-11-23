@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import p.lodz.pl.pas2.controllers.MovieController;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MovieNotFoundException;
+import p.lodz.pl.pas2.exceptions.movieExceptions.MoviesNotFoundException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.ThereIsNoSuchMovieToUpdateException;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.msg.MovieMsg;
@@ -39,7 +41,8 @@ public class MovieControllerTest {
         List<Movie> movies = new ArrayList<>();
         movies.add(movie1);
         movies.add(movie2);
-        Mockito.when(movieService.getMovies()).thenReturn(movies);
+        Mockito.when(movieService.getMovies()).thenReturn(movies)
+                .thenThrow(MoviesNotFoundException.class);
         mockMvc.perform(get("/api/v1/movies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -48,6 +51,8 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$[1].title").value(movie2.getTitle()))
                 .andExpect(jsonPath("$[1].cost").value(movie2.getCost()));
 
+        mockMvc.perform(get("/api/v1/movies"))
+                .andExpect(status().isNoContent());
     }
 
 
@@ -55,12 +60,16 @@ public class MovieControllerTest {
     public void getMovieById() throws Exception {
         UUID movieId = UUID.randomUUID();
         Movie movie = new Movie("testMovie", 50);
-        Mockito.when(movieService.getMovie(movieId)).thenReturn(movie);
+        Mockito.when(movieService.getMovie(movieId)).thenReturn(movie)
+                .thenThrow(MovieNotFoundException.class);
 
         mockMvc.perform(get("/api/v1/movies/{id}", movieId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.cost").value(movie.getCost()));
+
+        mockMvc.perform(get("/api/v1/movies/{id}", movieId))
+                .andExpect(status().isNoContent());
     }
     @Test
     public void updateMovie() throws Exception {

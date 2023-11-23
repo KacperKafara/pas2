@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.AdministratorController;
+import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.model.Administrator;
@@ -64,7 +65,7 @@ public class AdministratorControllerTest {
         User user2 = new Administrator(id,"maciek", true);
 
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user2)
-                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+                .thenThrow(ThereIsNoUserToUpdateException.class);
         mockMvc.perform(put("/api/v1/administrators/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
