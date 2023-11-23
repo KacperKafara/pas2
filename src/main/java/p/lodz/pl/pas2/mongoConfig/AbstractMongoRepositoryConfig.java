@@ -112,7 +112,7 @@ public class AbstractMongoRepositoryConfig implements Closeable {
                             "bsonType": "object",
                             "required": ["username", "active"],
                             "properties": {
-                                "title": {
+                                "username": {
                                     "bsonType": "string",
                                     "minLength": 1
                                 },
