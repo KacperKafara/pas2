@@ -84,9 +84,9 @@ public class RentController {
     @PatchMapping("/{id}")
     public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
         LocalDate endDateParsed;
-        if(endDate != null) {
+        try {
             endDateParsed = LocalDate.parse(endDate.get("endDate"));
-        } else {
+        } catch (NullPointerException ignored) {
             endDateParsed = LocalDate.now();
         }
         Rent updatedRent = rentService.setEndTime(id, endDateParsed);

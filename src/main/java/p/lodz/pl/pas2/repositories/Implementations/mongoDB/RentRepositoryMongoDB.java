@@ -47,18 +47,24 @@ public class RentRepositoryMongoDB implements RentRepository {
         Rent rent = rentMongoCollection.findOneAndDelete(Filters.eq("_id", id));
         return rent != null;
     }
-    // TODO do sprawdzenia czy działaja metody find past i current rents
+
     @Override
     public List<Rent> findCurrentRents() {
         LocalDate currentDate = LocalDate.now();
-        return rentMongoCollection.find(Filters.and(
-                Filters.or(
-                        Filters.eq("start_date", currentDate),
-                        Filters.lt("start_date", currentDate)
+        return rentMongoCollection.find(Filters.or(
+                Filters.and(
+                        Filters.or(
+                                Filters.eq("start_date", currentDate),
+                                Filters.lt("start_date", currentDate)
+                        ),
+                        Filters.or(
+                                Filters.eq("end_date", BsonNull.VALUE),
+                                Filters.gt("end_date", currentDate)
+                        )
                 ),
-                Filters.or(
+                Filters.and(
                         Filters.eq("end_date", BsonNull.VALUE),
-                        Filters.gt("end_date", currentDate)
+                        Filters.gt("start_date", currentDate)
                 )
         )).into(new ArrayList<>());
     }
@@ -70,7 +76,6 @@ public class RentRepositoryMongoDB implements RentRepository {
                 Filters.ne("end_date", BsonNull.VALUE),
                 Filters.lte("end_date", currentDate)
         )).into(new ArrayList<>());
-
     }
 
     @Override
