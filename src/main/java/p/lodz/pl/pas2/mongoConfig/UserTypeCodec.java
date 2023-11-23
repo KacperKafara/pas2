@@ -1,4 +1,4 @@
-package p.lodz.pl.pas2;
+package p.lodz.pl.pas2.mongoConfig;
 
 import org.bson.*;
 import org.bson.codecs.Codec;

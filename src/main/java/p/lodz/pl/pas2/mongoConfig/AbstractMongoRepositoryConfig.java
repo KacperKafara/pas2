@@ -1,4 +1,4 @@
-package p.lodz.pl.pas2.repositories;
+package p.lodz.pl.pas2.mongoConfig;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -21,12 +21,11 @@ import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import p.lodz.pl.pas2.CustomCodecProvider;
+import p.lodz.pl.pas2.mongoConfig.CustomCodecProvider;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.User;
 
 
-import javax.print.Doc;
 import java.io.Closeable;
 import java.util.List;
 

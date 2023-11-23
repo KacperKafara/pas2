@@ -1,15 +1,11 @@
 package p.lodz.pl.pas2.repositories.Implementations.mongoDB;
 
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 
 import java.util.ArrayList;

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentsNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
+import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
 import p.lodz.pl.pas2.services.MovieService;
@@ -15,10 +16,8 @@ import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 
 @RestController
 @RequestMapping("api/v1/rents")
@@ -50,12 +49,30 @@ public class RentController {
     }
 
     @GetMapping("/current")
-    public ResponseEntity<List<Rent>> getCurrentRents() {
+    public ResponseEntity<List<Rent>> getCurrentRents(@RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID movieId) {
+        if (clientId != null && movieId!= null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        if (clientId != null){
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRentsByClient(clientId));
+        }
+        if (movieId != null){
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRentsByMovie(movieId));
+        }
         return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRents());
     }
 
     @GetMapping("/past")
-    public ResponseEntity<List<Rent>> getPastRents() {
+    public ResponseEntity<List<Rent>> getPastRents(@RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID movieId) {
+        if (clientId != null && movieId != null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        if (clientId != null){
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRentsByClient(clientId));
+        }
+        if (movieId != null){
+            return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRentsByMovie(movieId));
+        }
         return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
     }
 

@@ -13,8 +13,10 @@ import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.RentRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Scope("prototype")
@@ -63,12 +65,37 @@ public class RentService {
     public List<Rent> getCurrentRents() {
         List<Rent> rents = repository.findCurrentRents();
         if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
-        return repository.findCurrentRents();
+        return rents;
+    }
+
+    public List<Rent> getCurrentRentsByClient(UUID clientId) {
+        List<Rent> rents1 = repository.findCurrentRents();
+        List<Rent> rents = rents1.stream().filter(element -> (element.getUser().getId().equals(clientId))).toList();
+        if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
+        return rents;
+    }
+
+    public List<Rent> getCurrentRentsByMovie(UUID movieId) {
+        List<Rent> rents = repository.findCurrentRents().stream().filter(element -> (element.getMovie().getId().equals(movieId))).toList();
+        if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
+        return rents;
+    }
+
+    public List<Rent> getPastRentsByClient(UUID clientId) {
+        List<Rent> rents = repository.findPastRents().stream().filter(element -> (element.getUser().getId().equals(clientId))).toList();
+        if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
+        return rents;
+    }
+
+    public List<Rent> getPastRentsByMovie(UUID movieId) {
+        List<Rent> rents = repository.findPastRents().stream().filter(element -> (element.getMovie().getId().equals(movieId))).toList();
+        if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
+        return rents;
     }
 
     public List<Rent> getPastRents() {
         List<Rent> rents = repository.findPastRents();
         if(rents.isEmpty()) throw new RentsNotFoundException(RentMsg.RENTS_NOT_FOUND);
-        return repository.findPastRents();
+        return rents;
     }
 }

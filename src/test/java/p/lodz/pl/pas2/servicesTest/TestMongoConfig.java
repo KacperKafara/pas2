@@ -21,10 +21,9 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import p.lodz.pl.pas2.CustomCodecProvider;
+import p.lodz.pl.pas2.mongoConfig.CustomCodecProvider;
 import p.lodz.pl.pas2.model.Movie;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.repositories.AbstractMongoRepositoryConfig;
 
 import java.io.Closeable;
 import java.util.List;

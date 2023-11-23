@@ -28,19 +28,19 @@ public class UserService {
     public User getUser(UUID id) {
         User user = repository.findUser(id);
         if (user == null) throw new UserNotFoundException(UserMsg.USER_NOT_FOUND);
-        return repository.findUser(id);
+        return user;
     }
 
     public User getUser(String username) {
         User user = repository.findUser(username);
         if (user == null) throw new UserNotFoundException(UserMsg.USER_NOT_FOUND);
-        return repository.findUser(username);
+        return user;
     }
 
     public List<User> getUsers() {
         List<User> users = repository.findUsers();
         if(users.isEmpty()) throw new UsersNotFoundException(UserMsg.USERS_NOT_FOUND);
-        return repository.findUsers();
+        return users;
     }
 
     public List<User> getUsersByPattern(String pattern) {

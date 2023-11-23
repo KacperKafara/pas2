@@ -18,14 +18,16 @@ public class AppConfig {
                                                       UserService userService) {
         return args -> {
             movieService.addMovie(new Movie("Saw", 10));
-            movieService.addMovie(new Movie("saw II", 20));
-            movieService.addMovie(new Movie("saw III", 30));
+            movieService.addMovie(new Movie("Saw II", 20));
+            movieService.addMovie(new Movie("Saw III", 30));
             movieService.addMovie(new Movie("Saw IV", 14));
+            movieService.addMovie(new Movie("Saw V", 19));
             userService.addUser(new Moderator("Maciek", true));
             userService.addUser(new Administrator("Jacek", true));
             userService.addUser(new Client("Kuba", false, "Kuba", "Aaa"));
             rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
             rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
+            rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(3), LocalDate.now(), LocalDate.now()));
             rentService.addRent(new Rent(userService.getUser("Jacek"), movieService.getMovies().get(2)));
         };
     }
