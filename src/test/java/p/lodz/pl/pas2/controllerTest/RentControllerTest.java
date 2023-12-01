@@ -15,11 +15,8 @@ import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
-import p.lodz.pl.pas2.model.Moderator;
-import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.model.*;
 import p.lodz.pl.pas2.request.RentRequest;
-import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.msg.UserMsg;
@@ -52,11 +49,11 @@ public class RentControllerTest {
         UUID clientId = UUID.randomUUID();
         UUID movieId = UUID.randomUUID();
 
-        User activeUser = new Moderator("ActiveUser", true);
+        Client activeUser = new Client("MaciekM", true, "Maciek", "Maciek");
         Movie availableMovie = new Movie("AvailableMovie", 20);
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, LocalDate.now());
-        Rent rent = new Rent(activeUser,availableMovie,rentRequest.getStartDate());
+        Rent rent = new Rent(activeUser, availableMovie,rentRequest.getStartDate());
 
         Mockito.when(userService.getUser(clientId)).thenReturn(activeUser);
         Mockito.when(movieService.getMovie(movieId)).thenReturn(availableMovie);
@@ -108,8 +105,8 @@ public class RentControllerTest {
     }
     @Test
     public void getCurrentRents() throws Exception {
-        Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now(), null);
-        Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now(), null);
+        Rent rent1 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie1", 10), LocalDate.now(), null);
+        Rent rent2 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie2", 15), LocalDate.now(), null);
         List<Rent> currentRents = Arrays.asList(rent1, rent2);
 
         Mockito.when(rentService.getCurrentRents()).thenReturn(currentRents)
@@ -136,8 +133,8 @@ public class RentControllerTest {
     }
     @Test
     public void getPastRents() throws Exception {
-        Rent rent1 = new Rent(UUID.randomUUID(), new Moderator("user1", true), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
-        Rent rent2 = new Rent(UUID.randomUUID(), new Moderator("user2", true), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
+        Rent rent1 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
+        Rent rent2 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
         List<Rent> pastRents = Arrays.asList(rent1, rent2);
 
         Mockito.when(rentService.getPastRents()).thenReturn(pastRents)
@@ -191,7 +188,7 @@ public class RentControllerTest {
         LocalDate endDate = LocalDate.now().plusDays(5);
         Map<String, String> endDateMap = Collections.singletonMap("endDate", endDate.toString());
 
-        Rent existingRent = new Rent(rentId, new Moderator("user", true), new Movie("movie", 10), LocalDate.now(), null);
+        Rent existingRent = new Rent(rentId, new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie", 10), LocalDate.now(), null);
         Rent updatedRent = new Rent(rentId, existingRent.getUser(), existingRent.getMovie(), existingRent.getStartDate(), endDate);
 
         Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent)
@@ -247,7 +244,7 @@ public class RentControllerTest {
         UUID rentId = UUID.randomUUID();
         LocalDate date = LocalDate.now();
 
-        User activeUser = new Moderator("ActiveUser", true);
+        Client activeUser = new Client("MaciekM", true, "Maciek", "Maciek");
         Movie availableMovie = new Movie("AvailableMovie", 20);
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, date);

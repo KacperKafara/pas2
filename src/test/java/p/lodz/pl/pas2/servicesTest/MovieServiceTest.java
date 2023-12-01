@@ -13,10 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import p.lodz.pl.pas2.exceptions.movieExceptions.*;
-import p.lodz.pl.pas2.model.Administrator;
-import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.model.*;
 import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
@@ -114,7 +111,7 @@ public class MovieServiceTest {
     @Test
     @DirtiesContext
     public void deleteMovieButMovieIsRented(){
-        User user = new Administrator( UUID.randomUUID(),"Bartosz",true);
+        Client user = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek");
         rentService.addRent(new Rent(user,movie, LocalDate.now()));
         MovieInUseException exception = assertThrows(MovieInUseException.class, () -> {
             movieService.deleteMovie(movie.getId());

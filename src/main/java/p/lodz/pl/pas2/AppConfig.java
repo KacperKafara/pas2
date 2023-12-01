@@ -22,13 +22,13 @@ public class AppConfig {
             movieService.addMovie(new Movie("Saw III", 30));
             movieService.addMovie(new Movie("Saw IV", 14));
             movieService.addMovie(new Movie("Saw V", 19));
-            userService.addUser(new Moderator("Maciek", true));
-            userService.addUser(new Administrator("Jacek", true));
-            userService.addUser(new Client("Kuba", false, "Kuba", "Aaa"));
-            rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
-            rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
-            rentService.addRent(new Rent(userService.getUser("Maciek"), movieService.getMovies().get(3), LocalDate.now(), LocalDate.now()));
-            rentService.addRent(new Rent(userService.getUser("Jacek"), movieService.getMovies().get(2)));
+            userService.addUser(new Client("MaciekM", true, "Maciek", "Maciek"));
+            userService.addUser(new Client("JacekJ", true, "Jacek", "Jacek"));
+            userService.addUser(new Client("KubaK", false, "Kuba", "Aaa"));
+            rentService.addRent(new Rent((Client) userService.getUser("MaciekM"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
+            rentService.addRent(new Rent((Client) userService.getUser("MaciekM"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
+            rentService.addRent(new Rent((Client) userService.getUser("MaciekM"), movieService.getMovies().get(3), LocalDate.now(), LocalDate.now()));
+            rentService.addRent(new Rent((Client) userService.getUser("JacekJ"), movieService.getMovies().get(2)));
         };
     }
 }

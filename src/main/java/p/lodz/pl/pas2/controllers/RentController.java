@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotForClientException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentsNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
+import p.lodz.pl.pas2.model.Client;
+import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
@@ -41,7 +44,9 @@ public class RentController {
 
     @PostMapping
     public ResponseEntity<Rent> addRent(@Valid @RequestBody RentRequest rentRequest) {
-        Rent rent = new Rent(userService.getUser(rentRequest.getClientID()),
+        User user = userService.getUser(rentRequest.getClientID());
+        if(!(user instanceof Client)) throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
+        Rent rent = new Rent((Client) user,
                 movieService.getMovie(rentRequest.getMovieID()),
                 rentRequest.getStartDate());
 

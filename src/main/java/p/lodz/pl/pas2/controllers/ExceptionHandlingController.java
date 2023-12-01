@@ -109,4 +109,9 @@ public class ExceptionHandlingController {
     ResponseEntity<String> handleThereIsNoSuchMovieToDeleteException(ThereIsNoSuchMovieToDeleteException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(RentNotForClientException.class)
+    ResponseEntity<String> handleRentNotForClientException(RentNotForClientException e) {
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 }

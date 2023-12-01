@@ -25,7 +25,7 @@ public class Rent {
     @NotNull
     @NotBlank
     @BsonProperty("user")
-    private User user;
+    private Client user;
 
     @NotNull
     @NotBlank
@@ -43,7 +43,7 @@ public class Rent {
 
     @BsonCreator
     public Rent(@BsonId UUID id,
-                @BsonProperty("user") User user,
+                @BsonProperty("user") Client user,
                 @BsonProperty("movie") Movie movie,
                 @BsonProperty("start_date") LocalDate startDate,
                 @BsonProperty("end_date") LocalDate endDate) {
@@ -55,21 +55,21 @@ public class Rent {
         this.endDate = endDate;
     }
 
-    public Rent(User user, Movie movie, LocalDate startDate, LocalDate endDate) {
+    public Rent(Client user, Movie movie, LocalDate startDate, LocalDate endDate) {
         this.user = user;
         this.movie = movie;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public Rent(User user, Movie movie) {
+    public Rent(Client user, Movie movie) {
         this.user = user;
         this.movie = movie;
         startDate = LocalDate.now();
         endDate = null;
     }
 
-    public Rent(User user, Movie movie, LocalDate startDate) {
+    public Rent(Client user, Movie movie, LocalDate startDate) {
         this.user = user;
         this.movie = movie;
         this.startDate = startDate;

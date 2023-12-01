@@ -12,10 +12,7 @@ import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
-import p.lodz.pl.pas2.model.Administrator;
-import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.model.*;
 import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.msg.UserMsg;
@@ -47,7 +44,7 @@ public class RentServiceTest {
     @Autowired
     private UserService userService;
     static Movie movie = new Movie(UUID.randomUUID(), "test", 34);
-    private User user = new Administrator(UUID.randomUUID(), "Bartosz", true);
+    private Client user = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek");
     private Rent rent = new Rent(user, movie, LocalDate.now());
     UUID rentId;
 
@@ -74,7 +71,7 @@ public class RentServiceTest {
     @DirtiesContext
     public void addRentCorrectly() {
         Movie movie2 = new Movie(UUID.randomUUID(), "test", 34);
-        User user2 = new Administrator(UUID.randomUUID(), "Mateusz", true);
+        Client user2 = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek");
         rentService.addRent(new Rent(user2, movie2, LocalDate.now()));
         assertThat(rentService.getCurrentRents().get(1).getMovie().getTitle()).isEqualTo(movie2.getTitle());
         assertThat(rentService.getCurrentRents().get(1).getMovie().getCost()).isEqualTo(movie2.getCost());
@@ -85,7 +82,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButUserNotActive() {
-        User user2 = new Administrator(UUID.randomUUID(), "Mateusz", false);
+        Client user2 = new Client("MaciekM", false, "Maciek", "Maciek");
         UserNotActiveException exception = assertThrows(UserNotActiveException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now()));
         });
@@ -95,7 +92,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButWrongStartDate() {
-        User user2 = new Administrator(UUID.randomUUID(), "Mateusz", true);
+        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek");
         StartDateException exception = assertThrows(StartDateException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now().minusDays(4)));
         });
@@ -105,7 +102,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButWrongEndDate() {
-        User user2 = new Administrator(UUID.randomUUID(), "Mateusz", true);
+        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek");
         EndDateException exception = assertThrows(EndDateException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now(), LocalDate.now().minusDays(4)));
         });
@@ -115,7 +112,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButMovieRented() {
-        User user2 = new Administrator(UUID.randomUUID(), "Mateusz", true);
+        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek");
         MovieInUseException exception = assertThrows(MovieInUseException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now(), LocalDate.now()));
         });
