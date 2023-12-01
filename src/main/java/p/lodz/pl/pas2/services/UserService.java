@@ -1,5 +1,7 @@
 package p.lodz.pl.pas2.services;
 
+import com.mongodb.MongoCommandException;
+import com.mongodb.MongoWriteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -50,7 +52,13 @@ public class UserService {
     }
 
     public User addUser(User user) {
-        return repository.saveClient(user);
+        User added;
+        try {
+            added = repository.saveClient(user);
+        } catch (MongoWriteException e){
+            throw new UsernameInUseException(UserMsg.USERNAME_IN_USE);
+        }
+        return added;
     }
 
     public User setActive(UUID id, boolean active) {

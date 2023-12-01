@@ -44,13 +44,9 @@ public class UserRepositoryMongoDB implements UserRepository {
 
     @Override
     public User saveClient(User user) {
-        if (isUsernameUnique(user.getUsername())) {
-            user.setId(UUID.randomUUID());
-            userMongoCollection.insertOne(user);
-            return user;
-        } else {
-            throw new UsernameInUseException(UserMsg.USERNAME_IN_USE);
-        }
+        user.setId(UUID.randomUUID());
+        userMongoCollection.insertOne(user);
+        return user;
     }
 
     @Override
@@ -73,8 +69,4 @@ public class UserRepositoryMongoDB implements UserRepository {
         ), options);
     }
 
-    private boolean isUsernameUnique(String username) {
-        long count = userMongoCollection.countDocuments(Filters.eq("username", username));
-        return count == 0;
-    }
 }

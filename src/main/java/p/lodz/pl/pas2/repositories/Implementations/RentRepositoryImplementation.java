@@ -92,4 +92,9 @@ public class RentRepositoryImplementation implements RentRepository {
         }
         return null;
     }
+
+    @Override
+    public List<Rent> findCurrentRentsById(UUID movieId) {
+        return null;
+    }
 }

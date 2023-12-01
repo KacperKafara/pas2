@@ -40,11 +40,15 @@ public class RentService {
             throw new EndDateException(RentMsg.WRONG_END_DATE);
         }
         List<Rent> currentRents = repository.findCurrentRents();
-        for(Rent cRent : currentRents) {
-            if(cRent.getMovie().getId().equals(rent.getMovie().getId())) {
-                throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
-            }
+        if (!repository.findCurrentRentsById(rent.getMovie().getId()).isEmpty()){
+            throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
         }
+
+//        for(Rent cRent : currentRents) {
+//            if(cRent.getMovie().getId().equals(rent.getMovie().getId())) {
+//                throw new MovieInUseException(MovieMsg.MOVIE_IS_RENTED);
+//            }
+//        }
         return repository.saveRent(rent);
     }
 

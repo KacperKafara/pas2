@@ -15,4 +15,6 @@ public interface RentRepository {
     List<Rent> findCurrentRents();
     List<Rent> findPastRents();
     Rent updateEndTime(UUID id, LocalDate endTime);
+
+    List<Rent> findCurrentRentsById(UUID movieId);
 }

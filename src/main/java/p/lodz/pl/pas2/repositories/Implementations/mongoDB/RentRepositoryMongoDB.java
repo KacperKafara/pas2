@@ -69,6 +69,35 @@ public class RentRepositoryMongoDB implements RentRepository {
         )).into(new ArrayList<>());
     }
 
+
+    public List<Rent> findCurrentRentsById(UUID movieId) {
+        LocalDate currentDate = LocalDate.now();
+        return rentMongoCollection.find(
+                Filters.and(
+                        Filters.eq("movie._id", movieId),
+                        Filters.or
+                                (
+                                        Filters.and(
+                                                Filters.or(
+                                                        Filters.eq("start_date", currentDate),
+                                                        Filters.lt("start_date", currentDate)
+                                                ),
+                                                Filters.or(
+                                                        Filters.eq("end_date", BsonNull.VALUE),
+                                                        Filters.gt("end_date", currentDate)
+                                                )
+                                        ),
+                                        Filters.and(
+                                                Filters.eq("end_date", BsonNull.VALUE),
+                                                Filters.gt("start_date", currentDate)
+                                        )
+
+                                )
+                )
+
+        ).into(new ArrayList<>());
+    }
+
     @Override
     public List<Rent> findPastRents() {
         LocalDate currentDate = LocalDate.now();
