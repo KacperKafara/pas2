@@ -6,6 +6,7 @@ import com.mongodb.client.model.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
+import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
@@ -67,6 +68,11 @@ public class UserRepositoryMongoDB implements UserRepository {
                 Updates.set("username", user.getUsername()),
                 Updates.set("active", user.isActive())
         ), options);
+    }
+
+    @Override
+    public List<User> findClients() {
+        return userMongoCollection.find(Filters.eq("_clazz", "client")).into(new ArrayList<>());
     }
 
 }

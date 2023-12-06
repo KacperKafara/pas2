@@ -10,6 +10,7 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.request.ClientRequest;
 import p.lodz.pl.pas2.services.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,5 +31,10 @@ public class ClientController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody ClientRequest user) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getClients() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getClients());
     }
 }

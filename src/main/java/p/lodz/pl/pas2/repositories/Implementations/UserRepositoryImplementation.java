@@ -3,6 +3,7 @@ package p.lodz.pl.pas2.repositories.Implementations;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
+import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
@@ -79,6 +80,11 @@ public class UserRepositoryImplementation implements UserRepository {
         updatedUser.setUsername(user.getUsername());
         updatedUser.setActive(user.isActive());
         return updatedUser;
+    }
+
+    @Override
+    public List<User> findClients() {
+        return null;
     }
 
     private boolean isUsernameUnique(String username) {

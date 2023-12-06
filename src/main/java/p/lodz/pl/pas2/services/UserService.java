@@ -10,10 +10,12 @@ import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
+import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
 import p.lodz.pl.pas2.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,5 +71,11 @@ public class UserService {
     public User updateUser(UUID id, User user) {
         if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
         return repository.updateUser(id, user);
+    }
+
+    public List<User> getClients() {
+        List<User> users = repository.findClients();
+        if(users.isEmpty()) throw new UsersNotFoundException(UserMsg.USERS_NOT_FOUND);
+        return users;
     }
 }

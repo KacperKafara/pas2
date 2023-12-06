@@ -1,5 +1,6 @@
 package p.lodz.pl.pas2.repositories;
 
+import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.User;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface UserRepository {
     List<User> findUsers();
     User setActive(UUID id, boolean active);
     User updateUser(UUID id, User user);
+    List<User> findClients();
 }

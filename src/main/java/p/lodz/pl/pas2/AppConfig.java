@@ -25,6 +25,7 @@ public class AppConfig {
             userService.addUser(new Client("MaciekM", true, "Maciek", "Maciek"));
             userService.addUser(new Client("JacekJ", true, "Jacek", "Jacek"));
             userService.addUser(new Client("KubaK", false, "Kuba", "Aaa"));
+            userService.addUser(new Moderator("HubertH", false));
             rentService.addRent(new Rent((Client) userService.getUser("MaciekM"), movieService.getMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
             rentService.addRent(new Rent((Client) userService.getUser("MaciekM"), movieService.getMovies().get(1), LocalDate.now(), LocalDate.now().plusDays(5)));
             rentService.addRent(new Rent((Client) userService.getUser("MaciekM"), movieService.getMovies().get(3), LocalDate.now(), LocalDate.now()));
