@@ -112,6 +112,11 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(RentNotForClientException.class)
     ResponseEntity<String> handleRentNotForClientException(RentNotForClientException e) {
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(RentIsAlreadyEndedException.class)
+    ResponseEntity<String> handleRentIsAlreadyEndedException(RentIsAlreadyEndedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

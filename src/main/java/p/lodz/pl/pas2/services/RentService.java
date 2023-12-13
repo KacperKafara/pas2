@@ -63,6 +63,7 @@ public class RentService {
         Rent rentToUpdate = repository.findRent(id);
         if(rentToUpdate == null) throw new ThereIsNoSuchRentToUpdateException(RentMsg.RENT_NOT_FOUND);
         if(rentToUpdate.getStartDate().isAfter(endTime)) throw new EndDateException(RentMsg.WRONG_END_DATE);
+        if(rentToUpdate.getEndDate() != null) throw new RentIsAlreadyEndedException(RentMsg.RENT_IS_ALREADY_ENDED);
         return repository.updateEndTime(id, endTime);
     }
 

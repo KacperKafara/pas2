@@ -7,4 +7,5 @@ public class RentMsg {
     public static final String RENT_NOT_ENDED = "The rental is still ongoing.";
     public static final String WRONG_START_DATE = "Start date cannot be set in the past.";
     public static final String RENT_FOR_WRONG_USER = "You tried to create a rent for a user other than the client.";
+    public static final String RENT_IS_ALREADY_ENDED = "The rental is already finished.";
 }
