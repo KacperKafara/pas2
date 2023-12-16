@@ -78,4 +78,9 @@ public class UserService {
         if(users.isEmpty()) throw new UsersNotFoundException(UserMsg.USERS_NOT_FOUND);
         return users;
     }
+
+    public User updateClient(UUID id, Client client) {
+        if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
+        return repository.updateClient(id, client);
+    }
 }

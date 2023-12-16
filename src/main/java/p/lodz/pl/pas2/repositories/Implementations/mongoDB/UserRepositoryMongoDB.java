@@ -75,4 +75,14 @@ public class UserRepositoryMongoDB implements UserRepository {
         return userMongoCollection.find(Filters.eq("_clazz", "client")).into(new ArrayList<>());
     }
 
+    @Override
+    public User updateClient(UUID id, Client client) {
+        return userMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
+                Updates.set("firstname", client.getFirstName()),
+                Updates.set("lastname", client.getLastName()),
+                Updates.set("username", client.getUsername()),
+                Updates.set("active", client.isActive())
+        ), options);
+    }
+
 }

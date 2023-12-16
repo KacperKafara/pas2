@@ -87,6 +87,11 @@ public class UserRepositoryImplementation implements UserRepository {
         return null;
     }
 
+    @Override
+    public User updateClient(UUID id, Client client) {
+        return null;
+    }
+
     private boolean isUsernameUnique(String username) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {

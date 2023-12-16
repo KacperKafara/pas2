@@ -15,4 +15,6 @@ public interface UserRepository {
     User setActive(UUID id, boolean active);
     User updateUser(UUID id, User user);
     List<User> findClients();
+
+    User updateClient(UUID id, Client client);
 }

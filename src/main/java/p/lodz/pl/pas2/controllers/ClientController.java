@@ -30,7 +30,7 @@ public class ClientController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody ClientRequest user) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateClient(id, new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName())));
     }
 
     @GetMapping
