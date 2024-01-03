@@ -81,6 +81,12 @@ public class UserService {
 
     public User updateClient(UUID id, Client client) {
         if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
-        return repository.updateClient(id, client);
+        User user;
+        try {
+            user = repository.updateClient(id, client);
+        } catch (MongoCommandException e){
+            throw new UsernameInUseException(UserMsg.USERNAME_IN_USE);
+        }
+        return user;
     }
 }
