@@ -30,6 +30,7 @@ public class AppConfig {
             userRepository.saveClient(new Client("JacekJ", true, "Jacek", "Jacek"));
             userRepository.saveClient(new Client("KubaK", false, "Kuba", "Aaa"));
             userRepository.saveClient(new Moderator("HubertH", false));
+            userRepository.saveClient(new Administrator("admin", true));
             rentRepository.saveRent(new Rent((Client) userRepository.findUser("MaciekM"), movieRepository.findMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
             rentRepository.saveRent(new Rent((Client) userRepository.findUser("MaciekM"), movieRepository.findMovies().get(1), LocalDate.now().minusDays(5), LocalDate.now().minusDays(1)));
             rentRepository.saveRent(new Rent((Client) userRepository.findUser("MaciekM"), movieRepository.findMovies().get(3), LocalDate.now().minusDays(5)));

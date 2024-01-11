@@ -10,6 +10,7 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.request.AdministratorRequest;
 import p.lodz.pl.pas2.services.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,4 +33,10 @@ public class AdministratorController {
     public ResponseEntity<User> updateUser(@PathVariable UUID id,@Valid @RequestBody AdministratorRequest user) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Administrator(user.getUsername(), user.isActive())));
     }
+
+    @GetMapping
+    public  ResponseEntity<List<User>> getAdministrators(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAdministrators());
+    }
+
 }

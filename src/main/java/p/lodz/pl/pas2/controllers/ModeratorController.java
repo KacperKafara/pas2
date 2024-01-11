@@ -10,6 +10,7 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.request.ModeratorRequest;
 import p.lodz.pl.pas2.services.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,5 +32,10 @@ public class ModeratorController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody ModeratorRequest user) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Moderator(user.getUsername(), user.isActive())));
+    }
+
+    @GetMapping
+    public  ResponseEntity<List<User>> getModerators(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getModerators());
     }
 }

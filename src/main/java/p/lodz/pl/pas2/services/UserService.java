@@ -89,4 +89,16 @@ public class UserService {
         }
         return user;
     }
+
+    public List<User> getAdministrators() {
+        List<User> users = repository.findAdministrators();
+        if(users.isEmpty()) throw new UsersNotFoundException(UserMsg.USERS_NOT_FOUND);
+        return users;
+    }
+
+    public List<User> getModerators() {
+        List<User> users = repository.findModerators();
+        if(users.isEmpty()) throw new UsersNotFoundException(UserMsg.USERS_NOT_FOUND);
+        return users;
+    }
 }

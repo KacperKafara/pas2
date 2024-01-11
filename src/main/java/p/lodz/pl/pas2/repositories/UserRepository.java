@@ -17,4 +17,8 @@ public interface UserRepository {
     List<User> findClients();
 
     User updateClient(UUID id, Client client);
+
+    List<User> findAdministrators();
+
+    List<User> findModerators();
 }

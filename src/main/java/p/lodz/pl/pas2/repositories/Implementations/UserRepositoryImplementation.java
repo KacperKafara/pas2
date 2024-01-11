@@ -92,6 +92,16 @@ public class UserRepositoryImplementation implements UserRepository {
         return null;
     }
 
+    @Override
+    public List<User> findAdministrators() {
+        return null;
+    }
+
+    @Override
+    public List<User> findModerators() {
+        return null;
+    }
+
     private boolean isUsernameUnique(String username) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {

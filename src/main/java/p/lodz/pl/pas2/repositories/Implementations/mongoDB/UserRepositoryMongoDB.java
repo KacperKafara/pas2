@@ -85,4 +85,14 @@ public class UserRepositoryMongoDB implements UserRepository {
         ), options);
     }
 
+    @Override
+    public List<User> findAdministrators() {
+        return userMongoCollection.find(Filters.eq("_clazz", "administrator")).into(new ArrayList<>());
+    }
+
+    @Override
+    public List<User> findModerators() {
+        return userMongoCollection.find(Filters.eq("_clazz", "moderator")).into(new ArrayList<>());
+    }
+
 }
