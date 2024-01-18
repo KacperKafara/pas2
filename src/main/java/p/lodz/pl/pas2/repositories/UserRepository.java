@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public interface UserRepository {
     User findUser(UUID id);
+    User findByLogin(String login);
     User findUser(String username);
     List<User> findUsersMatchToValue(String username);
     User saveClient(User user);

@@ -28,6 +28,12 @@ public class Client extends User {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    public Client(UUID id,String username, boolean active, String firstName, String lastName
+            ,String email,String password) {
+        super(id,username, active,email,password);
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Client(UUID id,
                   String username,
@@ -35,6 +41,17 @@ public class Client extends User {
                   String firstName,
                   String lastName) {
         super(id, username, active);
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    public Client(
+                  String username,
+                  boolean active,
+                  String firstName,
+                  String lastName,
+                  String email,
+                  String password) {
+        super( username, active,email,password);
         this.firstName = firstName;
         this.lastName = lastName;
     }

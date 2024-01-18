@@ -34,6 +34,11 @@ public class UserRepositoryMongoDB implements UserRepository {
     }
 
     @Override
+    public User findByLogin(String login) {
+        return userMongoCollection.find(Filters.eq("username",login)).first();
+    }
+
+    @Override
     public User findUser(String username) {
         return userMongoCollection.find(Filters.eq("username", username)).first();
     }

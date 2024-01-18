@@ -11,6 +11,7 @@ import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.User;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserTypeCodec implements Codec<User> {
@@ -29,6 +30,8 @@ public class UserTypeCodec implements Codec<User> {
         String firstName = null;
         String lastName = null;
         String _clazz = null;
+        String email = null;
+        String password = null;
         while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             String fieldName = bsonReader.readName();
             switch (fieldName) {
@@ -51,17 +54,30 @@ public class UserTypeCodec implements Codec<User> {
                 case "_clazz":
                     _clazz = bsonReader.readString();
                     break;
+                case "e-mail":
+                    email = bsonReader.readString();
+                    break;
+                case "password":
+                    password = bsonReader.readString();
+                    break;
                 default:
                     bsonReader.skipValue();
             }
         }
         bsonReader.readEndDocument();
-        if(_clazz != null && _clazz.equals("client")) {
+        if (_clazz != null && _clazz.equals("client") && (email == null || password == null)) {
             return new Client(id, username, active, firstName, lastName);
-        } else if (_clazz != null && _clazz.equals("administrator")) {
+        } else if (_clazz != null && _clazz.equals("client") ) {
+            return new Client(id, username, active, firstName, lastName, email, password);
+        } else if (_clazz != null && _clazz.equals("administrator") &&  (email == null || password == null)) {
             return new Administrator(id, username, active);
-        } else {
+        } else if (_clazz != null && _clazz.equals("administrator") ) {
+            return new Administrator(id, username, active, email, password);
+        } else if ( (email == null || password == null)) {
             return new Moderator(id, username, active);
+        }
+         else  {
+            return new Moderator(id, username, active,email,password);
         }
     }
 
@@ -73,6 +89,11 @@ public class UserTypeCodec implements Codec<User> {
 //        bsonWriter.writeString("_id", user.getId().toString());
         bsonWriter.writeString("username", user.getUsername());
         bsonWriter.writeBoolean("active", user.isActive());
+            if((user.getEmail() != null) && (user.getPassword() != null)) {
+            bsonWriter.writeString("e-mail", user.getEmail());
+                bsonWriter.writeString("password", user.getPassword());
+        }
+
         if (user instanceof Client) {
             bsonWriter.writeName("firstname");
             bsonWriter.writeString(((Client) user).getFirstName());

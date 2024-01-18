@@ -40,6 +40,11 @@ public class UserService {
         if (user == null) throw new UserNotFoundException(UserMsg.USER_NOT_FOUND);
         return user;
     }
+    public User getUserByLogin(String login) {
+        User user = repository.findByLogin(login);
+        if (user == null) throw new UserNotFoundException(UserMsg.USER_NOT_FOUND);
+        return user;
+    }
 
     public List<User> getUsers() {
         List<User> users = repository.findUsers();

@@ -26,6 +26,12 @@ public abstract class User {
     @BsonProperty("active")
     protected boolean active;
 
+    @BsonProperty("e-mail")
+    protected String email;
+
+    @BsonProperty("password")
+    protected String password;
+
     @BsonCreator
     public User(@BsonId UUID id,
                 @BsonProperty("username") String username,
@@ -34,10 +40,30 @@ public abstract class User {
         this.username = username;
         this.active = active;
     }
+    @BsonCreator
+    public User(@BsonId UUID id,
+                @BsonProperty("username") String username,
+                @BsonProperty("active") boolean active,
+                @BsonProperty("e-mail") String email,
+                @BsonProperty("password") String password) {
+        this.id = id;
+        this.username = username;
+        this.active = active;
+        this.email = email;
+        this.password = password;
+    }
+
 
     public User(String username, boolean active) {
         this.username = username;
         this.active = active;
+    }
+
+    public User(String username, boolean active, String email, String password) {
+        this.username = username;
+        this.active = active;
+        this.email = email;
+        this.password = password;
     }
 
     public void setId(UUID id) {

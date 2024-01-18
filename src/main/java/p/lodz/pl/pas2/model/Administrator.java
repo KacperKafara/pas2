@@ -18,4 +18,18 @@ public class Administrator extends User {
                          boolean active) {
         super(id, username, active);
     }
+    public Administrator(
+                         String username,
+                         boolean active,
+                         String email,
+                         String password) {
+        super( username, active,email,password);
+    }
+    public Administrator(UUID id,
+                         String username,
+                         boolean active,
+                         String email,
+                         String password) {
+        super(id, username, active,email,password);
+    }
 }

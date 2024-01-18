@@ -18,4 +18,18 @@ public class Moderator extends User {
                      boolean active) {
         super(id, username, active);
     }
+    public Moderator(UUID id,
+                     String username,
+                     boolean active,
+                     String email,
+                     String password) {
+        super(id, username, active,email,password);
+    }
+    public Moderator(
+                     String username,
+                     boolean active,
+                     String email,
+                     String password) {
+        super( username, active,email,password);
+    }
 }
