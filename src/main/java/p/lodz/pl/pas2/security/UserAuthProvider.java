@@ -51,4 +51,10 @@ public class UserAuthProvider {
         User user = userService.getUser(UUID.fromString(decodedJWT.getSubject()));
         return new UsernamePasswordAuthenticationToken(user, null, Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getClass().getSimpleName().toUpperCase())));
     }
+
+    public UUID getUserId(String token) {
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        return UUID.fromString(decodedJWT.getSubject());
+    }
 }
