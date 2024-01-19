@@ -9,27 +9,14 @@ import java.util.UUID;
 
 @NoArgsConstructor
 public class Moderator extends User {
-    public Moderator(String username, boolean active) {
-        super(username, active);
+    public Moderator(String username, boolean active, String password) {
+        super(username, active, password);
     }
 
     public Moderator(UUID id,
                      String username,
-                     boolean active) {
-        super(id, username, active);
-    }
-    public Moderator(UUID id,
-                     String username,
                      boolean active,
-                     String email,
                      String password) {
-        super(id, username, active,email,password);
-    }
-    public Moderator(
-                     String username,
-                     boolean active,
-                     String email,
-                     String password) {
-        super( username, active,email,password);
+        super(id, username, active, password);
     }
 }

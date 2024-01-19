@@ -36,8 +36,8 @@ public class AdministratorControllerTest {
     @Test
     @DirtiesContext
     public void testAddUser() throws Exception {
-        AdministratorRequest user = new AdministratorRequest("maciek", true);
-        User user1 = new Administrator("maciek", true);
+        AdministratorRequest user = new AdministratorRequest("maciek", true, "password");
+        User user1 = new Administrator("maciek", true, "password");
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user1)
                 .thenThrow(new UsernameInUseException(UserMsg.USERNAME_IN_USE));
         ObjectMapper objectMapper= new ObjectMapper();
@@ -60,9 +60,9 @@ public class AdministratorControllerTest {
     public void testUpdateUser() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        AdministratorRequest user = new AdministratorRequest("maciek", true);
+        AdministratorRequest user = new AdministratorRequest("maciek", true, "password");
         UUID id = UUID.randomUUID();
-        User user2 = new Administrator(id,"maciek", true);
+        User user2 = new Administrator(id,"maciek", true, "password");
 
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user2)
                 .thenThrow(ThereIsNoUserToUpdateException.class);

@@ -49,7 +49,7 @@ public class RentControllerTest {
         UUID clientId = UUID.randomUUID();
         UUID movieId = UUID.randomUUID();
 
-        Client activeUser = new Client("MaciekM", true, "Maciek", "Maciek");
+        Client activeUser = new Client("MaciekM", true, "Maciek", "Maciek", "1234");
         Movie availableMovie = new Movie("AvailableMovie", 20);
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, LocalDate.now());
@@ -105,8 +105,8 @@ public class RentControllerTest {
     }
     @Test
     public void getCurrentRents() throws Exception {
-        Rent rent1 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie1", 10), LocalDate.now(), null);
-        Rent rent2 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie2", 15), LocalDate.now(), null);
+        Rent rent1 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek", "1234"), new Movie("movie1", 10), LocalDate.now(), null);
+        Rent rent2 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek", "1234"), new Movie("movie2", 15), LocalDate.now(), null);
         List<Rent> currentRents = Arrays.asList(rent1, rent2);
 
         Mockito.when(rentService.getCurrentRents()).thenReturn(currentRents)
@@ -133,8 +133,8 @@ public class RentControllerTest {
     }
     @Test
     public void getPastRents() throws Exception {
-        Rent rent1 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
-        Rent rent2 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
+        Rent rent1 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek", "1234"), new Movie("movie1", 10), LocalDate.now().minusDays(10), LocalDate.now().minusDays(5));
+        Rent rent2 = new Rent(UUID.randomUUID(), new Client("MaciekM", true, "Maciek", "Maciek", "1234"), new Movie("movie2", 15), LocalDate.now().minusDays(8), LocalDate.now().minusDays(2));
         List<Rent> pastRents = Arrays.asList(rent1, rent2);
 
         Mockito.when(rentService.getPastRents()).thenReturn(pastRents)
@@ -188,7 +188,7 @@ public class RentControllerTest {
         LocalDate endDate = LocalDate.now().plusDays(5);
         Map<String, String> endDateMap = Collections.singletonMap("endDate", endDate.toString());
 
-        Rent existingRent = new Rent(rentId, new Client("MaciekM", true, "Maciek", "Maciek"), new Movie("movie", 10), LocalDate.now(), null);
+        Rent existingRent = new Rent(rentId, new Client("MaciekM", true, "Maciek", "Maciek", "1234"), new Movie("movie", 10), LocalDate.now(), null);
         Rent updatedRent = new Rent(rentId, existingRent.getUser(), existingRent.getMovie(), existingRent.getStartDate(), endDate);
 
         Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent)
@@ -244,7 +244,7 @@ public class RentControllerTest {
         UUID rentId = UUID.randomUUID();
         LocalDate date = LocalDate.now();
 
-        Client activeUser = new Client("MaciekM", true, "Maciek", "Maciek");
+        Client activeUser = new Client("MaciekM", true, "Maciek", "Maciek", "1234");
         Movie availableMovie = new Movie("AvailableMovie", 20);
 
         RentRequest rentRequest = new RentRequest(clientId, movieId, date);

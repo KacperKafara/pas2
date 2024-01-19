@@ -17,6 +17,7 @@ import java.util.UUID;
 public class UserTypeCodec implements Codec<User> {
     private final CodecRegistry registry;
     private Codec<UUID> uuidCodec;
+
     public UserTypeCodec(CodecRegistry registry) {
         this.registry = registry;
     }
@@ -65,19 +66,12 @@ public class UserTypeCodec implements Codec<User> {
             }
         }
         bsonReader.readEndDocument();
-        if (_clazz != null && _clazz.equals("client") && (email == null || password == null)) {
-            return new Client(id, username, active, firstName, lastName);
-        } else if (_clazz != null && _clazz.equals("client") ) {
-            return new Client(id, username, active, firstName, lastName, email, password);
-        } else if (_clazz != null && _clazz.equals("administrator") &&  (email == null || password == null)) {
-            return new Administrator(id, username, active);
-        } else if (_clazz != null && _clazz.equals("administrator") ) {
-            return new Administrator(id, username, active, email, password);
-        } else if ( (email == null || password == null)) {
-            return new Moderator(id, username, active);
-        }
-         else  {
-            return new Moderator(id, username, active,email,password);
+        if (_clazz != null && _clazz.equals("client")) {
+            return new Client(id, username, active, firstName, lastName, password);
+        } else if (_clazz != null && _clazz.equals("administrator")) {
+            return new Administrator(id, username, active, password);
+        } else {
+            return new Moderator(id, username, active, password);
         }
     }
 
@@ -89,10 +83,7 @@ public class UserTypeCodec implements Codec<User> {
 //        bsonWriter.writeString("_id", user.getId().toString());
         bsonWriter.writeString("username", user.getUsername());
         bsonWriter.writeBoolean("active", user.isActive());
-            if((user.getEmail() != null) && (user.getPassword() != null)) {
-            bsonWriter.writeString("e-mail", user.getEmail());
-                bsonWriter.writeString("password", user.getPassword());
-        }
+        bsonWriter.writeString("password", user.getPassword());
 
         if (user instanceof Client) {
             bsonWriter.writeName("firstname");

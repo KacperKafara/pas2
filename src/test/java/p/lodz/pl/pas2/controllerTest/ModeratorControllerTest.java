@@ -35,8 +35,8 @@ public class ModeratorControllerTest {
     @Test
     @DirtiesContext
     public void testAddUser() throws Exception {
-        ModeratorRequest user = new ModeratorRequest("maciek", true);
-        User user1 = new Moderator("maciek", true);
+        ModeratorRequest user = new ModeratorRequest("maciek", true, "1234");
+        User user1 = new Moderator("maciek", true, "1234");
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user1)
                 .thenThrow(new UsernameInUseException(UserMsg.USERNAME_IN_USE));
         ObjectMapper objectMapper= new ObjectMapper();
@@ -59,9 +59,9 @@ public class ModeratorControllerTest {
     public void testUpdateUser() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        ModeratorRequest user = new ModeratorRequest("maciek", true);
+        ModeratorRequest user = new ModeratorRequest("maciek", true, "1234");
         UUID id = UUID.randomUUID();
-        User user2 = new Moderator(id,"maciek", true);
+        User user2 = new Moderator(id,"maciek", true, "1234");
 
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user2)
                 .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));

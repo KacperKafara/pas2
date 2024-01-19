@@ -38,8 +38,8 @@ public class UserControllerTest {
 
     @Test
     public void getUsers() throws Exception {
-        User user = new Moderator("Jaca", true);
-        User user2 = new Moderator("Praca", true);
+        User user = new Moderator("Jaca", true, "Jaca");
+        User user2 = new Moderator("Praca", true, "Praca");
         List<User> users_list = new ArrayList<>();
         users_list.add(user);
         users_list.add(user2);
@@ -68,7 +68,7 @@ public class UserControllerTest {
     }
     @Test
     public void getUserByPatter() throws Exception {
-        User user = new Moderator("Jaca", true);
+        User user = new Moderator("Jaca", true, "Jaca");
         List<User> usersList = new ArrayList<>();
         usersList.add(user);
 
@@ -85,7 +85,7 @@ public class UserControllerTest {
     @Test
     public void testGetUserByID() throws Exception {
 
-        User user = new Client("Jaca", true, "Jaca", "Jaca");
+        User user = new Client("Jaca", true, "Jaca", "Jaca", "Jaca");
         UUID userId = UUID.randomUUID();
         user.setId(userId);
         Mockito.when(userService.getUser(user.getId())).thenReturn(user);
@@ -108,7 +108,7 @@ public class UserControllerTest {
         Map<String, Boolean> body = new HashMap<>();
         body.put("active", false);
 
-        User user = new Client("Jaca", false, "Jaca", "Jaca");
+        User user = new Client("Jaca", false, "Jaca", "Jaca", "Jaca");
         Mockito.when(userService.setActive(userId, false)).thenReturn(user)
                 .thenThrow(ThereIsNoUserToUpdateException.class);
         mockMvc.perform(patch("/api/v1/users/{id}", userId)

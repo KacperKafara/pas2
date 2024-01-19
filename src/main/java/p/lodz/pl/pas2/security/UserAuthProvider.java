@@ -20,6 +20,7 @@ import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -29,17 +30,16 @@ public class UserAuthProvider {
 
     private final UserService userService;
 
-
-
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
-    public String createToken(String login) {
+    public String createToken(UUID id, String userType) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validity = now.plusHours(12);
         return JWT.create()
-                .withSubject(login)
+                .withSubject(id.toString())
+                .withClaim("userType", userType)
                 .withIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
                 .withExpiresAt(Date.from(validity.atZone(ZoneId.systemDefault()).toInstant()))
                 .sign(Algorithm.HMAC256(secretKey));
@@ -48,13 +48,7 @@ public class UserAuthProvider {
     public Authentication validateToken(String token) {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        User user = userService.getUserByLogin(decodedJWT.getSubject());
-        return new UsernamePasswordAuthenticationToken(user, null, Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getClass().getSimpleName().toLowerCase())));
-    }
-
-    public String getUserLogin(String token) {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        return decodedJWT.getSubject();
+        User user = userService.getUser(UUID.fromString(decodedJWT.getSubject()));
+        return new UsernamePasswordAuthenticationToken(user, null, Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getClass().getSimpleName().toUpperCase())));
     }
 }

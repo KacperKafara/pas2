@@ -14,8 +14,8 @@ public class ClientRequest extends UserRequest {
     @NotNull(message = "last name not given")
     @NotBlank(message = "last name cannot be empty")
     private final String lastName;
-    public ClientRequest(String username, boolean active, String firstName, String lastName) {
-        super(username, active);
+    public ClientRequest(String username, boolean active, String firstName, String lastName, String password) {
+        super(username, active, password);
         this.firstName = firstName;
         this.lastName = lastName;
     }

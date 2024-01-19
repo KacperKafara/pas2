@@ -27,7 +27,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/rents/current").permitAll()
                         .requestMatchers("/api/v1/administrators").permitAll()
                         .requestMatchers("/api/v1/users").authenticated()
-                        .requestMatchers("/api/v1/authentication/registerAdmin").permitAll();
+                        .requestMatchers("/api/v1/authentication/login").permitAll();
                 });
 
 

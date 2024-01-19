@@ -38,7 +38,7 @@ public class ClientControllerTest {
     @Test
     @DirtiesContext
     public void testAddUser() throws Exception {
-        User user = new Client("maciek", true,"Maciek","Smolinski");
+        User user = new Client("maciek", true,"Maciek","Smolinski","1234");
         Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user);
         ObjectMapper objectMapper= new ObjectMapper();
         mockMvc.perform(post("/api/v1/clients")
@@ -57,8 +57,7 @@ public class ClientControllerTest {
     @Test
     @DirtiesContext
     public void addUserButLoginBlank() throws Exception {
-        ClientRequest user = new ClientRequest("", true, "co", "zle") {
-        };
+        ClientRequest user = new ClientRequest("", true, "co", "zle", "1234");
         MvcResult result =  mockMvc.perform(post("/api/v1/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(user)))
@@ -72,7 +71,7 @@ public class ClientControllerTest {
     public void testUpdateUser() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        User user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski");
+        User user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski","1234");
         user.setUsername("Nowe");
         Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user);
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())

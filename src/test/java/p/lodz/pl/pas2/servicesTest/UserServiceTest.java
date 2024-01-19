@@ -33,7 +33,7 @@ import java.util.UUID;
 public class UserServiceTest {
     @Autowired
     private UserService userService;
-    User user = new Administrator("Bartosz",true);
+    User user = new Administrator("Bartosz",true,"Bartosz");
     private UUID userId;
 
     @BeforeEach
@@ -62,7 +62,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void getUsers() {
-        User user2 = new Administrator("John", false);
+        User user2 = new Administrator("John", false, "John");
         userService.addUser(user2);
         List<User> users = new ArrayList<>();
         users.add(user);
@@ -77,7 +77,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void getUsersByPattern() {
-        User user2 = new Administrator("Bartek", false);
+        User user2 = new Administrator("Bartek", false, "Bartek");
         userService.addUser(user2);
         List<User> users = new ArrayList<>();
         users.add(user);
@@ -93,7 +93,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void addUser() {
-        User newUser = new Administrator("Alice", true);
+        User newUser = new Administrator("Alice", true, "Alice");
         userService.addUser(newUser);
         assertThat(userService.getUsers().size()).isEqualTo(2);
     }
@@ -101,7 +101,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void addUserWithDuplicateUsername() {
-        User duplicateUser = new Administrator(user.getUsername(), false);
+        User duplicateUser = new Administrator(user.getUsername(), false, "Alice");
         UsernameInUseException exception = assertThrows(UsernameInUseException.class, () -> {
             userService.addUser(duplicateUser);
         });
@@ -128,7 +128,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void updateUserForExistingUser() {
-        User updatedUser = new Administrator("UpdatedName", false);
+        User updatedUser = new Administrator("UpdatedName", false, "UpdatedName");
         userService.updateUser(userId, updatedUser);
         assertThat(userService.getUser(userId).getUsername()).isEqualTo(updatedUser.getUsername());
         assertThat(userService.getUser(userId).isActive()).isEqualTo(updatedUser.isActive());
@@ -138,7 +138,7 @@ public class UserServiceTest {
     @DirtiesContext
     public void updateUserForNonexistentUser() {
         UUID nonExistentUserId = UUID.randomUUID();
-        User updatedUser = new Administrator("UpdatedName", false);
+        User updatedUser = new Administrator("UpdatedName", false, "UpdatedName");
         ThereIsNoUserToUpdateException exception = assertThrows(ThereIsNoUserToUpdateException.class, () -> {
             userService.updateUser(nonExistentUserId, updatedUser);
         });

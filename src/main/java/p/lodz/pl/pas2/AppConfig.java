@@ -29,16 +29,14 @@ public class AppConfig {
             movieRepository.saveMovie(new Movie("Saw III", 30));
             movieRepository.saveMovie(new Movie("Saw IV", 14));
             movieRepository.saveMovie(new Movie("Saw V", 19));
-            authenticationService.registerClient(new Client("MaciekM", true, "Maciek", "Maciek","mail@o2.pl","pass"));
-            authenticationService.loginUser(new LoginDto("MaciekM","pass"));
-            userRepository.saveClient(new Client("JacekJ", true, "Jacek", "Jacek","jacek@mail.pl","pasword"));
-            userRepository.saveClient(new Client("KubaK", false, "Kuba", "Aaa","kuba@mail.pl","paswr1"));
-            userRepository.saveClient(new Moderator("HubertH", false));
-            userRepository.saveClient(new Administrator("admin", true));
-            rentRepository.saveRent(new Rent((Client) userRepository.findUser("MaciekM"), movieRepository.findMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
-            rentRepository.saveRent(new Rent((Client) userRepository.findUser("MaciekM"), movieRepository.findMovies().get(1), LocalDate.now().minusDays(5), LocalDate.now().minusDays(1)));
-            rentRepository.saveRent(new Rent((Client) userRepository.findUser("MaciekM"), movieRepository.findMovies().get(3), LocalDate.now().minusDays(5)));
-            rentRepository.saveRent(new Rent((Client) userRepository.findUser("JacekJ"), movieRepository.findMovies().get(2)));
+            userRepository.saveClient(new Client("client1", true, "Maciek", "M", "$2b$12$6J4h6z.Er73Ud7zWhUT4yueCCFl2xCLkUZGHi8JtJYYwxp3NHtbBK"));
+            userRepository.saveClient(new Client("client2", false, "Kuba", "Aaa","$2b$12$6J4h6z.Er73Ud7zWhUT4yueCCFl2xCLkUZGHi8JtJYYwxp3NHtbBK"));
+            userRepository.saveClient(new Moderator("HubertH", false, "$2b$12$6J4h6z.Er73Ud7zWhUT4yueCCFl2xCLkUZGHi8JtJYYwxp3NHtbBK"));
+            userRepository.saveClient(new Administrator("admin", true, "$2b$12$6J4h6z.Er73Ud7zWhUT4yueCCFl2xCLkUZGHi8JtJYYwxp3NHtbBK"));
+            rentRepository.saveRent(new Rent((Client) userRepository.findUser("client1"), movieRepository.findMovies().get(0), LocalDate.now(), LocalDate.now().plusDays(5)));
+            rentRepository.saveRent(new Rent((Client) userRepository.findUser("client1"), movieRepository.findMovies().get(1), LocalDate.now().minusDays(5), LocalDate.now().minusDays(1)));
+            rentRepository.saveRent(new Rent((Client) userRepository.findUser("client1"), movieRepository.findMovies().get(3), LocalDate.now().minusDays(5)));
+            rentRepository.saveRent(new Rent((Client) userRepository.findUser("client2"), movieRepository.findMovies().get(2)));
         };
     }
 }

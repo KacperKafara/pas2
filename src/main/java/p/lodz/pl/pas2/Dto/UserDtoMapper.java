@@ -8,13 +8,13 @@ import p.lodz.pl.pas2.model.Moderator;
 @Component
 public class UserDtoMapper {
 
-    public UserDto clientToUserDto(Client user) {
-        return new UserDto(user.getId(), user.getEmail(), user.getUsername(), user.getClass().getSimpleName().toLowerCase());
+    public ClientDto clientToUserDto(Client user) {
+        return new ClientDto(user.getId(), user.getUsername(), user.getClass().getSimpleName().toLowerCase(), user.getFirstName(), user.getLastName());
     }
-    public UserDto adminToUserDto(Administrator user) {
-        return new UserDto(user.getId(), user.getEmail(), user.getUsername(), user.getClass().getSimpleName().toLowerCase());
+    public AdminDto adminToUserDto(Administrator user) {
+        return new AdminDto(user.getId(), user.getUsername(), user.getClass().getSimpleName().toLowerCase());
     }
-    public UserDto moderatorToUserDto(Moderator user) {
-        return new UserDto(user.getId(), user.getEmail(), user.getUsername(), user.getClass().getSimpleName().toLowerCase());
+    public ModeratorDto moderatorToUserDto(Moderator user) {
+        return new ModeratorDto(user.getId(), user.getUsername(), user.getClass().getSimpleName().toLowerCase());
     }
 }
