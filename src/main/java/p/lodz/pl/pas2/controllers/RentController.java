@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.Dto.RentDto.RentDto;
+import p.lodz.pl.pas2.Dto.RentDto.RentDtoMapper;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotForClientException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentNotFoundException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.RentsNotFoundException;
@@ -29,56 +31,58 @@ public class RentController {
     private final RentService rentService;
     private final UserService userService;
     private final MovieService movieService;
+    private final RentDtoMapper rentDtoMapper;
 
     @Autowired
-    public RentController(RentService rentService, UserService userService, MovieService movieService) {
+    public RentController(RentService rentService, UserService userService, MovieService movieService, RentDtoMapper rentDtoMapper) {
         this.rentService = rentService;
         this.userService = userService;
         this.movieService = movieService;
+        this.rentDtoMapper = rentDtoMapper;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Rent> getRent(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getRent(id));
+    public ResponseEntity<RentDto> getRent(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentToRentDto(rentService.getRent(id)));
     }
 
     @PostMapping
-    public ResponseEntity<Rent> addRent(@Valid @RequestBody RentRequest rentRequest) {
+    public ResponseEntity<RentDto> addRent(@Valid @RequestBody RentRequest rentRequest) {
         User user = userService.getUser(rentRequest.getClientID());
         if(!(user instanceof Client)) throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
         Rent rent = new Rent((Client) user,
                 movieService.getMovie(rentRequest.getMovieID()),
                 rentRequest.getStartDate());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(rentService.addRent(rent));
+        Rent addedRent = rentService.addRent(rent);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rentDtoMapper.rentToRentDto(addedRent));
     }
 
     @GetMapping("/current")
-    public ResponseEntity<List<Rent>> getCurrentRents(@RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID movieId) {
+    public ResponseEntity<List<RentDto>> getCurrentRents(@RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID movieId) {
         if (clientId != null && movieId!= null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         if (clientId != null){
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRentsByClient(clientId));
+            return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rentService.getCurrentRentsByClient(clientId)));
         }
         if (movieId != null){
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRentsByMovie(movieId));
+            return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rentService.getCurrentRentsByMovie(movieId)));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getCurrentRents());
+        return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rentService.getCurrentRents()));
     }
 
     @GetMapping("/past")
-    public ResponseEntity<List<Rent>> getPastRents(@RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID movieId) {
+    public ResponseEntity<List<RentDto>> getPastRents(@RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID movieId) {
         if (clientId != null && movieId != null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         if (clientId != null){
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRentsByClient(clientId));
+            return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rentService.getPastRentsByClient(clientId)));
         }
         if (movieId != null){
-            return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRentsByMovie(movieId));
+            return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rentService.getPastRentsByMovie(movieId)));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(rentService.getPastRents());
+        return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rentService.getPastRents()));
     }
 
     @DeleteMapping("/{id}")
@@ -87,7 +91,7 @@ public class RentController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Rent> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
+    public ResponseEntity<RentDto> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate) {
         LocalDate endDateParsed;
         try {
             endDateParsed = LocalDate.parse(endDate.get("endDate"));
@@ -95,7 +99,7 @@ public class RentController {
             endDateParsed = LocalDate.now();
         }
         Rent updatedRent = rentService.setEndTime(id, endDateParsed);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedRent);
+        return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentToRentDto(updatedRent));
     }
 
     @ExceptionHandler(RentNotFoundException.class)
