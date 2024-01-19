@@ -24,11 +24,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> { requests
-                        .requestMatchers("/api/v1/rents/current").permitAll()
-                        .requestMatchers("/api/v1/administrators").permitAll()
-                        .requestMatchers("/api/v1/users").authenticated()
-                        .requestMatchers("/api/v1/authentication/login").permitAll()
-                        .requestMatchers("/api/v1/me/**").authenticated();
+                        .requestMatchers(HttpMethod.POST, "/api/v1/authentication/login").permitAll()
+                        .requestMatchers("/api/v1/me/**").authenticated()
+                        .requestMatchers("/api/v1/administrators/**", "/api/v1/clients/**", "/api/v1/moderators**", "/api/v1/users/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers("/api/v1/movies/**", "/api/v1/rents/**").hasRole("MODERATOR")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/rents").hasRole("CLIENT");
                 });
 
 

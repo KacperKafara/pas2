@@ -19,7 +19,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class RentRequest {
 
-    @NotNull(message = "client's id not given")
     private UUID clientID;
 
     @NotNull(message = "movie's id not given")

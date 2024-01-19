@@ -1,6 +1,7 @@
 package p.lodz.pl.pas2.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.model.User;
@@ -24,17 +25,12 @@ public class MeController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    private User getUser(String complexToken) {
-        String token = complexToken.replace("Bearer ", "");
-        return userService.getUser(userAuthProvider.getUserId(token));
-    }
-
     @PatchMapping("/password")
-    public String changePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> body) {
-        User user = getUser(token);
+    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> body) {
+        User user = userAuthProvider.getUser(token);
         String newPassword = body.get("password");
         user.setPassword(passwordEncoder.encode(newPassword));
         userService.updateUser(user.getId(), user);
-        return "Password changed";
+        return ResponseEntity.ok("Password changed");
     }
 }

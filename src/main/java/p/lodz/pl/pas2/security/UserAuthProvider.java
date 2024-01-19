@@ -52,9 +52,14 @@ public class UserAuthProvider {
         return new UsernamePasswordAuthenticationToken(user, null, Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getClass().getSimpleName().toUpperCase())));
     }
 
-    public UUID getUserId(String token) {
+    private UUID getUserId(String token) {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
         DecodedJWT decodedJWT = verifier.verify(token);
         return UUID.fromString(decodedJWT.getSubject());
+    }
+
+    public User getUser(String complexToken) {
+        String token = complexToken.replace("Bearer ", "");
+        return userService.getUser(getUserId(token));
     }
 }

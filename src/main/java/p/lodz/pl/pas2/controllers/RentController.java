@@ -16,6 +16,7 @@ import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.model.Rent;
+import p.lodz.pl.pas2.security.UserAuthProvider;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -32,13 +33,15 @@ public class RentController {
     private final UserService userService;
     private final MovieService movieService;
     private final RentDtoMapper rentDtoMapper;
+    private final UserAuthProvider userAuthProvider;
 
     @Autowired
-    public RentController(RentService rentService, UserService userService, MovieService movieService, RentDtoMapper rentDtoMapper) {
+    public RentController(RentService rentService, UserService userService, MovieService movieService, RentDtoMapper rentDtoMapper, UserAuthProvider userAuthProvider) {
         this.rentService = rentService;
         this.userService = userService;
         this.movieService = movieService;
         this.rentDtoMapper = rentDtoMapper;
+        this.userAuthProvider = userAuthProvider;
     }
 
     @GetMapping("/{id}")
@@ -47,8 +50,13 @@ public class RentController {
     }
 
     @PostMapping
-    public ResponseEntity<RentDto> addRent(@Valid @RequestBody RentRequest rentRequest) {
-        User user = userService.getUser(rentRequest.getClientID());
+    public ResponseEntity<RentDto> addRent(@RequestHeader(value = "Authorization", required = false) String token, @Valid @RequestBody RentRequest rentRequest) {
+        User user;
+        if(rentRequest.getClientID() == null) {
+            user = userAuthProvider.getUser(token);
+        } else {
+            user = userService.getUser(rentRequest.getClientID());
+        }
         if(!(user instanceof Client)) throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
         Rent rent = new Rent((Client) user,
                 movieService.getMovie(rentRequest.getMovieID()),
