@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import p.lodz.pl.pas2.exceptions.AuthenticationExceptions.InvalidPasswordException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.*;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
@@ -20,6 +21,12 @@ import java.util.List;
 
 @ControllerAdvice
 public class ExceptionHandlingController {
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    ResponseEntity<String> handleInvalidPasswordException(InvalidPasswordException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid due to validation error: " + e.getFieldErrors().get(0).getDefaultMessage());

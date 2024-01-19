@@ -3,9 +3,10 @@ package p.lodz.pl.pas2.services;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import p.lodz.pl.pas2.Dto.LoginDto;
-import p.lodz.pl.pas2.Dto.UserDto;
-import p.lodz.pl.pas2.Dto.UserDtoMapper;
+import p.lodz.pl.pas2.Dto.UserDto.LoginDto;
+import p.lodz.pl.pas2.request.LoginRequest;
+import p.lodz.pl.pas2.Dto.UserDto.UserDto;
+import p.lodz.pl.pas2.Dto.UserDto.UserDtoMapper;
 import p.lodz.pl.pas2.exceptions.AuthenticationExceptions.InvalidPasswordException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
 import p.lodz.pl.pas2.model.Administrator;
@@ -20,26 +21,18 @@ public class AuthenticationService {
 
     private UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final UserDtoMapper userDtoMapper;
 
-    public UserDto loginUser(LoginDto user) {
+    public LoginDto loginUser(LoginRequest user) {
         User foundUser = userService.getUserByLogin(user.getLogin());
 
-        if(!foundUser.isActive()) {
+        if (!foundUser.isActive()) {
             throw new UserNotActiveException(UserMsg.USER_NOT_ACTIVE);
         }
 
-        UserDto userDto;
-        if (foundUser.getClass().getSimpleName().equalsIgnoreCase("client")) {
-            userDto = userDtoMapper.clientToUserDto((Client) foundUser);
-        } else if (foundUser.getClass().getSimpleName().equalsIgnoreCase("administrator")) {
-            userDto = userDtoMapper.adminToUserDto((Administrator) foundUser);
-        } else {
-            userDto = userDtoMapper.moderatorToUserDto((Moderator) foundUser);
-        }
+        LoginDto loginDto = new LoginDto(foundUser.getId(), foundUser.getUsername(), foundUser.getClass().getSimpleName().toUpperCase());
 
         if (passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
-            return userDto;
+            return loginDto;
         }
         throw new InvalidPasswordException("Wrong password");
     }

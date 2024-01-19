@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.Dto.UserDto.UserDto;
+import p.lodz.pl.pas2.Dto.UserDto.UserDtoMapper;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
 import p.lodz.pl.pas2.model.User;
-import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.*;
@@ -17,15 +18,17 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserDtoMapper userDtoMapper) {
         this.userService = userService;
+        this.userDtoMapper = userDtoMapper;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getClientById(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
+    public ResponseEntity<UserDto> getClientById(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.userToUserDto(userService.getUser(id)));
     }
 
     @GetMapping
@@ -33,14 +36,14 @@ public class UserController {
         if (Objects.nonNull(username)){
             try {
                 User user = userService.getUser(username);
-                return ResponseEntity.status(HttpStatus.OK).body(user);
+                return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.userToUserDto(user));
             } catch (UserNotFoundException e1) {
                 List<User> users = userService.getUsersByPattern(username);
-                return ResponseEntity.status(HttpStatus.OK).body(users);
+                return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.usersToUserDtos(users));
             }
         }
-        List<User> usersList = userService.getUsers();
-        return usersList != null
+        List<UserDto> usersList = userDtoMapper.usersToUserDtos(userService.getUsers());
+        return !usersList.isEmpty()
                 ? ResponseEntity.status(HttpStatus.OK).body(usersList)
                 : ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
     }

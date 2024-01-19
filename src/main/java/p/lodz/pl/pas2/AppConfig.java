@@ -4,15 +4,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import p.lodz.pl.pas2.Dto.LoginDto;
 import p.lodz.pl.pas2.model.*;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;
 import p.lodz.pl.pas2.repositories.UserRepository;
 import p.lodz.pl.pas2.services.AuthenticationService;
-import p.lodz.pl.pas2.services.MovieService;
-import p.lodz.pl.pas2.services.RentService;
-import p.lodz.pl.pas2.services.UserService;
 
 import java.time.LocalDate;
 
