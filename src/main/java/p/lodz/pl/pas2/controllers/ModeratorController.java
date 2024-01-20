@@ -38,8 +38,10 @@ public class ModeratorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @Valid @RequestBody ModeratorRequest user) {
-        User updatedUser = userService.updateUser(id, new Moderator(user.getUsername(), user.isActive(), passwordEncoder.encode(user.getPassword())));
+    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @Valid @RequestBody ModeratorRequest user , @RequestHeader("If-Match") String ifMatch) {
+        User updatedUser = userService.updateUser(id,
+                new Moderator(user.getUsername(), user.isActive(), passwordEncoder.encode(user.getPassword())),
+                ifMatch);
         return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.moderatorToUserDto((Moderator) updatedUser));
     }
 
