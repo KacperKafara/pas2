@@ -37,8 +37,10 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @Valid @RequestBody ClientRequest user) {
-        User updatedUser = userService.updateClient(id, new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName(), passwordEncoder.encode(user.getPassword())));
+    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @Valid @RequestBody ClientRequest user, @RequestHeader("If-Match") String ifMatch) {
+        User updatedUser = userService.updateClient(id,
+                new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName(), passwordEncoder.encode(user.getPassword())),
+                ifMatch);
         return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.clientToUserDto((Client) updatedUser));
     }
 

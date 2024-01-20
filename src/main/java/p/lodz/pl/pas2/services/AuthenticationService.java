@@ -23,7 +23,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginDto loginUser(LoginRequest user) {
-        User foundUser = userService.getUserByLogin(user.getLogin());
+        User foundUser = userService.getUser(user.getLogin());
 
         if (!foundUser.isActive()) {
             throw new UserNotActiveException(UserMsg.USER_NOT_ACTIVE);

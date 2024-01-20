@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import p.lodz.pl.pas2.exceptions.AuthenticationExceptions.JwsNotMatchException;
 import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
@@ -14,8 +15,8 @@ import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.UserRepository;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.security.Jws;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,9 +25,11 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
+    private final Jws jws;
     @Autowired
-    public UserService(@Qualifier("userRepositoryMongoDB") UserRepository repository) {
+    public UserService(@Qualifier("userRepositoryMongoDB") UserRepository repository, Jws jws) {
         this.repository = repository;
+        this.jws = jws;
     }
 
     public User getUser(UUID id) {
@@ -37,11 +40,6 @@ public class UserService {
 
     public User getUser(String username) {
         User user = repository.findUser(username);
-        if (user == null) throw new UserNotFoundException(UserMsg.USER_NOT_FOUND);
-        return user;
-    }
-    public User getUserByLogin(String login) {
-        User user = repository.findByLogin(login);
         if (user == null) throw new UserNotFoundException(UserMsg.USER_NOT_FOUND);
         return user;
     }
@@ -84,8 +82,11 @@ public class UserService {
         return users;
     }
 
-    public User updateClient(UUID id, Client client) {
+    public User updateClient(UUID id, Client client, String ifMatch) {
         if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
+        if(!jws.verifySign(ifMatch, client.getId())) {
+            throw new JwsNotMatchException(UserMsg.JWS_NOT_MATCH);
+        }
         User user;
         try {
             user = repository.updateClient(id, client);

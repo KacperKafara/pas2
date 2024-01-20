@@ -25,10 +25,11 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> { requests
                         .requestMatchers(HttpMethod.POST, "/api/v1/authentication/login").permitAll()
-                        .requestMatchers("/api/v1/me/**").authenticated()
+                        .requestMatchers("/api/v1/me/password").authenticated()
+                        .requestMatchers("/api/v1/me/rent").hasRole("CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/").hasRole("CLIENT")
                         .requestMatchers("/api/v1/administrators/**", "/api/v1/clients/**", "/api/v1/moderators**", "/api/v1/users/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers("/api/v1/movies/**", "/api/v1/rents/**").hasRole("MODERATOR")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/rents").hasRole("CLIENT");
+                        .requestMatchers("/api/v1/movies/**", "/api/v1/rents/**").hasRole("MODERATOR");
                 });
 
 

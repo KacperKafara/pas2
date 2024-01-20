@@ -33,11 +33,6 @@ public class UserRepositoryImplementation implements UserRepository {
     }
 
     @Override
-    public User findByLogin(String login) {
-        return null;
-    }
-
-    @Override
     public User findUser(String username) {
         for (User user : users) {
             if (user.getUsername().equals(username)) {

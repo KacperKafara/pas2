@@ -1,6 +1,8 @@
 package p.lodz.pl.pas2.controllers;
 
+import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,7 @@ import p.lodz.pl.pas2.Dto.UserDto.UserDtoMapper;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsersNotFoundException;
 import p.lodz.pl.pas2.model.User;
+import p.lodz.pl.pas2.security.Jws;
 import p.lodz.pl.pas2.services.UserService;
 
 import java.util.*;
@@ -19,16 +22,22 @@ public class UserController {
 
     private final UserService userService;
     private final UserDtoMapper userDtoMapper;
+    private final Jws jws;
 
     @Autowired
-    public UserController(UserService userService, UserDtoMapper userDtoMapper) {
+    public UserController(UserService userService, UserDtoMapper userDtoMapper, Jws jws) {
         this.userService = userService;
         this.userDtoMapper = userDtoMapper;
+        this.jws = jws;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getClientById(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.userToUserDto(userService.getUser(id)));
+    public ResponseEntity<UserDto> getClientById(@PathVariable UUID id) throws JOSEException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("ETag", jws.generateSign(id));
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(userDtoMapper.userToUserDto(userService.getUser(id)));
     }
 
     @GetMapping

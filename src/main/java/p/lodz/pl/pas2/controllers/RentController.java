@@ -50,13 +50,8 @@ public class RentController {
     }
 
     @PostMapping
-    public ResponseEntity<RentDto> addRent(@RequestHeader(value = "Authorization", required = false) String token, @Valid @RequestBody RentRequest rentRequest) {
-        User user;
-        if(rentRequest.getClientID() == null) {
-            user = userAuthProvider.getUser(token);
-        } else {
-            user = userService.getUser(rentRequest.getClientID());
-        }
+    public ResponseEntity<RentDto> addRent(@Valid @RequestBody RentRequest rentRequest) {
+        User user = userService.getUser(rentRequest.getClientID());
         if(!(user instanceof Client)) throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
         Rent rent = new Rent((Client) user,
                 movieService.getMovie(rentRequest.getMovieID()),

@@ -1,11 +1,14 @@
 package p.lodz.pl.pas2.controllers;
 
+import com.nimbusds.jose.JOSEException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import p.lodz.pl.pas2.exceptions.AuthenticationExceptions.InvalidPasswordException;
+import p.lodz.pl.pas2.exceptions.AuthenticationExceptions.JwsNotMatchException;
 import p.lodz.pl.pas2.exceptions.movieExceptions.*;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
 import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
@@ -124,6 +127,26 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(RentIsAlreadyEndedException.class)
     ResponseEntity<String> handleRentIsAlreadyEndedException(RentIsAlreadyEndedException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(JwsNotMatchException.class)
+    ResponseEntity<String> handleJwsNotMatchException(JwsNotMatchException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    ResponseEntity<String> handleMissingRequestHeaderException(MissingRequestHeaderException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(JOSEException.class)
+    ResponseEntity<String> handleJOSEException(JOSEException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(RentForAnotherClientException.class)
+    ResponseEntity<String> handleRentForAnotherClientException(RentForAnotherClientException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }
