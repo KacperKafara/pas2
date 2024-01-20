@@ -49,11 +49,11 @@ public class MeController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> body) {
+    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> body, @RequestHeader("If-Match") String ifMatch) {
         User user = userAuthProvider.getUser(token);
         String newPassword = body.get("password");
         user.setPassword(passwordEncoder.encode(newPassword));
-        userService.updateUser(user.getId(), user);
+        userService.updateUser(user.getId(), user, ifMatch);
         return ResponseEntity.ok("Password changed");
     }
 
