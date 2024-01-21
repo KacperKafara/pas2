@@ -64,7 +64,7 @@ public class AdministratorControllerTest {
         UUID id = UUID.randomUUID();
         User user2 = new Administrator(id,"maciek", true, "password");
 
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user2)
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), "")).thenReturn(user2)
                 .thenThrow(ThereIsNoUserToUpdateException.class);
         mockMvc.perform(put("/api/v1/administrators/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)

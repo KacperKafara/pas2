@@ -73,7 +73,7 @@ public class ClientControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski","1234");
         user.setUsername("Nowe");
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user);
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), "")).thenReturn(user);
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
@@ -81,7 +81,7 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), "")).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))

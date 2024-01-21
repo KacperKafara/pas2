@@ -129,7 +129,7 @@ public class UserServiceTest {
     @DirtiesContext
     public void updateUserForExistingUser() {
         User updatedUser = new Administrator("UpdatedName", false, "UpdatedName");
-        userService.updateUser(userId, updatedUser);
+        userService.updateUser(userId, updatedUser, "");
         assertThat(userService.getUser(userId).getUsername()).isEqualTo(updatedUser.getUsername());
         assertThat(userService.getUser(userId).isActive()).isEqualTo(updatedUser.isActive());
     }
@@ -140,7 +140,7 @@ public class UserServiceTest {
         UUID nonExistentUserId = UUID.randomUUID();
         User updatedUser = new Administrator("UpdatedName", false, "UpdatedName");
         ThereIsNoUserToUpdateException exception = assertThrows(ThereIsNoUserToUpdateException.class, () -> {
-            userService.updateUser(nonExistentUserId, updatedUser);
+            userService.updateUser(nonExistentUserId, updatedUser, "");
         });
         assertEquals(UserMsg.USER_NOT_FOUND, exception.getMessage());
     }

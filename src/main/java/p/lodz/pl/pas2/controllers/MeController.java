@@ -49,18 +49,17 @@ public class MeController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> body) {
+    public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> body, @RequestHeader("If-Match") String ifMatch) {
         User user = userAuthProvider.getUser(token);
         String newPassword = body.get("password");
         user.setPassword(passwordEncoder.encode(newPassword));
-        userService.updateUser(user.getId(), user);
+        userService.updateUser(user.getId(), user, ifMatch);
         return ResponseEntity.ok("Password changed");
     }
 
     @PostMapping("/rent")
     public ResponseEntity<RentDto> addRent(@RequestHeader("Authorization") String token, @RequestBody RentForClientRequest rentRequest) {
         User user = userAuthProvider.getUser(token);
-//        if(rentRequest.getClientID() != user.getId()) throw new RentForAnotherClientException(RentMsg.RENT_FOR_OTHER_CLIENT);
         if(!(user instanceof Client)) throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
         Rent rent = new Rent((Client) user,
                 movieService.getMovie(rentRequest.getMovieID()),

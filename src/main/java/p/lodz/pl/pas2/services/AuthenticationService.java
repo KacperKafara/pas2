@@ -30,6 +30,10 @@ public class AuthenticationService {
         }
 
         LoginDto loginDto = new LoginDto(foundUser.getId(), foundUser.getUsername(), foundUser.getClass().getSimpleName().toUpperCase());
+        if(foundUser instanceof Client) {
+            loginDto.setFirstName(((Client) foundUser).getFirstName());
+            loginDto.setLastName(((Client) foundUser).getLastName());
+        }
 
         if (passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
             return loginDto;
