@@ -12,6 +12,8 @@ public class LoginDto {
     private String login;
     private String token;
     private String userType;
+    private String firstName = null;
+    private String lastName = null;
 
     public LoginDto(UUID id, String login, String userType) {
         this.id = id;

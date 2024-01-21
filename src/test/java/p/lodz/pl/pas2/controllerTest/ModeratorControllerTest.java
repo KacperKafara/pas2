@@ -63,7 +63,7 @@ public class ModeratorControllerTest {
         UUID id = UUID.randomUUID();
         User user2 = new Moderator(id,"maciek", true, "1234");
 
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class))).thenReturn(user2)
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), "")).thenReturn(user2)
                 .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(put("/api/v1/moderators/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
