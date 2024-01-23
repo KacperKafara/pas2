@@ -56,7 +56,8 @@ public class SecurityConfig {
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT,
-                HttpHeaders.IF_MATCH));
+                HttpHeaders.IF_MATCH,
+                HttpHeaders.ETAG));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
 
