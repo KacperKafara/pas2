@@ -45,7 +45,7 @@ public class AuthenticationService {
     }
 
     public UserDto registerUser(ClientRequest user) {
-        User newUser = new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName(), user.getPassword());
+        User newUser = new Client(user.getUsername(), user.isActive(), user.getFirstName(), user.getLastName(), passwordEncoder.encode(user.getPassword()));
         User addedUser = userService.addUser(newUser);
         return userDtoMapper.clientToUserDto((Client) addedUser);
     }
