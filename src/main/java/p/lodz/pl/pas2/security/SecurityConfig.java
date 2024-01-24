@@ -54,12 +54,12 @@ public class SecurityConfig {
 //        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedHeaders(Arrays.asList(
-//                HttpHeaders.AUTHORIZATION,
-//                HttpHeaders.CONTENT_TYPE,
-//                HttpHeaders.ACCEPT,
-//                HttpHeaders.IF_MATCH,
-//                HttpHeaders.ETAG));
-                "*"));
+                HttpHeaders.AUTHORIZATION,
+                HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.ACCEPT,
+                HttpHeaders.IF_MATCH
+                ));
+//                "*"));
         configuration.addExposedHeader(HttpHeaders.ETAG);
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
