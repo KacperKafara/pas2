@@ -73,7 +73,7 @@ public class UserService {
 
     public User updateUser(UUID id, User user, String ifMatch) {
         if(repository.findUser(id) == null) throw new ThereIsNoUserToUpdateException(UserMsg.USER_NOT_FOUND);
-        if(!jws.verifySign(ifMatch, user.getId())) {
+        if(!jws.verifySign(ifMatch, id)) {
             throw new JwsNotMatchException(UserMsg.JWS_NOT_MATCH);
         }
         return repository.updateUser(id, user);

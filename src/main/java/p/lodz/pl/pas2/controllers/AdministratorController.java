@@ -40,7 +40,7 @@ public class AdministratorController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable UUID id,@Valid @RequestBody AdministratorRequest user, @RequestHeader("If-Match") String ifMatch) {
         User updatedUser = userService.updateUser(id,
-                new Administrator(user.getUsername(), user.isActive(), passwordEncoder.encode(user.getPassword())),
+                new Administrator(user.getUsername(), user.isActive(), userService.getUser(id).getPassword()),
                 ifMatch);
         return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.adminToUserDto((Administrator) updatedUser));
     }
