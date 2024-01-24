@@ -69,7 +69,7 @@ public class MeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(rentDtoMapper.rentToRentDto(addedRent));
     }
 
-    @GetMapping("/currnetRents")
+    @GetMapping("/currentRents")
     public ResponseEntity<List<RentDto>> getCurrentRents(@RequestHeader("Authorization") String token) {
         User user = userAuthProvider.getUser(token);
         List<Rent> rent = rentService.getCurrentRentsByClient(user.getId());
