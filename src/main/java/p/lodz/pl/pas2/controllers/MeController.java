@@ -20,6 +20,7 @@ import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -66,5 +67,19 @@ public class MeController {
                 rentRequest.getStartDate());
         Rent addedRent = rentService.addRent(rent);
         return ResponseEntity.status(HttpStatus.CREATED).body(rentDtoMapper.rentToRentDto(addedRent));
+    }
+
+    @GetMapping("/currnetRents")
+    public ResponseEntity<List<RentDto>> getCurrentRents(@RequestHeader("Authorization") String token) {
+        User user = userAuthProvider.getUser(token);
+        List<Rent> rent = rentService.getCurrentRentsByClient(user.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rent));
+    }
+
+    @GetMapping("/pastRents")
+    public ResponseEntity<List<RentDto>> getPastRents(@RequestHeader("Authorization") String token) {
+        User user = userAuthProvider.getUser(token);
+        List<Rent> rent = rentService.getPastRentsByClient(user.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(rentDtoMapper.rentsToRentsDto(rent));
     }
 }
