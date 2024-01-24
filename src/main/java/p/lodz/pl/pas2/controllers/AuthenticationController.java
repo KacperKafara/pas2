@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import p.lodz.pl.pas2.Dto.UserDto.ClientDto;
 import p.lodz.pl.pas2.Dto.UserDto.LoginDto;
+import p.lodz.pl.pas2.request.ClientRequest;
 import p.lodz.pl.pas2.request.LoginRequest;
 import p.lodz.pl.pas2.Dto.UserDto.UserDto;
 import p.lodz.pl.pas2.security.Jws;
@@ -28,10 +30,14 @@ public class AuthenticationController {
     public ResponseEntity<LoginDto> loginUser(@RequestBody LoginRequest user) throws JOSEException {
         LoginDto authUserDto = authenticationService.loginUser(user);
         HttpHeaders headers = new HttpHeaders();
-//        headers.add("ETag", jws.generateSign(authUserDto.getId()));
-//        headers.add(HttpHeaders.ETAG, jws.generateSign(authUserDto.getId()));
         authUserDto.setToken(userAuthProvider.createToken(authUserDto.getId(), authUserDto.getUserType()));
         return ResponseEntity.status(HttpStatus.OK).eTag(jws.generateSign(authUserDto.getId())).headers(headers).body(authUserDto);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDto> registerUser(@RequestBody ClientRequest user) {
+        UserDto authUserDto = authenticationService.registerUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(authUserDto);
     }
 
 }
