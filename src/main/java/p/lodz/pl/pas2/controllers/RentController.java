@@ -97,8 +97,10 @@ public class RentController {
     public ResponseEntity<RentDto> endRent(@PathVariable UUID id, @RequestBody(required = false) Map<String, String> endDate, @RequestHeader(value = "Authorization", required = false) String token) {
         User user = userAuthProvider.getUser(token);
         Rent rent = rentService.getRent(id);
-        if (user instanceof Client && rent.getUser().getId() != user.getId()) {
-            throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
+        if (user instanceof Client) {
+            if (!rent.getUser().getId().equals(user.getId())) {
+                throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
+            }
         }
         LocalDate endDateParsed;
         try {
