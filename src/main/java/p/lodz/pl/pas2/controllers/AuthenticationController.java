@@ -28,9 +28,10 @@ public class AuthenticationController {
     public ResponseEntity<LoginDto> loginUser(@RequestBody LoginRequest user) throws JOSEException {
         LoginDto authUserDto = authenticationService.loginUser(user);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("ETag", jws.generateSign(authUserDto.getId()));
+//        headers.add("ETag", jws.generateSign(authUserDto.getId()));
+//        headers.add(HttpHeaders.ETAG, jws.generateSign(authUserDto.getId()));
         authUserDto.setToken(userAuthProvider.createToken(authUserDto.getId(), authUserDto.getUserType()));
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(authUserDto);
+        return ResponseEntity.status(HttpStatus.OK).eTag(jws.generateSign(authUserDto.getId())).headers(headers).body(authUserDto);
     }
 
 }
