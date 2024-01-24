@@ -1,7 +1,7 @@
 package p.lodz.pl.pas2.msg;
 
 public class RentMsg {
-    public static final String  RENTS_NOT_FOUND = "There is not rents";
+    public static final String RENTS_NOT_FOUND = "Rents not found.";
     public static final String WRONG_END_DATE = "EndDate is before StartDate.";
     public static final String RENT_NOT_FOUND = "Rent with given id does not exist.";
     public static final String RENT_NOT_ENDED = "The rental is still ongoing.";
