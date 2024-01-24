@@ -33,7 +33,7 @@ public class SecurityConfig {
                         corsConfigurationSource())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> { requests
-                        .requestMatchers(HttpMethod.POST, "/api/v1/authentication/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/authentication/login", "/api/v1/authentication/register").permitAll()
                         .requestMatchers("/api/v1/me/password").authenticated()
                         .requestMatchers("/api/v1/me/rent", "/api/v1/me/currentRents", "/api/v1/me/pastRents").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/rents/**").hasAnyRole("CLIENT", "MODERATOR")
