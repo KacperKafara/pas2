@@ -3,6 +3,8 @@ package p.lodz.pl.pas2.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import p.lodz.pl.pas2.Dto.RentDto.RentDto;
@@ -60,7 +62,9 @@ public class MeController {
 
     @PostMapping("/rent")
     public ResponseEntity<RentDto> addRent(@RequestHeader("Authorization") String token, @RequestBody RentForClientRequest rentRequest) {
-        User user = userAuthProvider.getUser(token);
+//        User user = userAuthProvider.getUser(token);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
         if(!(user instanceof Client)) throw new RentNotForClientException(RentMsg.RENT_FOR_WRONG_USER);
         Rent rent = new Rent((Client) user,
                 movieService.getMovie(rentRequest.getMovieID()),
