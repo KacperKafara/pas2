@@ -20,6 +20,7 @@ import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoD
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.UserRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.UserRepository;
+import p.lodz.pl.pas2.security.Jws;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TestMongoConfig.class, MovieService.class, RentService.class, UserService.class, UserRepositoryMongoDB.class, MovieRepositoryMongoDB.class, RentRepositoryMongoDB.class})
+@SpringBootTest(classes = {TestMongoConfig.class, MovieService.class, RentService.class, UserService.class, UserRepositoryMongoDB.class, MovieRepositoryMongoDB.class, RentRepositoryMongoDB.class, Jws.class})
 @ActiveProfiles("test")
 public class RentServiceTest {
     @Autowired

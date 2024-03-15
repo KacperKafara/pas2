@@ -5,16 +5,17 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.RentController;
 import p.lodz.pl.pas2.exceptions.movieExceptions.MovieInUseException;
 import p.lodz.pl.pas2.exceptions.rentExceptions.*;
-import p.lodz.pl.pas2.exceptions.userExceptions.ThereIsNoUserToUpdateException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotActiveException;
-import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.model.*;
 import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.msg.MovieMsg;
@@ -32,7 +33,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@WebMvcTest(RentController.class)
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
+@ComponentScan(basePackages = "p.lodz.pl.pas2")
 public class RentControllerTest {
     @MockBean
     private MovieService movieService;
@@ -63,27 +66,24 @@ public class RentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.username").value(activeUser.getUsername()))
-                .andExpect(jsonPath("$.user.active").value(activeUser.isActive()))
+                .andExpect(jsonPath("$.client.username").value(activeUser.getUsername()))
+                .andExpect(jsonPath("$.client.active").value(activeUser.isActive()))
                 .andExpect(jsonPath("$.movie.title").value(availableMovie.getTitle()))
                 .andExpect(jsonPath("$.movie.cost").value(availableMovie.getCost()))
                 .andExpect(jsonPath("$.startDate").value(rentRequest.getStartDate().toString()));
 
-        // zla start data
         Mockito.when(rentService.addRent(Mockito.any(Rent.class)))
                 .thenThrow( new UserNotActiveException(UserMsg.USER_NOT_ACTIVE))
                 .thenThrow( new MovieInUseException(MovieMsg.MOVIE_IS_RENTED))
                 .thenThrow( new StartDateException(RentMsg.WRONG_START_DATE))
                 .thenThrow( new EndDateException(RentMsg.WRONG_END_DATE));
 
-        //Uzytkownik nie aktywny
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isLocked())
                 .andExpect(content().string(UserMsg.USER_NOT_ACTIVE));
 
-        //film jest wypozyczony
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
@@ -95,7 +95,7 @@ public class RentControllerTest {
                         .content(asJsonString(rentRequest)))
                 .andExpect(status().isBadRequest())
                         .andExpect(content().string(RentMsg.WRONG_START_DATE));
-        // zla end data
+
         mockMvc.perform(post("/api/v1/rents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(rentRequest)))
@@ -116,14 +116,14 @@ public class RentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(rent1.getId().toString()))
-                .andExpect(jsonPath("$[0].user.username").value(rent1.getUser().getUsername()))
-                .andExpect(jsonPath("$[0].user.active").value(rent1.getUser().isActive()))
+                .andExpect(jsonPath("$[0].client.username").value(rent1.getUser().getUsername()))
+                .andExpect(jsonPath("$[0].client.active").value(rent1.getUser().isActive()))
                 .andExpect(jsonPath("$[0].movie.title").value(rent1.getMovie().getTitle()))
                 .andExpect(jsonPath("$[0].movie.cost").value(rent1.getMovie().getCost()))
                 .andExpect(jsonPath("$[0].startDate").value(rent1.getStartDate().toString()))
                 .andExpect(jsonPath("$[1].id").value(rent2.getId().toString()))
-                .andExpect(jsonPath("$[1].user.username").value(rent2.getUser().getUsername()))
-                .andExpect(jsonPath("$[1].user.active").value(rent2.getUser().isActive()))
+                .andExpect(jsonPath("$[1].client.username").value(rent2.getUser().getUsername()))
+                .andExpect(jsonPath("$[1].client.active").value(rent2.getUser().isActive()))
                 .andExpect(jsonPath("$[1].movie.title").value(rent2.getMovie().getTitle()))
                 .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
                 .andExpect(jsonPath("$[1].startDate").value(rent2.getStartDate().toString()));
@@ -144,15 +144,15 @@ public class RentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(rent1.getId().toString()))
-                .andExpect(jsonPath("$[0].user.username").value(rent1.getUser().getUsername()))
-                .andExpect(jsonPath("$[0].user.active").value(rent1.getUser().isActive()))
+                .andExpect(jsonPath("$[0].client.username").value(rent1.getUser().getUsername()))
+                .andExpect(jsonPath("$[0].client.active").value(rent1.getUser().isActive()))
                 .andExpect(jsonPath("$[0].movie.title").value(rent1.getMovie().getTitle()))
                 .andExpect(jsonPath("$[0].movie.cost").value(rent1.getMovie().getCost()))
                 .andExpect(jsonPath("$[0].startDate").value(rent1.getStartDate().toString()))
                 .andExpect(jsonPath("$[0].endDate").value(rent1.getEndDate().toString()))
                 .andExpect(jsonPath("$[1].id").value(rent2.getId().toString()))
-                .andExpect(jsonPath("$[1].user.username").value(rent2.getUser().getUsername()))
-                .andExpect(jsonPath("$[1].user.active").value(rent2.getUser().isActive()))
+                .andExpect(jsonPath("$[1].client.username").value(rent2.getUser().getUsername()))
+                .andExpect(jsonPath("$[1].client.active").value(rent2.getUser().isActive()))
                 .andExpect(jsonPath("$[1].movie.title").value(rent2.getMovie().getTitle()))
                 .andExpect(jsonPath("$[1].movie.cost").value(rent2.getMovie().getCost()))
                 .andExpect(jsonPath("$[1].startDate").value(rent2.getStartDate().toString()))
@@ -194,7 +194,7 @@ public class RentControllerTest {
         Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent)
                 .thenThrow(ThereIsNoSuchRentToUpdateException.class);
 
-        mockMvc.perform(patch("/api/v1/rents/{id}", rentId)
+        mockMvc.perform(patch("/api/v1/rents/{id}", rentId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(endDateMap)))
                 .andExpect(status().isOk())
@@ -223,14 +223,13 @@ public class RentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidRentRequest)))
                 .andExpect(status().isBadRequest());
-                //.andExpect(content().string("not valid due to validation error: "));
     }
     @Test
     public void badDateFormat() throws Exception {
         UUID rentId = UUID.randomUUID();
         Map<String, String> invalidEndDateMap = Collections.singletonMap("endDate", "invalid-date");
 
-        mockMvc.perform(patch("/api/v1/rents/{id}",rentId)
+        mockMvc.perform(patch("/api/v1/rents/{id}", rentId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidEndDateMap)))
                 .andExpect(status().isBadRequest())
@@ -254,7 +253,7 @@ public class RentControllerTest {
 
         mockMvc.perform(get("/api/v1/rents/{id}", rentId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.id").value(activeUser.getId()))
+                .andExpect(jsonPath("$.client.id").value(activeUser.getId()))
                 .andExpect(jsonPath("$.movie.id").value(availableMovie.getId()))
                 .andExpect(jsonPath("$.startDate").value(date.toString()));
 
@@ -264,7 +263,6 @@ public class RentControllerTest {
 
     private static String asJsonString(final Object obj) {
         try {
-
             return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);

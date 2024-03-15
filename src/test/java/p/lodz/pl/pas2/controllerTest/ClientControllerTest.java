@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import p.lodz.pl.pas2.Dto.UserDto.UserDtoMapper;
 import p.lodz.pl.pas2.controllers.ClientController;
 import p.lodz.pl.pas2.exceptions.userExceptions.UserNotFoundException;
 import p.lodz.pl.pas2.exceptions.userExceptions.UsernameInUseException;
@@ -17,18 +20,21 @@ import p.lodz.pl.pas2.model.Client;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.request.ClientRequest;
-import p.lodz.pl.pas2.request.UserRequest;
+import p.lodz.pl.pas2.security.PasswordConfig;
 import p.lodz.pl.pas2.services.UserService;
+import p.lodz.pl.pas2.servicesTest.TestMongoConfig;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ClientController.class)
+@SpringBootTest(classes = {ClientController.class, PasswordConfig.class, UserDtoMapper.class, TestMongoConfig.class})
+@AutoConfigureMockMvc(addFilters = false)
+@EnableWebMvc
 public class ClientControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -39,8 +45,11 @@ public class ClientControllerTest {
     @DirtiesContext
     public void testAddUser() throws Exception {
         User user = new Client("maciek", true,"Maciek","Smolinski","1234");
-        Mockito.when(userService.addUser(Mockito.any(User.class))).thenReturn(user);
+
+        Mockito.when(userService.addUser(Mockito.any(User.class)))
+                .thenReturn(user);
         ObjectMapper objectMapper= new ObjectMapper();
+
         mockMvc.perform(post("/api/v1/clients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
@@ -71,20 +80,25 @@ public class ClientControllerTest {
     public void testUpdateUser() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        User user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski","1234");
+        Client user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski","1234");
         user.setUsername("Nowe");
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), "")).thenReturn(user);
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
+                .thenReturn(user);
+
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(user))
+                        .header("If-Match", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), "")).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
+                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(user))
+                        .header("If-Match", "1"))
                 .andExpect(status().isNotFound());
 
     }

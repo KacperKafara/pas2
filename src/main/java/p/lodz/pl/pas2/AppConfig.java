@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import p.lodz.pl.pas2.model.*;
 import p.lodz.pl.pas2.repositories.MovieRepository;
 import p.lodz.pl.pas2.repositories.RentRepository;

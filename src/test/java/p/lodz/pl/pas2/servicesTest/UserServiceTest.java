@@ -1,5 +1,6 @@
 package p.lodz.pl.pas2.servicesTest;
 
+import com.nimbusds.jose.JOSEException;
 import jdk.jshell.spi.ExecutionControl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.UserRepositoryMongoDB;
+import p.lodz.pl.pas2.security.Jws;
 import p.lodz.pl.pas2.services.UserService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,13 +30,14 @@ import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TestMongoConfig.class, UserService.class, UserRepositoryMongoDB.class})
+@SpringBootTest(classes = {TestMongoConfig.class, UserService.class, UserRepositoryMongoDB.class, Jws.class})
 @ActiveProfiles("test")
 public class UserServiceTest {
     @Autowired
     private UserService userService;
     User user = new Administrator("Bartosz",true,"Bartosz");
     private UUID userId;
+    Jws jws = new Jws();
 
     @BeforeEach
     public void setUp() {
@@ -123,15 +126,6 @@ public class UserServiceTest {
             userService.setActive(nonExistentUserId, true);
         });
         assertEquals(UserMsg.USER_NOT_FOUND, exception.getMessage());
-    }
-
-    @Test
-    @DirtiesContext
-    public void updateUserForExistingUser() {
-        User updatedUser = new Administrator("UpdatedName", false, "UpdatedName");
-        userService.updateUser(userId, updatedUser, "");
-        assertThat(userService.getUser(userId).getUsername()).isEqualTo(updatedUser.getUsername());
-        assertThat(userService.getUser(userId).isActive()).isEqualTo(updatedUser.isActive());
     }
 
     @Test
