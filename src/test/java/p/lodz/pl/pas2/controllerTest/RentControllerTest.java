@@ -21,6 +21,7 @@ import p.lodz.pl.pas2.request.RentRequest;
 import p.lodz.pl.pas2.msg.MovieMsg;
 import p.lodz.pl.pas2.msg.RentMsg;
 import p.lodz.pl.pas2.msg.UserMsg;
+import p.lodz.pl.pas2.security.UserAuthProvider;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -35,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@ComponentScan(basePackages = "p.lodz.pl.pas2")
 public class RentControllerTest {
     @MockBean
     private MovieService movieService;
@@ -43,6 +43,8 @@ public class RentControllerTest {
     private UserService userService;
     @MockBean
     private RentService rentService;
+    @MockBean
+    private UserAuthProvider userAuthProvider;
 
     @Autowired
     private MockMvc mockMvc;
@@ -194,13 +196,13 @@ public class RentControllerTest {
         Mockito.when(rentService.setEndTime(rentId, endDate)).thenReturn(updatedRent)
                 .thenThrow(ThereIsNoSuchRentToUpdateException.class);
 
-        mockMvc.perform(patch("/api/v1/rents/{id}", rentId.toString())
+        mockMvc.perform(patch("/api/v1/rents/{id}", rentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(endDateMap)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(updatedRent.getId().toString()))
-                .andExpect(jsonPath("$.user.username").value(updatedRent.getUser().getUsername()))
-                .andExpect(jsonPath("$.user.active").value(updatedRent.getUser().isActive()))
+                .andExpect(jsonPath("$.client.username").value(updatedRent.getUser().getUsername()))
+                .andExpect(jsonPath("$.client.active").value(updatedRent.getUser().isActive()))
                 .andExpect(jsonPath("$.movie.title").value(updatedRent.getMovie().getTitle()))
                 .andExpect(jsonPath("$.movie.cost").value(updatedRent.getMovie().getCost()))
                 .andExpect(jsonPath("$.startDate").value(updatedRent.getStartDate().toString()))
@@ -229,7 +231,7 @@ public class RentControllerTest {
         UUID rentId = UUID.randomUUID();
         Map<String, String> invalidEndDateMap = Collections.singletonMap("endDate", "invalid-date");
 
-        mockMvc.perform(patch("/api/v1/rents/{id}", rentId.toString())
+        mockMvc.perform(patch("/api/v1/rents/{id}",rentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidEndDateMap)))
                 .andExpect(status().isBadRequest())

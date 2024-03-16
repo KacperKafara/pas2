@@ -68,19 +68,27 @@ public class ModeratorControllerTest {
         UUID id = UUID.randomUUID();
         User user2 = new Moderator(id,"maciek", true, "1234");
 
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any())).thenReturn(user2)
-                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+        Mockito.when(userService.getUser(id))
+                .thenReturn(user2);
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
+                .thenReturn(user2);
+
         mockMvc.perform(put("/api/v1/moderators/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user))
-                        .header("If-Match", "1"))
+                        .header("If-Match", "abd"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
+
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
+                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+
         mockMvc.perform(put("/api/v1/moderators/{id}", user2.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(user))
+                        .header("If-Match", "abd"))
                 .andExpect(status().isNotFound());
 
     }

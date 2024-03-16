@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,14 +28,14 @@ import p.lodz.pl.pas2.servicesTest.TestMongoConfig;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = {ClientController.class, PasswordConfig.class, UserDtoMapper.class, TestMongoConfig.class})
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@EnableWebMvc
 public class ClientControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -80,27 +81,25 @@ public class ClientControllerTest {
     public void testUpdateUser() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Client user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski","1234");
+        User user = new Client(UUID.randomUUID(),"maciek", true,"Maciek","Smolinski","1234");
         user.setUsername("Nowe");
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
-                .thenReturn(user);
-
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), eq(""))).thenReturn(user);
+        Mockito.when(userService.updateClient(Mockito.any(), Mockito.any(Client.class), eq(""))).thenReturn(user);
+        Mockito.when(userService.getUser(user.getId())).thenReturn(user);
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
+                        .header(HttpHeaders.IF_MATCH, "")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
-                        .header("If-Match", "1"))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
-                .thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
+        Mockito.when(userService.updateClient(Mockito.any(), Mockito.any(Client.class), eq(""))).thenThrow(new UserNotFoundException(UserMsg.USER_NOT_FOUND));
         mockMvc.perform(put("/api/v1/clients/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
-                        .header("If-Match", "1"))
+                        .header(HttpHeaders.IF_MATCH, "")
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isNotFound());
-
     }
     private static String asJsonString(final Object obj) {
         try {

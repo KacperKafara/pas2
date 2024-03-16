@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +22,7 @@ import p.lodz.pl.pas2.services.UserService;
 
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -67,24 +69,22 @@ public class AdministratorControllerTest {
         UUID id = UUID.randomUUID();
         User user2 = new Administrator(id,"maciek", true, "password");
 
-        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), Mockito.any(String.class)))
-                .thenReturn(user2)
+        Mockito.when(userService.updateUser(Mockito.any(), Mockito.any(User.class), eq(""))).thenReturn(user2)
                 .thenThrow(ThereIsNoUserToUpdateException.class);
-
+        Mockito.when(userService.getUser(id)).thenReturn(user2);
         mockMvc.perform(put("/api/v1/administrators/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
-                        .header("If-Match", "1"))
+                        .header(HttpHeaders.IF_MATCH, "")
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.active").value(user.isActive()))
                 .andExpect(jsonPath("$.id").isNotEmpty());
-
         mockMvc.perform(put("/api/v1/administrators/{id}", user2.getId())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.IF_MATCH, "")
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isNotFound());
-
     }
 
 }
