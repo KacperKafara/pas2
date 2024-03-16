@@ -35,7 +35,7 @@ public class TestMongoConfig implements Closeable {
     private MongoDatabase database;
 
     ConnectionString connectionString = new ConnectionString(
-            "mongodb://localhost:27017/pas?replicaSet=replica_set_single"
+            "mongodb://localhost:27017"
     );
     MongoCredential credential = MongoCredential.createCredential("admin",
             "admin", "adminpassword".toCharArray());
