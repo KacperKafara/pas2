@@ -10,9 +10,11 @@ public abstract class UserRequest {
     @NotBlank(message = "username cannot be empty")
     protected String username;
     protected boolean active;
+    protected String password;
 
-    public UserRequest(String username, boolean active) {
+    public UserRequest(String username, boolean active, String password) {
         this.username = username;
         this.active = active;
+        this.password = password;
     }
 }

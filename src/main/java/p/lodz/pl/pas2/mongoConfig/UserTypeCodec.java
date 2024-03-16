@@ -11,11 +11,13 @@ import p.lodz.pl.pas2.model.Moderator;
 import p.lodz.pl.pas2.model.User;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserTypeCodec implements Codec<User> {
     private final CodecRegistry registry;
     private Codec<UUID> uuidCodec;
+
     public UserTypeCodec(CodecRegistry registry) {
         this.registry = registry;
     }
@@ -29,6 +31,8 @@ public class UserTypeCodec implements Codec<User> {
         String firstName = null;
         String lastName = null;
         String _clazz = null;
+        String email = null;
+        String password = null;
         while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
             String fieldName = bsonReader.readName();
             switch (fieldName) {
@@ -51,17 +55,23 @@ public class UserTypeCodec implements Codec<User> {
                 case "_clazz":
                     _clazz = bsonReader.readString();
                     break;
+                case "e-mail":
+                    email = bsonReader.readString();
+                    break;
+                case "password":
+                    password = bsonReader.readString();
+                    break;
                 default:
                     bsonReader.skipValue();
             }
         }
         bsonReader.readEndDocument();
-        if(_clazz != null && _clazz.equals("client")) {
-            return new Client(id, username, active, firstName, lastName);
+        if (_clazz != null && _clazz.equals("client")) {
+            return new Client(id, username, active, firstName, lastName, password);
         } else if (_clazz != null && _clazz.equals("administrator")) {
-            return new Administrator(id, username, active);
+            return new Administrator(id, username, active, password);
         } else {
-            return new Moderator(id, username, active);
+            return new Moderator(id, username, active, password);
         }
     }
 
@@ -73,6 +83,8 @@ public class UserTypeCodec implements Codec<User> {
 //        bsonWriter.writeString("_id", user.getId().toString());
         bsonWriter.writeString("username", user.getUsername());
         bsonWriter.writeBoolean("active", user.isActive());
+        bsonWriter.writeString("password", user.getPassword());
+
         if (user instanceof Client) {
             bsonWriter.writeName("firstname");
             bsonWriter.writeString(((Client) user).getFirstName());

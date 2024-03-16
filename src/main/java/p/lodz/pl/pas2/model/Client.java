@@ -23,8 +23,8 @@ public class Client extends User {
     private String lastName;
 
 
-    public Client(String username, boolean active, String firstName, String lastName) {
-        super(username, active);
+    public Client(String username, boolean active, String firstName, String lastName, String password) {
+        super(username, active, password);
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -33,8 +33,9 @@ public class Client extends User {
                   String username,
                   boolean active,
                   String firstName,
-                  String lastName) {
-        super(id, username, active);
+                  String lastName,
+                  String password) {
+        super(id, username, active, password);
         this.firstName = firstName;
         this.lastName = lastName;
     }

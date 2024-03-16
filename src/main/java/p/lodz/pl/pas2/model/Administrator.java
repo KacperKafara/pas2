@@ -10,12 +10,13 @@ import java.util.UUID;
 
 @NoArgsConstructor
 public class Administrator extends User {
-    public Administrator(String username, boolean active) {
-        super(username, active);
+    public Administrator(String username, boolean active, String password) {
+        super(username, active, password);
     }
     public Administrator(UUID id,
                          String username,
-                         boolean active) {
-        super(id, username, active);
+                         boolean active,
+                         String password) {
+        super(id, username, active, password);
     }
 }

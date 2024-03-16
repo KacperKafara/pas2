@@ -66,7 +66,8 @@ public class UserRepositoryMongoDB implements UserRepository {
     public User updateUser(UUID id, User user) {
         return userMongoCollection.findOneAndUpdate(Filters.eq("_id", id), Updates.combine(
                 Updates.set("username", user.getUsername()),
-                Updates.set("active", user.isActive())
+                Updates.set("active", user.isActive()),
+                Updates.set("password", user.getPassword())
         ), options);
     }
 
@@ -81,7 +82,8 @@ public class UserRepositoryMongoDB implements UserRepository {
                 Updates.set("firstname", client.getFirstName()),
                 Updates.set("lastname", client.getLastName()),
                 Updates.set("username", client.getUsername()),
-                Updates.set("active", client.isActive())
+                Updates.set("active", client.isActive()),
+                Updates.set("password", client.getPassword())
         ), options);
     }
 

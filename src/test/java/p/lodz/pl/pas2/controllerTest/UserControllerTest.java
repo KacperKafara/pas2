@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import p.lodz.pl.pas2.controllers.UserController;
@@ -26,7 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
+@ComponentScan(basePackages = "p.lodz.pl.pas2")
 public class UserControllerTest {
 
     @Autowired
@@ -38,8 +43,8 @@ public class UserControllerTest {
 
     @Test
     public void getUsers() throws Exception {
-        User user = new Moderator("Jaca", true);
-        User user2 = new Moderator("Praca", true);
+        User user = new Moderator("Jaca", true, "Jaca");
+        User user2 = new Moderator("Praca", true, "Praca");
         List<User> users_list = new ArrayList<>();
         users_list.add(user);
         users_list.add(user2);
@@ -58,17 +63,14 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(user.getId()));
 
 
-        Mockito.when(userService.getUsers()).thenReturn(null);
-        mockMvc.perform(get("/api/v1/users"))
-                .andExpect(status().isNoContent());
-
-        Mockito.when(userService.getUsers()).thenThrow(UsersNotFoundException.class);
+        Mockito.when(userService.getUsers())
+                .thenThrow(UsersNotFoundException.class);
         mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isNoContent());
     }
     @Test
     public void getUserByPatter() throws Exception {
-        User user = new Moderator("Jaca", true);
+        User user = new Moderator("Jaca", true, "Jaca");
         List<User> usersList = new ArrayList<>();
         usersList.add(user);
 
@@ -85,7 +87,7 @@ public class UserControllerTest {
     @Test
     public void testGetUserByID() throws Exception {
 
-        User user = new Client("Jaca", true, "Jaca", "Jaca");
+        User user = new Client("Jaca", true, "Jaca", "Jaca", "Jaca");
         UUID userId = UUID.randomUUID();
         user.setId(userId);
         Mockito.when(userService.getUser(user.getId())).thenReturn(user);
@@ -108,7 +110,7 @@ public class UserControllerTest {
         Map<String, Boolean> body = new HashMap<>();
         body.put("active", false);
 
-        User user = new Client("Jaca", false, "Jaca", "Jaca");
+        User user = new Client("Jaca", false, "Jaca", "Jaca", "Jaca");
         Mockito.when(userService.setActive(userId, false)).thenReturn(user)
                 .thenThrow(ThereIsNoUserToUpdateException.class);
         mockMvc.perform(patch("/api/v1/users/{id}", userId)

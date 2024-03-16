@@ -20,6 +20,7 @@ import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoD
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.UserRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.UserRepository;
+import p.lodz.pl.pas2.security.Jws;
 import p.lodz.pl.pas2.services.MovieService;
 import p.lodz.pl.pas2.services.RentService;
 import p.lodz.pl.pas2.services.UserService;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TestMongoConfig.class, MovieService.class, RentService.class, UserService.class, UserRepositoryMongoDB.class, MovieRepositoryMongoDB.class, RentRepositoryMongoDB.class})
+@SpringBootTest(classes = {TestMongoConfig.class, MovieService.class, RentService.class, UserService.class, UserRepositoryMongoDB.class, MovieRepositoryMongoDB.class, RentRepositoryMongoDB.class, Jws.class})
 @ActiveProfiles("test")
 public class RentServiceTest {
     @Autowired
@@ -44,7 +45,7 @@ public class RentServiceTest {
     @Autowired
     private UserService userService;
     static Movie movie = new Movie(UUID.randomUUID(), "test", 34);
-    private Client user = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek");
+    private Client user = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek", "1234");
     private Rent rent = new Rent(user, movie, LocalDate.now());
     UUID rentId;
 
@@ -71,7 +72,7 @@ public class RentServiceTest {
     @DirtiesContext
     public void addRentCorrectly() {
         Movie movie2 = new Movie(UUID.randomUUID(), "test", 34);
-        Client user2 = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek");
+        Client user2 = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek", "1234");
         rentService.addRent(new Rent(user2, movie2, LocalDate.now()));
         assertThat(rentService.getCurrentRents().get(1).getMovie().getTitle()).isEqualTo(movie2.getTitle());
         assertThat(rentService.getCurrentRents().get(1).getMovie().getCost()).isEqualTo(movie2.getCost());
@@ -82,7 +83,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButUserNotActive() {
-        Client user2 = new Client("MaciekM", false, "Maciek", "Maciek");
+        Client user2 = new Client("MaciekM", false, "Maciek", "Maciek", "1234");
         UserNotActiveException exception = assertThrows(UserNotActiveException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now()));
         });
@@ -92,7 +93,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButWrongStartDate() {
-        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek");
+        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek", "1234");
         StartDateException exception = assertThrows(StartDateException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now().minusDays(4)));
         });
@@ -102,7 +103,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButWrongEndDate() {
-        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek");
+        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek", "1234");
         EndDateException exception = assertThrows(EndDateException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now(), LocalDate.now().minusDays(4)));
         });
@@ -112,7 +113,7 @@ public class RentServiceTest {
     @Test
     @DirtiesContext
     public void addRentButMovieRented() {
-        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek");
+        Client user2 = new Client("MaciekM", true, "Maciek", "Maciek", "1234");
         MovieInUseException exception = assertThrows(MovieInUseException.class, () -> {
             rentService.addRent(new Rent(user2, movie, LocalDate.now(), LocalDate.now()));
         });

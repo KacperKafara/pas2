@@ -111,7 +111,7 @@ public class MovieServiceTest {
     @Test
     @DirtiesContext
     public void deleteMovieButMovieIsRented(){
-        Client user = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek");
+        Client user = new Client(UUID.randomUUID(), "MaciekM", true, "Maciek", "Maciek", "1234");
         rentService.addRent(new Rent(user,movie, LocalDate.now()));
         MovieInUseException exception = assertThrows(MovieInUseException.class, () -> {
             movieService.deleteMovie(movie.getId());

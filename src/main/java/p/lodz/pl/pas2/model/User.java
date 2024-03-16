@@ -1,8 +1,5 @@
 package p.lodz.pl.pas2.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,21 +23,24 @@ public abstract class User {
     @BsonProperty("active")
     protected boolean active;
 
+    @BsonProperty("password")
+    protected String password;
+
     @BsonCreator
     public User(@BsonId UUID id,
                 @BsonProperty("username") String username,
-                @BsonProperty("active") boolean active) {
+                @BsonProperty("active") boolean active,
+                @BsonProperty("password") String password) {
         this.id = id;
         this.username = username;
         this.active = active;
+        this.password = password;
     }
 
-    public User(String username, boolean active) {
+
+    public User(String username, boolean active, String password) {
         this.username = username;
         this.active = active;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+        this.password = password;
     }
 }

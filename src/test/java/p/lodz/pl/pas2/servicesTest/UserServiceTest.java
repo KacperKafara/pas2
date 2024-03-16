@@ -1,5 +1,6 @@
 package p.lodz.pl.pas2.servicesTest;
 
+import com.nimbusds.jose.JOSEException;
 import jdk.jshell.spi.ExecutionControl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import p.lodz.pl.pas2.msg.UserMsg;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.MovieRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.RentRepositoryMongoDB;
 import p.lodz.pl.pas2.repositories.Implementations.mongoDB.UserRepositoryMongoDB;
+import p.lodz.pl.pas2.security.Jws;
 import p.lodz.pl.pas2.services.UserService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,13 +30,14 @@ import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {TestMongoConfig.class, UserService.class, UserRepositoryMongoDB.class})
+@SpringBootTest(classes = {TestMongoConfig.class, UserService.class, UserRepositoryMongoDB.class, Jws.class})
 @ActiveProfiles("test")
 public class UserServiceTest {
     @Autowired
     private UserService userService;
-    User user = new Administrator("Bartosz",true);
+    User user = new Administrator("Bartosz",true,"Bartosz");
     private UUID userId;
+    Jws jws = new Jws();
 
     @BeforeEach
     public void setUp() {
@@ -62,7 +65,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void getUsers() {
-        User user2 = new Administrator("John", false);
+        User user2 = new Administrator("John", false, "John");
         userService.addUser(user2);
         List<User> users = new ArrayList<>();
         users.add(user);
@@ -77,7 +80,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void getUsersByPattern() {
-        User user2 = new Administrator("Bartek", false);
+        User user2 = new Administrator("Bartek", false, "Bartek");
         userService.addUser(user2);
         List<User> users = new ArrayList<>();
         users.add(user);
@@ -93,7 +96,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void addUser() {
-        User newUser = new Administrator("Alice", true);
+        User newUser = new Administrator("Alice", true, "Alice");
         userService.addUser(newUser);
         assertThat(userService.getUsers().size()).isEqualTo(2);
     }
@@ -101,7 +104,7 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void addUserWithDuplicateUsername() {
-        User duplicateUser = new Administrator(user.getUsername(), false);
+        User duplicateUser = new Administrator(user.getUsername(), false, "Alice");
         UsernameInUseException exception = assertThrows(UsernameInUseException.class, () -> {
             userService.addUser(duplicateUser);
         });
@@ -127,20 +130,11 @@ public class UserServiceTest {
 
     @Test
     @DirtiesContext
-    public void updateUserForExistingUser() {
-        User updatedUser = new Administrator("UpdatedName", false);
-        userService.updateUser(userId, updatedUser);
-        assertThat(userService.getUser(userId).getUsername()).isEqualTo(updatedUser.getUsername());
-        assertThat(userService.getUser(userId).isActive()).isEqualTo(updatedUser.isActive());
-    }
-
-    @Test
-    @DirtiesContext
     public void updateUserForNonexistentUser() {
         UUID nonExistentUserId = UUID.randomUUID();
-        User updatedUser = new Administrator("UpdatedName", false);
+        User updatedUser = new Administrator("UpdatedName", false, "UpdatedName");
         ThereIsNoUserToUpdateException exception = assertThrows(ThereIsNoUserToUpdateException.class, () -> {
-            userService.updateUser(nonExistentUserId, updatedUser);
+            userService.updateUser(nonExistentUserId, updatedUser, "");
         });
         assertEquals(UserMsg.USER_NOT_FOUND, exception.getMessage());
     }

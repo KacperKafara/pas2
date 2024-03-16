@@ -6,9 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import p.lodz.pl.pas2.model.Movie;
-import p.lodz.pl.pas2.model.Rent;
-import p.lodz.pl.pas2.model.User;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -17,9 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RentRequest {
-    @NotNull(message = "client's id not given")
-    private UUID clientID;
+public class RentForClientRequest {
 
     @NotNull(message = "movie's id not given")
     private UUID movieID;
@@ -30,9 +25,7 @@ public class RentRequest {
 
     private LocalDate endDate;
 
-
-    public RentRequest(UUID clientID, UUID movieID, LocalDate startDate) {
-        this.clientID = clientID;
+    public RentForClientRequest(UUID movieID, LocalDate startDate) {
         this.movieID = movieID;
         this.startDate = startDate;
     }

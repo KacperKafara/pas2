@@ -4,7 +4,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import p.lodz.pl.pas2.Dto.UserDto.UserDto;
+import p.lodz.pl.pas2.Dto.UserDto.UserDtoMapper;
 import p.lodz.pl.pas2.model.Administrator;
 import p.lodz.pl.pas2.model.User;
 import p.lodz.pl.pas2.request.AdministratorRequest;
@@ -18,25 +21,34 @@ import java.util.UUID;
 public class AdministratorController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public AdministratorController(UserService userService) {
+    public AdministratorController(UserService userService, PasswordEncoder passwordEncoder, UserDtoMapper userDtoMapper) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.userDtoMapper = userDtoMapper;
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@Valid @RequestBody AdministratorRequest user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(new Administrator(user.getUsername(), user.isActive())));
+    public ResponseEntity<UserDto> addUser(@Valid @RequestBody AdministratorRequest user) {
+        User addedUser = userService.addUser(new Administrator(user.getUsername(), user.isActive(), passwordEncoder.encode(user.getPassword())));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDtoMapper.adminToUserDto((Administrator) addedUser));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id,@Valid @RequestBody AdministratorRequest user) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, new Administrator(user.getUsername(), user.isActive())));
+    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id,@Valid @RequestBody AdministratorRequest user, @RequestHeader("If-Match") String ifMatch) {
+        User updatedUser = userService.updateUser(id,
+                new Administrator(user.getUsername(), user.isActive(), userService.getUser(id).getPassword()),
+                ifMatch);
+        return ResponseEntity.status(HttpStatus.OK).body(userDtoMapper.adminToUserDto((Administrator) updatedUser));
     }
 
     @GetMapping
-    public  ResponseEntity<List<User>> getAdministrators(){
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getAdministrators());
+    public  ResponseEntity<List<UserDto>> getAdministrators(){
+        List<UserDto> userDtos = userDtoMapper.adminsToUserDtos(userService.getAdministrators());
+        return ResponseEntity.status(HttpStatus.OK).body(userDtos);
     }
 
 }
