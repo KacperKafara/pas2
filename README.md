@@ -2,6 +2,17 @@
 The "Movie Rental" app, built with Spring Boot 3.1.5 and MongoDB, allows users to browse and rent movies for specific durations. It's a RESTful application, enabling easy communication via HTTP. Key features include user registration, browsing movies and renting. Moderators can manage the movie and rent collections and administrators the users collection.
 
 Frontend application built with REACT: https://github.com/konradkoza/pasSPA
+---
+Default accounts:
+- Administrator
+  - Login: admin
+  - Password: password
+- Moderator
+  - Login: mod
+  - Password: password
+- Client
+  - Logind: client1
+  - Password: password
 ## How to run
 - Clone repository
 ```
