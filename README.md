@@ -16,7 +16,7 @@ Default accounts:
 ## How to run
 - Clone repository
 ```
-git clone https://github.com/KacperKafara/pas2.git
+git clone https://github.com/KacperKafara/pasREST.git
 ```
 - Run docker containers with MongoDB
 ```
